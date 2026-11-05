@@ -1,0 +1,103 @@
+.gradient-image {
+    height: 100%;
+    position: relative;
+}
+
+.gradient-image img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
+    z-index: 1;
+}
+
+/* Animasi teks naik turun */
+@keyframes floatY {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(10px); }
+    100% { transform: translateY(0); }
+}
+
+.animated-text {
+    animation: floatY 3s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.animated-text.delay {
+    animation-delay: 1.5s;
+}
+
+/* Card tinggi minimal biar proporsional */
+.card {
+    height: 450px; /* fix tinggi */
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Row & kolom wajib isi penuh card */
+.card .row,
+.card .col-md-6 {
+    height: 100%;
+}
+
+/* Carousel dan gambar fix tinggi dan cover */
+.carousel,
+.carousel-inner,
+.carousel-item {
+    height: 100%;
+}
+
+.carousel-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Biar tombol carousel posisinya pas */
+.carousel-control-prev,
+.carousel-control-next {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Teks tetap di tengah */
+.text-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Animasi teks */
+@keyframes floatY {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(10px); }
+    100% { transform: translateY(0); }
+}
+
+.animated-text {
+    animation: floatY 3s ease-in-out infinite;
+    margin: 0;
+}
+
+
+.animated-text.delay {
+    animation-delay: 1.5s;
+}
+
+/* Gambar di carousel fit rapi */
+.carousel-item img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}

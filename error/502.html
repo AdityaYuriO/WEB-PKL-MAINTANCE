@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>502 Bad Gateway</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { text-align: center; padding: 20px; max-width: 600px; }
+        h1 { font-size: 5rem; color: #f00; margin-bottom: 20px; }
+        h2 { font-size: 2rem; margin-bottom: 20px; color: #fff; }
+        p { color: #aaa; margin-bottom: 30px; line-height: 1.6; }
+        .btn { display: inline-block; padding: 12px 30px; background: #fff; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px; }
+        .btn:hover { background: #ddd; }
+        .error-detail { background: #222; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: left; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>502</h1>
+        <h2>Bad Gateway</h2>
+        <p>Server sedang mengalami masalah koneksi. Silakan coba beberapa saat lagi.</p>
+        <a href="/" class="btn">Refresh Halaman</a>
+        <a href="javascript:history.back()" class="btn" style="background: #444; color: #fff;">Kembali</a>
+    </div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        setTimeout(() => location.reload(), 10000);
+    </script>
+</body>
+</html>

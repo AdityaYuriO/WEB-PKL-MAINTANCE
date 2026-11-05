@@ -1,0 +1,21 @@
+# Redirect php.info ke 404 (security)
+RewriteEngine On
+
+# Block sensitive files
+RewriteRule ^(php\.info|phpinfo\.php|\.env|composer\.json|composer\.lock)$ - [R=404,L]
+
+# Custom error documents
+ErrorDocument 403 /error/403.html
+ErrorDocument 404 /error/404.html
+ErrorDocument 502 /error/502.html
+ErrorDocument 500 /error/50x.html
+
+# ROUTE SEMUA REQUEST KE /public/ (kecuali error dan file existing)
+RewriteCond %{REQUEST_URI} !^/error/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1 [L]
+
+# Jika langsung akses root, ke public
+RewriteRule ^$ /public/ [L]
