@@ -629,9 +629,31 @@ nav.layout-navbar {
 }
 
 .modal-header {
+    position: relative;
     background-color: #f8fafc !important;
     border-bottom: 1px solid var(--border-color) !important;
     padding: 18px 24px !important;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.modal-header .btn-close {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
+    flex-shrink: 0;
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    margin: 0 !important;
+    transform: translateY(-50%) !important;
+    transition: none !important;
+    z-index: 1;
+}
+
+.modal-header .btn-close:hover,
+.modal-header .btn-close:focus,
+.modal-header .btn-close:active {
+    transform: translateY(-50%) !important;
 }
 
 .modal-title {
@@ -648,6 +670,7 @@ nav.layout-navbar {
     border-top: 1px solid var(--border-color) !important;
     padding: 14px 24px !important;
     background-color: #f8fafc !important;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
 /* =============================================

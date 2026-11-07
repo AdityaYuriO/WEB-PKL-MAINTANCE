@@ -63,7 +63,7 @@ class RekapAbsensiController extends Controller
 
         return response()->json([
             'jurusan' => $jurusanQuery->select('id', 'name_konke')->get(),
-            'kelas' => $kelasQuery->select('id', 'name_kelas', 'konke_id')->get(),
+            'kelas' => $kelasQuery->select('id', 'kelas', 'name_kelas', 'konke_id')->get(),
             'siswa' => $siswaQuery->select('id', 'name', 'kelas_id', 'konke_id')->get()
         ]);
     }
@@ -151,7 +151,7 @@ class RekapAbsensiController extends Controller
         // A. Ambil Siswa beserta IDUKA nya (penting untuk cek libur)
         $students = $studentQuery
             ->select(['id', 'name', 'nip as nis', 'kelas_id', 'iduka_id', 'konke_id'])
-            ->with('kelas:id,name_kelas')
+            ->with('kelas:id,kelas,name_kelas')
             ->get();
 
         // B. Siapkan Data Libur per IDUKA (Optimasi Query)

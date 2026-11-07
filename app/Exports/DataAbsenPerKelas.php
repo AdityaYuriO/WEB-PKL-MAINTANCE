@@ -50,7 +50,7 @@ class DataAbsenPerKelas implements FromCollection, WithHeadings, WithEvents, Sho
                 $q->where('pembimbing_id', $this->guruId);
             });
 
-        $students = $userQuery->select(['id', 'name', 'nip', 'kelas_id', 'iduka_id'])->with('kelas:id,name_kelas')->get();
+        $students = $userQuery->select(['id', 'name', 'nip', 'kelas_id', 'iduka_id'])->with('kelas:id,kelas,name_kelas')->get();
 
         $studentIds = $students->pluck('id')->all();
 
@@ -139,7 +139,7 @@ class DataAbsenPerKelas implements FromCollection, WithHeadings, WithEvents, Sho
             return [
                 'Nama Siswa' => $s->name ?? '-',
                 'NIS' => $s->nip ?? '-',
-                'Kelas' => optional($s->kelas)->name_kelas ?? '-',
+                'Kelas' => trim((optional($s->kelas)->kelas ?? '') . ' ' . (optional($s->kelas)->name_kelas ?? '')) ?: '-',
                 'Hadir (H)' => $H,
                 'Sakit (S)' => $S,
                 'Izin (I)' => $I,

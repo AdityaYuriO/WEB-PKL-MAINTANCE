@@ -86,7 +86,7 @@
                                                 <td>{{ $g->email }}</td>
                                                 @if (in_array(auth()->user()->role, ['hubin']))
                                                     <td>
-                                                        <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                        <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#editGuruModal{{ $g->id }}">
                                                                 <i class="bi bi-pen"></i>
@@ -242,8 +242,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Tutup</button>
+                                                                {{-- <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Tutup</button> --}}
                                                                 <button type="submit" class="btn btn-primary">Simpan
                                                                     Perubahan</button>
                                                             </div>
@@ -360,8 +360,8 @@
 
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Tutup</button>
+                                        {{-- <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Tutup</button> --}}
                                         <button type="submit" class="btn btn-primary">Simpan Data</button>
                                     </div>
                                 </form>
@@ -420,7 +420,7 @@
                     icon: 'error',
                     title: 'Gagal Menambahkan Data',
                     html: `{!! implode('<br>', $errors->all()) !!}`,
-                    confirmButtonText: 'Tutup'
+                    // confirmButtonText: 'Tutup'
                 }).then(() => {
                     // Buka kembali modal jika ada error validasi
                     const tambahModal = new bootstrap.Modal(document.getElementById('tambahGuruModal'));
@@ -453,4 +453,3 @@
         });
     </script>
 @endsection
-

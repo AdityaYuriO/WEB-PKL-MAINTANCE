@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h3>Daftar Pengajuan PKL</h3>
+    <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
@@ -40,5 +41,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

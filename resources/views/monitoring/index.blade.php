@@ -312,12 +312,12 @@
                             </tbody>
                         </table>
                     @else
-                        <p class="text-muted">Semua guru/kaprog sudah membuat monitoring Ã¢Å“â€¦</p>
+                        <p class="text-muted">Semua guru/kaprog sudah membuat monitoring ✅</p>
                     @endif
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
                 </div>
             </div>
         </div>
@@ -365,4 +365,3 @@
         }
     </script>
 @endpush
-

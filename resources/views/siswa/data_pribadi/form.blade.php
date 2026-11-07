@@ -342,7 +342,7 @@
                 icon: 'error',
                 title: 'Gagal Data!',
                 html: `{!! implode('<br>', $errors->all()) !!}`,
-                confirmButtonText: 'Tutup',
+                // confirmButtonText: 'Tutup',
                 customClass: { popup: 'rounded-4' }
             });
         });

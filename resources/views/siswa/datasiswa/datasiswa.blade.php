@@ -10,6 +10,10 @@
         <title>Data Siswa</title>
 
         <style>
+            .student-actions-card {
+                overflow: visible !important;
+            }
+
             @media (max-width: 768px) {
                 .table th:nth-child(2),
                 .table td:nth-child(2) {
@@ -39,7 +43,7 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
 
-                        <div class="card mb-3">
+                        <div class="card mb-3 student-actions-card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="mb-0">Data Siswa</h5>
@@ -177,7 +181,7 @@
                                                     </td>
                                                     <td></td>
                                                     <td>
-                                                        <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                        <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                             @if(in_array(auth()->user()->role, ['hubin', 'guru', 'kaprog']))
                                                             <button class="btn btn-warning btn-sm d-flex align-items-center"
                                                                 data-bs-toggle="modal" data-bs-target="#editSiswaModal{{ $s->id }}">
@@ -203,7 +207,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
-                                                                    <i class="fas fa-trash-alt3"></i>
+                                                                    <i class="fas fa-trash"></i>
                                                                 </button>
                                                             </form>
                                                             @endif
@@ -287,7 +291,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                                                                    {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
                                                                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                                                                 </div>
                                                             </form>
@@ -494,4 +498,3 @@
         });
     </script>
 @endsection
-

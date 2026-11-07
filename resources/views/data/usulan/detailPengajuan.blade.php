@@ -72,6 +72,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
+                            <div class="table-responsive">
                             <table class="table table-hover">
                                 <tr>
                                     <td>Nama Siswa</td>
@@ -124,6 +125,7 @@
                                     <td>malvaa</td>
                                 </tr>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -134,6 +136,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
+                            <div class="table-responsive">
                             <table class="table table-hover">
                                 <tr>
                                     <td>Nama Institusi / Perusahaan</td>
@@ -186,6 +189,7 @@
                                     <td>malvaa</td>
                                 </tr>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>

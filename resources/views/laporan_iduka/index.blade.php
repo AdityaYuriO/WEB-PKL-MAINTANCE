@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container-xxl flex-grow-1 container-p-y laporan-iduka-page">
 
         <div class="row mb-4">
             <div class="col-12">
@@ -124,6 +124,16 @@
 @endsection
 
 <style>
+    @media (min-width: 1200px) {
+        .layout-page:has(.laporan-iduka-page) {
+            padding-left: var(--sidebar-width, 260px) !important;
+        }
+
+        html.sidebar-minimized .layout-page:has(.laporan-iduka-page) {
+            padding-left: 56px !important;
+        }
+    }
+
     .bg-gradient-primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -222,5 +232,3 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs
-
-

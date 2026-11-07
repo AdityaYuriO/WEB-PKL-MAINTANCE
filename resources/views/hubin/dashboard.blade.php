@@ -6,10 +6,10 @@
   <div class="row">
     <div class="col-lg-12 mb-4 order-0">
       <div class="card shadow-sm border-0 bg-primary text-white card-hover">
-        <div class="d-flex align-items-end row">
+        <div class="d-flex align-items-center row">
           <div class="col-sm-8">
             <div class="card-body">
-              <h4 class="card-title text-white mb-2 fw-bold">Selamat Datang, {{ Auth::user()->name }}!</h4>
+              <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">Selamat Datang, {{ Auth::user()->name }}!</h4>
               <p class="mb-4 text-white-50">
                 Ini adalah dashboard panel Hubin. Anda dapat memantau statistik dan rekapitulasi data usulan PKL siswa secara keseluruhan.
               </p>
@@ -167,6 +167,5 @@
     });
   });
 </script>
-
 
 

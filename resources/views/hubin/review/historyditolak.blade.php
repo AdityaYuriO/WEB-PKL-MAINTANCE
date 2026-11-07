@@ -56,6 +56,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif   
+                            <div class="table-responsive">
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
@@ -86,6 +87,7 @@
                                     <!-- Add more rows here -->
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content mt-3 mb-2">

@@ -11,6 +11,7 @@
                 @if ($iduka->siswa->isEmpty())
                     <p class="text-muted">Belum ada siswa yang diterima di Iduka ini.</p>
                 @else
+                    <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead class="table-light">
                             <tr>
@@ -32,6 +33,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    </div>
                 @endif
             </div>
         </div>

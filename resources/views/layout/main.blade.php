@@ -60,11 +60,278 @@
 
     <!-- Custom App CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    {{-- ============================================================
+         PERBAIKAN UI (menimpa aturan bermasalah di css/app.css)
+         ============================================================ --}}
+    <style id="perbaikan-ui">
+        /* 1) TABEL: app.css memberi .table-responsive "overflow: hidden"
+              sehingga isi tabel yang lebar terpotong dan tidak bisa di-scroll. */
+        .table-responsive {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-responsive::-webkit-scrollbar { height: 10px; }
+        .table-responsive::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+
+        /* 2) TOMBOL PANAH SIDEBAR ( < dan > ) */
+        .sidebar-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            margin-left: auto;
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 6px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: left .3s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+        }
+        .sidebar-toggle-btn:hover {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, .25);
+            color: #f1f5f9;
+        }
+        .sidebar-toggle-btn i {
+            font-size: 20px;
+            line-height: 1;
+            transition: transform .3s ease;
+        }
+
+        /* 3) SIDEBAR (desktop >= 1200px)
+              Sidebar tetap (fixed) seperti bawaan template, posisi konten TIDAK diubah.
+              Saat di-minimize: sidebar meluncur keluar, konten melebar, tombol panah
+              berputar jadi ">" dan logo muncul di navbar (fade-in). */
+        .sidebar-toggle-floating { display: none; }
+        .navbar-brand-mini { display: none; }
+
+        @media (min-width: 1200px) {
+            #layout-menu,
+            .layout-menu {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                display: flex;
+                flex-direction: column;
+                visibility: visible;
+                transition: left .3s ease, visibility 0s linear 0s;
+            }
+            #layout-menu .menu-inner { flex: 1 1 auto; min-height: 0; }
+
+            .layout-page { transition: padding-left .3s ease; }
+
+            /* tombol bawaan di dalam sidebar hanya untuk layar kecil */
+            .sidebar-toggle-mobile { display: none !important; }
+
+            .sidebar-toggle-floating {
+                display: flex;
+                position: fixed;
+                top: 24px;
+                left: calc(var(--sidebar-width, 260px) - 19px);
+                margin: 0;
+                z-index: 1090;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+            }
+
+            html.sidebar-minimized #layout-menu,
+            html.sidebar-minimized .layout-menu {
+                left: calc(-1 * var(--sidebar-width, 260px) - 40px) !important;
+                visibility: hidden;
+                transition: left .3s ease, visibility 0s linear .3s;
+            }
+            html.sidebar-minimized .layout-page { padding-left: 56px !important; }
+            html.sidebar-minimized .sidebar-toggle-floating { left: 6px; }
+            html.sidebar-minimized .sidebar-toggle-floating i { transform: rotate(180deg); }
+
+            /* Logo + teks di navbar: tersembunyi saat sidebar tampil, fade-in saat sidebar ditutup */
+            .navbar-brand-mini {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 0 0 auto;
+                margin-right: 16px;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateX(-8px);
+                transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+            }
+            .navbar-brand-mini img {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, .3);
+            }
+            .navbar-brand-mini span {
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: .5px;
+                line-height: 1.2;
+                text-transform: uppercase;
+                white-space: nowrap;
+                color: var(--text-primary, #0f172a);
+            }
+            html.sidebar-minimized .navbar-brand-mini {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: none;
+                transition: opacity .4s ease .2s, transform .4s ease .2s, visibility 0s linear 0s;
+            }
+        }
+
+        /* 4) TITIK SUBMENU: app.css memampatkan padding submenu sehingga titik bawaan
+              template menimpa huruf (Siswa, GTK, Nilai, dst). */
+        .layout-menu .menu-sub .menu-item > .menu-link {
+            position: relative;
+            padding: 8px 12px 8px 30px !important;
+        }
+        .layout-menu .menu-sub .menu-item > .menu-link::before {
+            content: '' !important;
+            position: absolute !important;
+            left: 13px !important;
+            top: 50% !important;
+            width: 6px !important;
+            height: 6px !important;
+            margin: 0 !important;
+            border: 0 !important;
+            border-radius: 50% !important;
+            background-color: currentColor !important;
+            opacity: .45;
+            transform: translateY(-50%) !important;
+        }
+        .layout-menu .menu-sub .menu-item > .menu-link:hover::before { opacity: 1; }
+        .layout-menu .menu-sub .menu-item.active > .menu-link::before {
+            display: block !important;
+            background-color: var(--accent, #3b82f6) !important;
+            opacity: 1;
+        }
+
+        /* 5) TOMBOL AKSI (ikon): ukuran sama untuk pensil, mata, dan hapus + jarak antar tombol. */
+        .aksi-icon-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+        }
+        .aksi-icon-group form { display: flex !important; margin: 0; }
+        .aksi-icon-group .btn {
+            width: 34px;
+            height: 34px;
+            padding: 0 !important;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .aksi-icon-group .btn i { font-size: 15px; line-height: 1; }
+
+        /* 6) TEKS MELUBER: sel tabel ber-max-width (mis. Saran/Catatan di monitoring) mewarisi
+              "nowrap" dari .text-nowrap sehingga teksnya menimpa kolom sebelahnya. Dibuat turun baris. */
+        td[style*="max-width"] {
+            white-space: normal !important;
+            word-break: break-word;
+        }
+
+        /* 7) TOMBOL AKSI DI TABEL: jarak sedikit antar tombol, tombol ikon seragam ukurannya. */
+        td .btn-group { display: inline-flex; gap: 6px; }
+        td .btn-group > .btn {
+            margin-left: 0 !important;
+            border-radius: var(--bs-btn-border-radius, .375rem) !important;
+        }
+        td .gap-1:has(> .btn),
+        td .gap-1:has(> form) { gap: 8px !important; }
+        td > .btn + .btn,
+        td > .btn + form,
+        td > form + .btn,
+        td > form + form,
+        td form > .btn + .btn,
+        td .d-flex:not([class*="gap-"]) > .btn + .btn,
+        td .d-flex:not([class*="gap-"]) > .btn + form,
+        td .d-flex:not([class*="gap-"]) > form + .btn { margin-left: 6px; }
+        td .btn.me-1 { margin-right: 8px !important; }
+
+        /* Tombol HANYA berisi ikon (ditandai skrip di bawah dengan class .btn-icon-only).
+           Tombol berisi ikon + teks (mis. "Lihat", "Export") tidak ikut diubah ukurannya. */
+        td .btn.btn-icon-only {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 0 !important;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        td .btn.btn-icon-only > i { font-size: 15px; line-height: 1; margin: 0 !important; }
+        td form.aksi-form { display: inline-flex; margin: 0; vertical-align: middle; }
+
+        /* 9) NAVBAR ATAS: menempel di atas saat halaman di-scroll. */
+        #layout-navbar {
+            position: sticky;
+            top: 10px;
+            z-index: 1020;
+            box-shadow: var(--shadow-sm), 0 -10px 0 0 var(--body-bg) !important;
+        }
+
+        /* 8) JUDUL BANNER DASHBOARD: .card-title di app.css memaksa warna gelap,
+              padahal di banner biru harus putih. */
+        .card-title.text-white { color: #fff !important; }
+    </style>
+
+    {{-- Tombol minimize sidebar di desktop (>= 1200px). Layar kecil tetap memakai bawaan template. --}}
+    <script>
+        (function () {
+            var root = document.documentElement;
+            try {
+                if (localStorage.getItem('tr-sidebar-minimized') === '1') root.classList.add('sidebar-minimized');
+            } catch (e) {}
+            function rapikanTombol() {
+                document.querySelectorAll('td .btn:not(.btn-icon-only)').forEach(function (b) {
+                    if (b.querySelector('i') && b.textContent.replace(/\s+/g, '') === '') {
+                        b.classList.add('btn-icon-only');
+                        if (b.parentElement && b.parentElement.tagName === 'FORM') {
+                            b.parentElement.classList.add('aksi-form');
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                rapikanTombol();
+                var t;
+                new MutationObserver(function () {
+                    clearTimeout(t);
+                    t = setTimeout(rapikanTombol, 80);
+                }).observe(document.body, { childList: true, subtree: true });
+            });
+            document.addEventListener('click', function (e) {
+                var t = e.target.closest ? e.target.closest('.layout-menu-toggle') : null;
+                if (!t || window.innerWidth < 1200) return;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var on = root.classList.toggle('sidebar-minimized');
+                try { localStorage.setItem('tr-sidebar-minimized', on ? '1' : '0'); } catch (err) {}
+            }, true);
+        })();
+    </script>
+
+    {{-- CSS tambahan per halaman (@push('styles')) --}}
+    @stack('styles')
 </head>
 
 <body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
+        <!-- Tombol minimize sidebar (desktop). Sengaja di luar sidebar supaya tetap terlihat saat sidebar ditutup. -->
+        <button type="button" id="sidebarToggleBtn" class="layout-menu-toggle sidebar-toggle-btn sidebar-toggle-floating"
+            aria-label="Sembunyikan / tampilkan sidebar" title="Sembunyikan / tampilkan sidebar">
+            <i class="bx bx-chevron-left"></i>
+        </button>
+
         <div class="layout-container">
             <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -77,25 +344,9 @@
                             K-ONE</span>
                     </a>
 
-                    <button type="button"
-                        class="layout-menu-toggle btn btn-sm ms-auto d-flex align-items-center justify-content-center d-lg-none"
-                        style="
-                            background: black;
-                            border: 1px solid rgba(255,255,255,0.1);
-                            color: #cbd5e1;
-                            width: 44px;
-                            height: 44px;
-                            border-radius: 6px;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            padding: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        "
-                        onmouseover="this.style.backgroundColor='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='#f1f5f9';"
-                        onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='#cbd5e1';">
-                        <i class="bx bx-chevron-left" style="font-size: 20px;"></i>
+                    <button type="button" class="layout-menu-toggle sidebar-toggle-btn sidebar-toggle-mobile"
+                        aria-label="Tutup menu">
+                        <i class="bx bx-chevron-left"></i>
                     </button>
                 </div>
 
@@ -103,7 +354,7 @@
 
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
-                    <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+                    <li class="menu-item {{ Request::is('dashboard', 'dashboard/*') ? 'active' : '' }}">
                         <a href="@if (auth()->user()->role == 'guru') /dashboard/guru
                         @elseif(auth()->user()->role == 'siswa') /dashboard/siswa
                         @elseif(auth()->user()->role == 'hubin') /dashboard/hubin
@@ -217,7 +468,8 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog', 'hubin']))
+                    {{-- sementara akses dari hubin di blok dulu --}}
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
@@ -354,7 +606,7 @@ Request::routeIs('nilai-akhir.*')
 
                         <li class="menu-item {{ Request::routeIs('konke.index') ? 'active' : '' }}">
                             <a href="{{ route('konke.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-bookmark-star"></i>
+                                <i class="menu-icon tf-icons bx bx-bookmark"></i>
                                 <div data-i18n="Basic">Konsentrasi Keahlian</div>
                             </a>
                         </li>
@@ -640,6 +892,12 @@ Request::routeIs('nilai-akhir.*')
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                             <i class="fas fa-bars" style="font-size:22px; color:#64748b;"></i>
                         </a>
+                    </div>
+
+                    <!-- Logo kecil di navbar: fade-in saat sidebar ditutup, fade-out saat sidebar tampil -->
+                    <div class="navbar-brand-mini" aria-hidden="true">
+                        <img src="{{ asset('images/logoo.png') }}" alt="">
+                        <span>TATA RIKSA K-ONE</span>
                     </div>
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">

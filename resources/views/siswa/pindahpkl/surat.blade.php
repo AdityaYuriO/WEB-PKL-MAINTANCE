@@ -209,7 +209,7 @@
             <h1>CABANG DINAS PENDIDIKAN WILAYAH XIII</h1>
             <h1>SMK NEGERI 1 KAWALI</h1>
             <p>Jalan Talagasari No.35 Tlp. (0265) 791727 E-Mail : smkn1kawali@gmail.com</p>
-            <p>Kawali â€“ Kabupaten Ciamis 46253</p>
+            <p>Kawali – Kabupaten Ciamis 46253</p>
         </div>
     </div>
 

@@ -123,7 +123,7 @@
                                                         </td>
                                                         <td></td>
                                                         <td>
-                                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                            <div class="aksi-icon-group">
                                                                 <button class="btn btn-warning btn-sm"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#editSiswaModal{{ $s->id }}">
@@ -361,7 +361,7 @@
                     icon: 'error',
                     title: 'Gagal Menambahkan Siswa',
                     html: `{!! implode('<br>', $errors->all()) !!}`,
-                    confirmButtonText: 'Tutup'
+                    // confirmButtonText: 'Tutup'
                 });
             @endif
         });

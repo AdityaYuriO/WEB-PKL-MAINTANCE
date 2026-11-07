@@ -21,7 +21,7 @@
 
                         <div class="card-body p-4">
                             <!-- Form -->
-                            <form action="{{ route('user.siswa.store') }}" method="POST">
+                            <form action="{{ route('user.siswa.store') }}" method="POST" autocomplete="off">
                                 @csrf
 
                                 <div class="row">
@@ -37,27 +37,32 @@
                                         <!-- NIP -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">NIP/NIS</label>
-                                            <input type="text" name="nip" class="form-control"
+                                            <input autocomplete="off" type="text" name="nip" class="form-control"
                                                 placeholder="Masukkan NIP/NIS" required>
                                         </div>
 
                                         <!-- Kelas -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Kelas</label>
-                                            <select name="kelas_id" class="form-select" required>
-                                                <option value="">Pilih Kelas</option>
+                                            <select id="kelas_id" name="kelas_id" class="form-select" required disabled>
+                                                <option value="">Pilih Jurusan terlebih dahulu</option>
                                                 @foreach ($kelas as $k)
-                                                    <option value="{{ $k->id }}">
-                                                        {{$k->name_kelas }}
+                                                    <option value="{{ $k->id }}"
+                                                        data-konke-id="{{ $k->konke_id }}"
+                                                        data-jurusan="{{ $k->konke->name_konke ?? '' }}"
+                                                        data-kelas="{{ $k->name_kelas }}"
+                                                        data-tingkat="{{ $k->kelas }}"
+                                                        @selected(old('kelas_id') == $k->id)>
+                                                        {{ trim(($k->kelas ?? '') . ' ' . ($k->name_kelas ?? '')) }}
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </div>
 
-                                             <div class="mb-3">
+                                        <div class="mb-3">
                                             <label class="form-label">Tahun Ajaran</label>
                                             <input type="text" name="tahun_ajaran" class="form-control"
-                                                placeholder="2025/2026" required>
-                                        </div>
+                                                value="{{ old('tahun_ajaran') }}" placeholder="2025/2026" required>
                                         </div>
                                     </div>
 
@@ -66,24 +71,27 @@
                                         <!-- Email -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
-                                            <input type="email" name="email" class="form-control"
+                                            <input autocomplete="off" type="email" name="email" readonly onfocus="this.removeAttribute('readonly');" class="form-control"
                                                 placeholder="contoh@email.com" required>
                                         </div>
 
                                         <!-- Password -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Password</label>
-                                            <input type="password" name="password" class="form-control"
+                                            <input autocomplete="new-password" type="password" name="password" readonly onfocus="this.removeAttribute('readonly');" class="form-control"
                                                 placeholder="Masukkan password" required>
                                         </div>
 
                                         <!-- Konsentrasi Keahlian -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Konsentrasi Keahlian</label>
-                                            <select name="konke_id" class="form-select" required>
+                                            <select id="konke_id" name="konke_id" class="form-select" required>
                                                 <option value="">Pilih Konsentrasi</option>
                                                 @foreach ($konke as $kk)
-                                                    <option value="{{ $kk->id }}">{{ $kk->name_konke }}</option>
+                                                    <option value="{{ $kk->id }}"
+                                                        @selected(old('konke_id') == $kk->id)>
+                                                        {{ $kk->name_konke }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -110,3 +118,65 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const jurusanSelect = document.getElementById('konke_id');
+            const kelasSelect = document.getElementById('kelas_id');
+            const kelasByJurusan = @json($kelasByJurusan);
+            const kelasOptions = Array.from(kelasSelect.options).filter(option => option.value);
+            const previousKelas = @json((string) old('kelas_id'));
+
+            function normalize(value) {
+                return String(value || '')
+                    .toLowerCase()
+                    .replace(/&/g, ' dan ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            function updateKelasOptions(restorePrevious = false) {
+                const selectedJurusanId = jurusanSelect.value;
+                const selectedJurusan = normalize(jurusanSelect.selectedOptions[0]?.textContent);
+                const mapping = Object.entries(kelasByJurusan).find(([name]) => {
+                    const mappedJurusan = normalize(name);
+                    return selectedJurusan === mappedJurusan || selectedJurusan.startsWith(mappedJurusan + ' ');
+                });
+                const allowedKelas = (mapping?.[1] || []).map(normalize);
+
+                kelasOptions.forEach(option => {
+                    const visible = Boolean(selectedJurusanId) &&
+                        option.dataset.konkeId === selectedJurusanId &&
+                        allowedKelas.includes(normalize(option.dataset.kelas));
+                    option.hidden = !visible;
+                });
+
+                kelasSelect.disabled = allowedKelas.length === 0;
+                kelasSelect.options[0].textContent = selectedJurusanId
+                    ? (allowedKelas.length ? 'Pilih Kelas' : 'Tidak ada kelas untuk jurusan ini')
+                    : 'Pilih Jurusan terlebih dahulu';
+
+                const currentOption = kelasSelect.selectedOptions[0];
+                const currentIsVisible = currentOption && !currentOption.hidden;
+                if (!currentIsVisible) {
+                    kelasSelect.value = '';
+                }
+
+                if (restorePrevious && previousKelas) {
+                    const previousOption = kelasOptions.find(option =>
+                        option.value === previousKelas && !option.hidden
+                    );
+                    if (previousOption) kelasSelect.value = previousOption.value;
+                }
+            }
+
+            jurusanSelect.addEventListener('change', function () {
+                kelasSelect.value = '';
+                updateKelasOptions();
+            });
+
+            updateKelasOptions(true);
+        });
+    </script>
+@endpush

@@ -227,7 +227,7 @@
                                                                 @endif
                                                             </td>
                                                             <td>
-                                                                <div class="d-flex gap-1 justify-content-center">
+                                                                <div class="d-flex gap-2 justify-content-center">
                                                                     <button type="button" class="btn btn-sm btn-success rounded-pill px-2 px-md-3 shadow-sm"
                                                                             onclick="konfirmasiAbsensi({{ $absensi->id }}, 'disetujui')" title="Setujui">
                                                                         <i class="bi bi-check-lg"></i>
@@ -303,7 +303,7 @@
                                 </td>
                                 <td><span class="badge bg-warning">Pending</span></td>
                                 <td>
-                                    <div class="d-flex gap-1 justify-content-center">
+                                    <div class="d-flex gap-2 justify-content-center">
                                         <button type="button" class="btn btn-sm btn-success rounded-pill px-2 px-md-3 shadow-sm"
                                                 onclick="konfirmasiDinas({{ $dinas->id }}, 'disetujui')" title="Setujui">
                                             <i class="bi bi-check-lg"></i>
@@ -390,7 +390,7 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div class="d-flex gap-1 justify-content-center flex-wrap">
+                                                            <div class="d-flex gap-2 justify-content-center flex-wrap">
                                                                 <button type="button" class="btn btn-sm btn-success rounded-pill px-2 px-md-3 shadow-sm"
                                                                         onclick="konfirmasiIzin({{ $izin->id }}, 'disetujui')" title="Setujui">
                                                                     <i class="bi bi-check-lg"></i>
@@ -697,7 +697,7 @@
             </div>
             <div class="modal-body" id="modalDetailIzinContent"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
             </div>
         </div>
     </div>

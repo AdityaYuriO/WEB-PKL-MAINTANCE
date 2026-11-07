@@ -302,9 +302,9 @@
                         </div>
                     </div>
                     <div class="modal-footer bg-light rounded-bottom-4 border-0 pt-3">
-                        <button type="button" class="btn btn-light rounded-pill px-4 border" data-bs-dismiss="modal">
+                        {{-- <button type="button" class="btn btn-light rounded-pill px-4 border" data-bs-dismiss="modal">
                             <i class="bi bi-x-lg me-1"></i>Tutup
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -836,5 +836,4 @@
         </script>
     @endpush
 @endsection
-
 

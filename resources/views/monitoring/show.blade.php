@@ -39,6 +39,7 @@
                                     <h6 class="fw-bold text-primary mb-3">
                                         <i class="bx bx-building me-2"></i>Informasi IDUKA
                                     </h6>
+                                    <div class="table-responsive">
                                     <table class="table table-borderless">
                                         <tr>
                                             <td width="30%" class="text-muted">Nama IDUKA</td>
@@ -57,6 +58,7 @@
                                             <td>: {{ $monitoring->iduka->email ?? '-' }}</td>
                                         </tr>
                                     </table>
+                                    </div>
                                 </div>
 
                                 {{-- Informasi Monitoring --}}
@@ -64,6 +66,7 @@
                                     <h6 class="fw-bold text-success mb-3">
                                         <i class="bx bx-calendar-check me-2"></i>Informasi Monitoring
                                     </h6>
+                                    <div class="table-responsive">
                                     <table class="table table-borderless">
                                         <tr>
                                             <td width="40%" class="text-muted">Tanggal Input</td>
@@ -82,6 +85,7 @@
                                             </td>
                                         </tr>
                                     </table>
+                                    </div>
                                 </div>
                             </div>
 
@@ -160,7 +164,7 @@
                     <img id="modalImage" src="" alt="" class="img-fluid rounded shadow">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
                 </div>
             </div>
         </div>

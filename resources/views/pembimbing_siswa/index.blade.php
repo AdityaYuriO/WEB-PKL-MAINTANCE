@@ -138,9 +138,9 @@
                                         </h6>
                                         <form action="{{ route('pembimbing.store', $pembimbing->id) }}" method="POST">
                                             @csrf
-                                            <div class="row g-2">
-                                                <div class="col-md-8">
-                                                    <div class="mb-3">
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-md-8 mb-3">
+                                                    <div>
                                                         <label for="siswa_id" class="form-label fw-bold text-secondary">
                                                             Pilih Siswa
                                                         </label>
@@ -165,7 +165,7 @@
 
 
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-4 mb-3">
                                                     <button type="submit" class="btn btn-success w-100">
                                                         <i class="fas fa-plus me-2"></i> Tambah
                                                     </button>
@@ -176,12 +176,6 @@
                                 </div>
                             </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    style="border-radius: 10px;">
-                                    <i class="fas fa-times me-2"></i> Tutup
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,4 +204,3 @@
             });
         </script>
     @endpush
-

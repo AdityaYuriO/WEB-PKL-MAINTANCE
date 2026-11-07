@@ -477,7 +477,7 @@
             `,
             icon: 'info',
             iconColor: '#3b82f6',
-            confirmButtonText: 'Tutup',
+            // confirmButtonText: 'Tutup',
             confirmButtonColor: '#3b82f6',
             customClass: { popup: 'rounded-4' }
         });
@@ -506,5 +506,4 @@
     @endif
 </script>
 @endsection
-
 

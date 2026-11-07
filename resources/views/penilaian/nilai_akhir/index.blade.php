@@ -12,7 +12,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Berhasil!</strong> {{ session('success') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertSuccess')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertSuccess')">✕</button>
     </div>
     @endif
 
@@ -24,7 +24,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Gagal!</strong> {{ session('error') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertError')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertError')">✕</button>
     </div>
     @endif
 

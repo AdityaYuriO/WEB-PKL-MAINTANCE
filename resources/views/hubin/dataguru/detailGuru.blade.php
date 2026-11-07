@@ -8,6 +8,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div class="table-responsive">
         <table class="table table-hover">
           <tr>
             <td><i class="bi bi-person-vcard-fill me-2"></i>Nama Guru</td>
@@ -60,9 +61,10 @@
             <td><i class="bi bi-shield-lock-fill"></i> (terenkripsi)</td>
           </tr>
         </table>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
       </div>
     </div>
   </div>

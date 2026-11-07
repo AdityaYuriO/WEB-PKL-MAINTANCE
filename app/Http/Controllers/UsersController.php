@@ -9,22 +9,47 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
+    private const KELAS_BY_JURUSAN = [
+        'Pengembangan Perangkat Lunak & Gim' => ['RPL 1', 'RPL 2', 'GIM'],
+        'Teknik Komputer dan Jaringan' => ['TKJ 1', 'TKJ 2', 'TKJ 3'],
+        'Teknik Kendaraan Ringan' => ['TKR 1', 'TKR 2', 'TKR 3'],
+        'Manajemen Perkantoran' => ['MP 1', 'MP 2'],
+        'Akuntansi' => ['AK 1', 'AK 2'],
+        'Seni Karawitan' => ['SK 1', 'SK 2'],
+        'Desain Pemodelan dan Informasi Bangunan' => ['DPIB 1', 'DPIB 2'],
+    ];
+
     public function index()
     {
-        $kelas = Kelas::all();
+        $kelas = Kelas::with('konke')
+            ->orderBy('kelas')
+            ->orderBy('name_kelas')
+            ->get();
         $konke = Konke::all();
-        return view('user.siswa', compact('kelas', 'konke'));
+        $kelasByJurusan = self::KELAS_BY_JURUSAN;
+
+        return view('user.siswa', compact('kelas', 'konke', 'kelasByJurusan'));
     }
 
     public function store(Request $request)
     {
+        $selectedKonke = Konke::find($request->input('konke_id'));
+        $allowedClasses = $this->kelasMappingFor($selectedKonke?->name_konke);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => 'required|unique:users,nip',
-            'kelas_id' => 'required|exists:kelas,id',
+            'kelas_id' => [
+                'required',
+                Rule::exists('kelas', 'id')->where(function ($query) use ($request, $allowedClasses) {
+                    $query->where('konke_id', $request->input('konke_id'))
+                        ->whereIn('name_kelas', $allowedClasses);
+                }),
+            ],
             'konke_id' => 'required|exists:konkes,id',
             'tahun_ajaran' => 'required|string|max:9',
             'email' => 'required|email|unique:users,email',
@@ -44,6 +69,30 @@ class UsersController extends Controller
         ]);
 
         return redirect()->route('data.siswa')->with('success', 'Siswa berhasil ditambahkan.');
+    }
+
+    private function kelasMappingFor(?string $jurusan): array
+    {
+        if (!$jurusan) {
+            return [];
+        }
+
+        $selectedJurusan = $this->normalizeJurusan($jurusan);
+        foreach (self::KELAS_BY_JURUSAN as $mappedJurusan => $kelasNames) {
+            $mappedJurusan = $this->normalizeJurusan($mappedJurusan);
+            if ($selectedJurusan === $mappedJurusan || str_starts_with($selectedJurusan, $mappedJurusan . ' ')) {
+                return $kelasNames;
+            }
+        }
+
+        return [];
+    }
+
+    private function normalizeJurusan(string $jurusan): string
+    {
+        $normalized = strtolower(str_replace('&', ' dan ', trim($jurusan)));
+
+        return preg_replace('/\s+/', ' ', $normalized) ?? $normalized;
     }
 
     public function guruIndex() {

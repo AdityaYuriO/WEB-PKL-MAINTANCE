@@ -194,6 +194,7 @@
                             <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllTambah">
                             </label>
+                            <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -207,11 +208,12 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
                         <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
                     </div>
                 </form>
@@ -249,6 +251,7 @@
                             <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllUpdate">
                             </label>
+                            <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -262,11 +265,12 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
                         <button type="submit" class="btn btn-info btn-sm">Update Data</button>
                     </div>
                 </form>

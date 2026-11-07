@@ -13,7 +13,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Berhasil!</strong> {{ session('success') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertSuccess')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertSuccess')">✕</button>
     </div>
     @endif
 
@@ -26,7 +26,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Gagal!</strong> {{ session('error') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertError')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertError')">✕</button>
     </div>
     @endif
 
@@ -77,7 +77,7 @@
                                 <div class="siswa-avatar" id="siswaAvatar">S</div>
                                 <div>
                                     <div class="siswa-name" id="siswaName">-</div>
-                                    <div class="siswa-badge">âœ“ Siswa Terpilih</div>
+                                    <div class="siswa-badge">✓ Siswa Terpilih</div>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <span>Draft Penilaian â€” Menunggu Penilaian Pihak Lain</span>
+                <span>Draft Penilaian — Menunggu Penilaian Pihak Lain</span>
             </div>
         </div>
         <div class="card-modern-body p-0">
@@ -183,7 +183,7 @@
                             </td>
                             <td>
                                 @if($draft['guru']->count())
-                                    <span class="draft-done-badge">âœ“ Sudah Dinilai</span>
+                                    <span class="draft-done-badge">✓ Sudah Dinilai</span>
                                     <div class="draft-detail mt-1">
                                         Rata-rata: <strong>{{ round($draft['guru']->avg('nilai'), 1) }}</strong>
                                     </div>
@@ -193,7 +193,7 @@
                             </td>
                             <td>
                                 @if($draft['iduka']->count())
-                                    <span class="draft-done-badge">âœ“ Sudah Dinilai</span>
+                                    <span class="draft-done-badge">✓ Sudah Dinilai</span>
                                     <div class="draft-detail mt-1">
                                         Rata-rata: <strong>{{ round($draft['iduka']->avg('nilai'), 1) }}</strong>
                                     </div>
@@ -396,7 +396,7 @@ function showToast(message, type = 'success') {
 @if(session('error'))   showToast("{{ session('error') }}",   'error');   @endif
 
 /* ===========================
-   SELECT SISWA â†’ LOAD INDIKATOR GROUPED
+   SELECT SISWA → LOAD INDIKATOR GROUPED
 =========================== */
 document.getElementById('siswaSelect').addEventListener('change', function () {
     const siswaId        = this.value;
@@ -517,7 +517,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
 });
 
 /* ===========================
-   SUBMIT â€” loading state
+   SUBMIT — loading state
 =========================== */
 document.getElementById('formPenilaian').addEventListener('submit', function () {
     const btn = document.getElementById('btnSubmit');

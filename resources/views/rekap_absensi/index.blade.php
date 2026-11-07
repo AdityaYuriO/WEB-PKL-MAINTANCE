@@ -272,8 +272,11 @@
                     let userJurusanOrKelas = '-';
                     if (val.user) {
                         // first try kelas relation/name
-                        if (val.user.kelas && val.user.kelas.name_kelas) {
-                            userJurusanOrKelas = val.user.kelas.name_kelas;
+                        if (val.user.kelas && typeof val.user.kelas === 'object') {
+                            userJurusanOrKelas = [
+                                val.user.kelas.kelas,
+                                val.user.kelas.name_kelas
+                            ].filter(Boolean).join(' ') || '-';
                         } else if (val.user.kelas) {
                             userJurusanOrKelas = val.user.kelas;
                         } else {
@@ -477,7 +480,11 @@
                         if (clean.konke_id) {
                             kelasList = kelasList.filter(k => String(k.konke_id) === String(clean.konke_id));
                         }
-                        populateSelect('#filter-kelas', kelasList, 'name_kelas', 'Semua Kelas');
+                        kelasList = kelasList.map(k => ({
+                            ...k,
+                            display_name: [k.kelas, k.name_kelas].filter(Boolean).join(' ')
+                        }));
+                        populateSelect('#filter-kelas', kelasList, 'display_name', 'Semua Kelas');
 
                         if (clean.kelas_id) {
                             populateSelect('#filter-siswa', data.siswa, 'name', 'Semua Siswa');
@@ -494,4 +501,3 @@
             }
         </script>
     @endpush
-

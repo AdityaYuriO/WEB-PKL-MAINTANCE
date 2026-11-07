@@ -318,9 +318,9 @@
                                 <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="retryFetch(${jurnalId})">
                                     <i class="bi bi-arrow-clockwise me-1"></i> Coba Lagi
                                 </button>
-                                <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">
+                                <!-- <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">
                                     Tutup
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     `;
@@ -427,5 +427,4 @@
         }
     </style>
 @endsection
-
 

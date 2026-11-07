@@ -1399,7 +1399,7 @@
 
             // Update lokasi user
             userLocation.textContent = userLat.toFixed(6) + ", " + userLng.toFixed(6);
-            locationStatus.textContent = "Lokasi terdeteksi dengan akurasi Â±" + Math.round(accuracy) + "m";
+            locationStatus.textContent = "Lokasi terdeteksi dengan akurasi ±" + Math.round(accuracy) + "m";
 
             // Jika sedang dinas luar, tampilkan pesan khusus dan skip validasi lokasi
             if (sedangDinas) {
@@ -1465,7 +1465,7 @@
             const distance = calculateDistance(userLat, userLng, targetLat, targetLng);
 
             // Update UI
-            distanceValue.textContent = Math.round(distance) + " meter dari " + lokasiName + " (akurasi: Â±" + Math.round(accuracy) + "m)";
+            distanceValue.textContent = Math.round(distance) + " meter dari " + lokasiName + " (akurasi: ±" + Math.round(accuracy) + "m)";
 
             // Gunakan akurasi GPS sebagai toleransi
             const effectiveRadius = targetRadius + accuracy;
@@ -1679,7 +1679,7 @@
             if (distance > (targetRadius + accuracy)) {
                 e.preventDefault();
                 alert(
-                    `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: Â±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
+                    `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: ±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
                 );
                 return false;
             }
@@ -1804,7 +1804,7 @@
                 if (distance > (targetRadius + accuracy)) {
                     e.preventDefault();
                     alert(
-                        `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: Â±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
+                        `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: ±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
                     );
                     return false;
                 }
