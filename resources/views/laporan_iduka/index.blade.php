@@ -8,22 +8,17 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <form method="GET" action="{{ route('laporan.iduka.index') }}">
-                            <div class="row align-items-center">
-                                <div class="col-lg-8">
-                                    <div class="row g-3">
-                                        <div class="col-md-3">
-                                            <label class="form-label fw-semibold text-muted small">Nama Iduka</label>
-                                            <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
-                                                class="form-control" placeholder="Cari Nama Iduka">
-                                        </div>
-                                        <div class="col-md-3 d-flex align-items-end">
-                                            <button type="submit" class="btn btn-primary w-100">
-                                                <i class="fas fa-search me-2"></i>Search
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="row align-items-end g-3">
+                                <div class="col-12 col-md-7 col-lg-5">
+                                    <label class="form-label fw-semibold text-muted small">Nama Iduka</label>
+                                    <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
+                                        class="form-control" placeholder="Cari Nama Iduka">
                                 </div>
-
+                                <div class="col-12 col-md-auto">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-2"></i>Cari
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

@@ -7,9 +7,11 @@ use App\Models\Kelas;
 use App\Models\Konke;
 use App\Models\tahunAjaran;
 use App\Models\DataPribadi;
+use App\Support\KelasJurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class DataPribadiController extends Controller
 {
@@ -19,21 +21,31 @@ class DataPribadiController extends Controller
         $siswa = User::with('siswa', 'kelas', 'konke')->where('id', Auth::id())->first();
         $konke = Konke::all();
         $tahunAjaran = tahunAjaran::all();
-        $kelas = Kelas::all();
+        $kelas = Kelas::where('kelas', 'XII')->get();
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
 
-        return view('siswa.data_pribadi.form', compact('dataPribadi', 'siswa', 'kelas', 'konke', 'tahunAjaran'));
+        return view('siswa.data_pribadi.form', compact('dataPribadi', 'siswa', 'kelas', 'konke', 'kelasByKonkeId', 'tahunAjaran'));
     }
 
 public function store(Request $request)
     {
         $dataPribadi = Auth::user()->dataPribadi;
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
 
         // Validasi
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nip' => 'required|unique:data_pribadis,nip,' . ($dataPribadi->id ?? 'null') . ',id',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'konke_id' => 'nullable|exists:konkes,id',
+            'kelas_id' => [
+                'required',
+                Rule::exists('kelas', 'id')->where(fn ($query) => $query
+                    ->where('kelas', 'XII')
+                    ->where('konke_id', $request->input('konke_id'))
+                    ->whereIn('name_kelas', $allowedClasses)),
+            ],
+            'konke_id' => 'required|exists:konkes,id',
             'alamat_siswa' => 'required|string',
             'no_hp' => 'required|numeric|unique:data_pribadis,no_hp,' . ($dataPribadi->id ?? 'null') . ',id',
             'jk' => 'required|string',

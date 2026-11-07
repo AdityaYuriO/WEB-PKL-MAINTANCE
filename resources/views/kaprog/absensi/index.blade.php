@@ -117,18 +117,11 @@
                         <div class="card-header bg-white border-0 py-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0 fw-semibold text-dark">Grafik Kehadiran</h5>
-                                <div class="dropdown">
-                                    <button id="chartFilterBtn" class="btn btn-sm btn-light border dropdown-toggle"
-                                        type="button" data-bs-toggle="dropdown">
-                                        7 Hari Terakhir
-                                    </button>
-                                    <ul class="dropdown-menu shadow-sm">
-                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="today">Hari
-                                                Ini</a></li>
-                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="7">7 Hari
-                                                Terakhir</a></li>
-                                    </ul>
-                                </div>
+                                <select id="chartFilterBtn" class="form-select form-select-sm w-auto attendance-chart-filter"
+                                    aria-label="Periode grafik kehadiran">
+                                    <option value="7" selected>7 Hari Terakhir</option>
+                                    <option value="today">Hari Ini</option>
+                                </select>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -903,14 +896,8 @@
             // Default tampil "7 Hari Terakhir"
             loadAttendanceChart('7');
 
-            // Klik dropdown filter
-            document.querySelectorAll('.chart-filter').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const filter = this.dataset.filter;
-                    document.getElementById('chartFilterBtn').innerText = this.innerText;
-                    loadAttendanceChart(filter);
-                });
+            document.getElementById('chartFilterBtn').addEventListener('change', function() {
+                loadAttendanceChart(this.value);
             });
 
             // ====== Grafik Distribusi per Kelas (Doughnut Chart) ======

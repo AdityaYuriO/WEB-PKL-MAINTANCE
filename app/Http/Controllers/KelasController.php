@@ -5,43 +5,46 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Konke;
+use App\Support\KelasJurusan;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class KelasController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Kelas::query();
-    
-        // Filter berdasarkan kelas (X, XI, XII)
-        if ($request->filled('kelas')) {
-            $query->where('kelas', $request->kelas);
+        $query = Kelas::where('kelas', 'XII');
+
+        if ($request->filled('konke_id')) {
+            $query->where('konke_id', $request->konke_id);
         }
-    
-        // Filter berdasarkan konsentrasi keahlian
-        if ($request->filled('konsentrasi')) {
-            $query->whereHas('konke', function ($q) use ($request) {
-                $q->where('name_konke', 'like', '%' . $request->konsentrasi . '%');
-            });
+
+        if ($request->filled('name_kelas')) {
+            $query->where('name_kelas', $request->name_kelas);
         }
-    
+
         $kelas = $query->orderBy('created_at', 'desc')->paginate(10);
         $konke = Konke::all();
-    
-        return view('data.kelas.dataKelas', compact('kelas', 'konke'));
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
+
+        return view('data.kelas.dataKelas', compact('kelas', 'konke', 'kelasByKonkeId'));
     }
     
 
     public function store(Request $request)
     {
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
+
         $request->validate([
-            'kelas' => 'required|in:X,XI,XII',
+            'kelas' => 'required|in:XII',
             'konke_id' => 'required|exists:konkes,id',
-            'name_kelas' => 'required|string|max:255',
+            'name_kelas' => ['required', 'string', 'max:255', Rule::in($allowedClasses)],
         ]);
-    
-        // Cek apakah kombinasi kelas dan name_kelas sudah ada
+
         $exists = Kelas::where('kelas', $request->kelas)
+            ->where('konke_id', $request->konke_id)
             ->where('name_kelas', $request->name_kelas)
             ->exists();
     
@@ -61,21 +64,26 @@ class KelasController extends Controller
 
     public function showSiswa($id)
     {
-        $kelas = Kelas::findOrFail($id);
-        $kelas = Kelas::all();
+        Kelas::findOrFail($id);
+        $kelas = Kelas::where('kelas', 'XII')->get();
         $konke = Konke::all();
-        $siswa = User::all();
         $siswa = User::where('kelas_id', $id)->get(); // Sesuaikan dengan struktur tabelmu
-        return view('siswa.datasiswa.showSiswa', compact('kelas', 'siswa', 'konke'));
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
+
+        return view('siswa.datasiswa.showSiswa', compact('kelas', 'siswa', 'konke', 'kelasByKonkeId'));
     }
 
 
     public function update(Request $request, Kelas $kelas)
     {
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
+
         $request->validate([
-            'kelas' => 'required|in:X,XI,XII',
+            'kelas' => 'required|in:XII',
             'konke_id' => 'required|exists:konkes,id',
-            'name_kelas' => 'required|string|max:255',
+            'name_kelas' => ['required', 'string', 'max:255', Rule::in($allowedClasses)],
         ]);
 
 

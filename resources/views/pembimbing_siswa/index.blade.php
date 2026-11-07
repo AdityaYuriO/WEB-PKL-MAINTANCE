@@ -57,12 +57,12 @@
                     aria-labelledby="detailModalLabel{{ $pembimbing->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content" style="border-radius: 15px;">
-                            <div class="modal-header bg-primary text-white"
+                            <div class="modal-header bg-primary text-white detail-pembimbing-modal-header"
                                 style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
                                 <h5 class="modal-title fw-bold" id="detailModalLabel{{ $pembimbing->id }}">
                                     <i class="fas fa-user-tie me-2"></i> Detail Pembimbing
                                 </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
 

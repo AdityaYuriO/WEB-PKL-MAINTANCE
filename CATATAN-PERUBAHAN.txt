@@ -1,35 +1,46 @@
-PERBAIKAN UI - WEB PKL (VERSI 6, menggantikan v1-v5; berisi SEMUA file yang berubah)
-==================================================================================
-Cara pakai: backup/commit dulu, timpa file-file di ZIP ini ke folder yang sama
-di project, lalu jalankan:  php artisan view:clear
-Terakhir refresh keras di browser (Ctrl+F5).
+Perbaikan
 
-YANG BARU DI VERSI 6
---------------------
-1. KOREKSI regresi v5: tombol berisi ikon + teks ("Lihat" di kolom Foto monitoring,
-   "Lihat Siswa" dan "Export" di Laporan Iduka) ikut dipaksa 34x34 sehingga teksnya
-   bertumpuk. Kini hanya tombol yang BENAR-BENAR hanya berisi ikon yang diseragamkan
-   (ditandai skrip kecil di layout dengan class .btn-icon-only).
-2. Navbar atas (kartu putih berisi nama user) kini menempel di atas saat halaman di-scroll.
-3. Huruf rusak "â€”", "âœ•", "Â±", dst. (rusak sejak file asli; masalah encoding) diperbaiki di:
-   data/absensi-siswa/index, kaprog/absensi/index, monitoring/index, penilaian/input_nilai/index,
-   penilaian/nilai_akhir/index, siswa/absensi/index, siswa/pindahpkl/surat,
-   surat_pengantar/surat_pengantarsemua.
-   (Di surat_pengantarsemua karakter aslinya sudah hilang total [berupa "?"], diganti tanda "-"
-    panjang antara "Kawali" dan "46253". Cek apakah itu sesuai maksud surat.)
-4. Form Tambah User (guru & siswa): kolom email / no HP / password tidak lagi terisi otomatis
-   oleh Chrome (data login tersimpan). Kolom dibuat readonly sampai diklik.
-   Catatan: ini ulah autofill Chrome, bukan bug project; atribut autocomplete="off" yang sudah
-   ada diabaikan Chrome untuk kolom yang dianggap kolom login.
+Tampilan
+- Sidebar fixed + animasi minimize + tombol panah `<` `>` di luar sidebar + logo/teks fade di navbar. Keadaan diingat.
+- Navbar atas menempel saat di-scroll.
+- Titik submenu tidak menimpa huruf.
+- Judul banner dashboard putih.
+- Menu Dashboard menyala (active).
+- Modal: posisi tombol close diperbaiki, tetap di dalam modal dan tidak bergeser saat di-hover.
+- Tombol Tutup dikomentari agar tidak tampil; skrip penyembunyiannya dihapus.
+- Perapian jarak dan alignment pada modal Pembimbing, Laporan Iduka, Daftar Cetak Usulan, dan dashboard Hubin.
 
-SEBELUMNYA (v1-v5), ringkas
----------------------------
-- Sidebar fixed + animasi minimize + logo/teks fade di navbar, tombol panah < > di luar sidebar.
-- Tabel bisa di-scroll (.table-responsive overflow-x), 16 halaman tabel dibungkus table-responsive.
-- Titik submenu tidak menimpa huruf, Paginator Bootstrap 5, @stack('styles').
-- Jarak tombol aksi di tabel, teks monitoring tidak meluber, judul banner dashboard putih,
-  menu Dashboard menyala (active), ikon hapus (fa-trash-alt3 -> fa-trash), tombol hapus seragam.
+Tabel
+- Akar masalah: `.table-responsive { overflow: hidden }` diganti jadi bisa scroll horizontal.
+- 16 halaman tabel dibungkus `table-responsive`.
+- Teks Saran di monitoring tidak meluber.
+- Paginator Bootstrap 5 (tombol next normal).
 
-CATATAN
--------
-- Ikon yang tidak ada di Font Awesome dan belum diubah: fa-hand-wave, fa-image-fill.
+Tombol
+- Jarak tombol aksi di semua tabel (btn-group dipisah, gap diperlebar).
+- Tombol yang hanya berisi ikon seragam 34 px (pensil, mata, hapus). Tombol ikon+teks tidak disentuh.
+- Ikon hapus muncul lagi (`fa-trash-alt3` jadi `fa-trash`) di data siswa dan jurnal siswa.
+- Jarak tombol di indikator, tujuan pembelajaran, data TK/siswa/proker/konke/guru, konfirmasi absen iduka, kelas siswa.
+
+Data
+- Rekap Absensi: nama kelas mencakup tingkat, termasuk pada filter dan ekspor.
+- Data Siswa: dropdown kelas menampilkan tingkat dan menyesuaikan opsi berdasarkan jurusan; validasi server diperbarui.
+
+CSS dan teks
+- `@stack('styles')` di layout. CSS 9 halaman akhirnya termuat.
+- Huruf rusak (`â€”`, `âœ•`, `Â±`) diperbaiki di 8 file.
+- Form Tambah User tidak terisi otomatis oleh Chrome.
+
+Absensi & navigasi
+- Peringatan hari libur IDUKA dirapikan: ikon, judul, deskripsi, dan tombol disejajarkan.
+- Filter grafik Absensi dan Kaprog memakai dropdown yang bisa diubah, dengan ikon panah.
+- Animasi loading navigasi ditampilkan jika perpindahan memakan waktu lebih dari 2 detik, sekaligus memblokir interaksi.
+- Active state sidebar dipertahankan pada halaman turunan; menu Data Kelas dan Daftar Siswa dibedakan.
+
+
+Data siswa & modal
+- Opsi kelas dibatasi ke kelas XII dan disaring sesuai jurusan; validasi server ikut diperketat dan mapping diuji.
+- Modal edit siswa diperbaiki agar tampil di atas konten tabel.
+- Tampilan tombol close modal Data Kelas/Pembimbing disamakan dengan modal Edit Program Keahlian.
+- Ikon search Daftar IDUKA disatukan dengan tombol Cari.
+- Tombol Batal pada modal yang ditangani dikomentari Terlebih Dahulu.
