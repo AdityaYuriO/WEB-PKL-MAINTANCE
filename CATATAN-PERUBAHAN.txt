@@ -1,13 +1,32 @@
-PERBAIKAN UI - WEB PKL ROLE HUBIN
-==================================================================================
-Ringkas
----------------------------
-- Sidebar fixed + animasi minimize + logo/teks fade di navbar, tombol panah < > di luar sidebar.
-- Tabel bisa di-scroll (.table-responsive overflow-x), 16 halaman tabel dibungkus table-responsive.
-- Titik submenu tidak menimpa huruf, Paginator Bootstrap 5, @stack('styles').
-- Jarak tombol aksi di tabel, teks monitoring tidak meluber, judul banner dashboard putih,
-  menu Dashboard menyala (active), ikon hapus (fa-trash-alt3 -> fa-trash), tombol hapus seragam.
-- Dan Lebih Persisi
-CATATAN
--------
-- Ikon yang tidak ada di Font Awesome dan belum diubah: fa-hand-wave, fa-image-fill.
+Perbaikan
+
+Tampilan
+- Sidebar fixed + animasi minimize + tombol panah `<` `>` di luar sidebar + logo/teks fade di navbar. Keadaan diingat.
+- Navbar atas menempel saat di-scroll.
+- Titik submenu tidak menimpa huruf.
+- Judul banner dashboard putih.
+- Menu Dashboard menyala (active).
+- Modal: posisi tombol close diperbaiki, tetap di dalam modal dan tidak bergeser saat di-hover.
+- Tombol Tutup dikomentari agar tidak tampil; skrip penyembunyiannya dihapus.
+- Perapian jarak dan alignment pada modal Pembimbing, Laporan Iduka, Daftar Cetak Usulan, dan dashboard Hubin.
+
+Tabel
+- Akar masalah: `.table-responsive { overflow: hidden }` diganti jadi bisa scroll horizontal.
+- 16 halaman tabel dibungkus `table-responsive`.
+- Teks Saran di monitoring tidak meluber.
+- Paginator Bootstrap 5 (tombol next normal).
+
+Tombol
+- Jarak tombol aksi di semua tabel (btn-group dipisah, gap diperlebar).
+- Tombol yang hanya berisi ikon seragam 34 px (pensil, mata, hapus). Tombol ikon+teks tidak disentuh.
+- Ikon hapus muncul lagi (`fa-trash-alt3` jadi `fa-trash`) di data siswa dan jurnal siswa.
+- Jarak tombol di indikator, tujuan pembelajaran, data TK/siswa/proker/konke/guru, konfirmasi absen iduka, kelas siswa.
+
+Data
+- Rekap Absensi: nama kelas mencakup tingkat, termasuk pada filter dan ekspor.
+- Data Siswa: dropdown kelas menampilkan tingkat dan menyesuaikan opsi berdasarkan jurusan; validasi server diperbarui.
+
+CSS dan teks
+- `@stack('styles')` di layout. CSS 9 halaman akhirnya termuat.
+- Huruf rusak (`â€”`, `âœ•`, `Â±`) diperbaiki di 8 file.
+- Form Tambah User tidak terisi otomatis oleh Chrome.
