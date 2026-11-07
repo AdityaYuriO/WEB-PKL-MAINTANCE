@@ -30,6 +30,7 @@ CSS dan teks
 - `@stack('styles')` di layout. CSS 9 halaman akhirnya termuat.
 - Huruf rusak (`â€”`, `âœ•`, `Â±`) diperbaiki di 8 file.
 - Form Tambah User tidak terisi otomatis oleh Chrome.
+<<<<<<< HEAD
 
 Absensi & navigasi
 - Peringatan hari libur IDUKA dirapikan: ikon, judul, deskripsi, dan tombol disejajarkan.
@@ -44,3 +45,4 @@ Data siswa & modal
 - Tampilan tombol close modal Data Kelas/Pembimbing disamakan dengan modal Edit Program Keahlian.
 - Ikon search Daftar IDUKA disatukan dengan tombol Cari.
 - Tombol Batal pada modal yang ditangani dikomentari Terlebih Dahulu.
+
