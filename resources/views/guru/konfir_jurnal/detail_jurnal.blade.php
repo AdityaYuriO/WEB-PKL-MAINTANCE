@@ -189,7 +189,7 @@
                             <i class="bi bi-camera me-1"></i> Dokumentasi Kegiatan
                         </h6>
                         <div class="text-center">
-                            <img src="{{ asset($journal->foto) }}" alt="Dokumentasi kegiatan"
+                            <img src="{{ asset('storage/'. $journal->foto) }}" alt="Dokumentasi kegiatan"
                                 class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
                                 onclick="showImageModal('{{ asset($journal->foto) }}')">
                         </div>

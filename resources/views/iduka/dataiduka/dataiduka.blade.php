@@ -167,7 +167,7 @@
                                                     <option value="all">Semua</option>
                                                     <option value="rekomendasi">Rekomendasi</option>
                                                     <option value="ajuan">Ajuan</option>
-                                                   
+
                                                     <option value="hidden">Hidden</option>
 
                                                 </select>
@@ -228,7 +228,7 @@
                                 // Jika role siswa, hanya tampilkan iduka yang tidak hidden
                                 $showToStudent = auth()->user()->role !== 'siswa' || !$i->hidden;
                             @endphp
-                            
+
                             @if(auth()->user()->role !== 'siswa' || $showToStudent)
                             <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;"
                                 data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}"
@@ -270,7 +270,7 @@
                                             <a href="{{ route('kepsek.detail.iduka', $i->id) }}"
                                                 class="btn btn-hover rounded-pill btn-sm d-none d-md-block">Detail</a>
                                         @endif
-                                    
+
                                         {{-- Tombol Kalender --}}
                                         @if(auth()->user()->role === 'kaprog')
                                             <button type="button" class="btn btn-hover rounded-pill btn-sm ms-2" data-bs-toggle="modal"
@@ -283,7 +283,7 @@
                                                 <i class="bi bi-calendar-event"></i>
                                             </button>
                                         @endif
-                                    
+
                                         {{-- Dropdown (Mobile) --}}
                                         @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
                                             <div class="dropdown ms-2">
@@ -291,46 +291,46 @@
                                                     <i class="bi bi-three-dots-vertical"></i>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
-                                                    {{-- Tombol Detail (Mobile) --}}
-                                                    <li class="d-block d-md-none">
-                                                        @if (auth()->user()->role == 'kaprog')
-                                                            <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
-                                                        @elseif(auth()->user()->role == 'hubin')
-                                                            <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
-                                                        @elseif(auth()->user()->role == 'kepsek')
-                                                            <a href="{{ route('kepsek.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
-                                                        @endif
-                                                    </li>
-                                    
-                                                      @if (auth()->user()->role == 'kaprog')
-                                                    {{-- Tombol Hidden/Unhidden --}}
-                                                    <li>
-                                                        <form action="{{ route('iduka.toggleVisibility', $i->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <button type="submit" class="dropdown-item">
-                                                                @if($i->hidden)
-                                                                    <i class="bi bi-eye me-2"></i> Tampilkan
-                                                                @else
-                                                                    <i class="bi bi-eye-slash me-2"></i> Sembunyikan
-                                                                @endif
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                    
-                                                    {{-- Tombol Hapus --}}
-                                                    <li>
-                                                       <form action="{{ auth()->user()->role === 'hubin' ? route('hubin.iduka.destroy', $i->id) : route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
-                                                        </form>
-                                                    </li>
-                                                      @endif
+{{-- Tombol Detail (Mobile) --}}
+<li class="d-block d-md-none">
+    @if (auth()->user()->role == 'kaprog')
+        <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+    @elseif(auth()->user()->role == 'hubin')
+        <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+    @elseif(auth()->user()->role == 'kepsek')
+        <a href="{{ route('kepsek.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+    @endif
+</li>
+
+@if (in_array(auth()->user()->role, ['hubin', 'kaprog']))
+    {{-- Tombol Hidden/Unhidden --}}
+    <li>
+        <form action="{{ route('iduka.toggleVisibility', $i->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <button type="submit" class="dropdown-item">
+                @if($i->hidden)
+                    <i class="bi bi-eye me-2"></i> Tampilkan
+                @else
+                    <i class="bi bi-eye-slash me-2"></i> Sembunyikan
+                @endif
+            </button>
+        </form>
+    </li>
+
+    {{-- Tombol Hapus --}}
+    <li>
+        <form action="{{ auth()->user()->role === 'hubin' ? route('hubin.iduka.destroy', $i->id) : route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
+        </form>
+    </li>
+@endif
                                                 </ul>
                                             </div>
                                         @endif
-                                    </div>                                        
+                                    </div>
                                 </div>
                             </div>
                             @if (auth()->user()->role === 'kaprog')
@@ -447,63 +447,63 @@
                                 <input type="text" class="form-control" id="nama{{ $i->id }}" name="nama" value="{{ $i->nama }}" required>
                                 <small class="form-text text-muted">Nama Institusi ini akan tercatat di sistem, pastikan sudah benar ya!</small>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="nama_pimpinan{{ $i->id }}" class="form-label">Nama Pimpinan*</label>
                                 <input type="text" class="form-control" id="nama_pimpinan{{ $i->id }}" name="nama_pimpinan" value="{{ $i->nama_pimpinan }}" required>
                                 <small class="form-text text-muted">Nama lengkap ini akan tercatat di sistem, pastikan sudah benar ya!</small>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="nip_pimpinan{{ $i->id }}" class="form-label">NIP Pimpinan*</label>
                                 <input type="text" class="form-control" id="nip_pimpinan{{ $i->id }}" name="nip_pimpinan" value="{{ $i->nip_pimpinan }}" required>
                                 <small class="form-text text-muted">Isi NIP atau NUPTK di sini, pastikan sudah benar ya!</small></div>
-                            
+
                             <div class="mb-3">
                                 <label for="no_hp_pimpinan{{ $i->id }}" class="form-label">No HP Pimpinan*</label>
                                 <input type="text" class="form-control" id="no_hp_pimpinan{{ $i->id }}" name="no_hp_pimpinan" value="{{ $i->no_hp_pimpinan }}" required>
                                 <small class="form-text text-muted">Masukkan nomor telepon aktif. Pastikan bisa diakses ya!</small></div>
-                            
+
                             <div class="mb-3">
                                 <label for="jabatan{{ $i->id }}" class="form-label">Jabatan*</label>
                                 <input type="text" class="form-control" id="jabatan{{ $i->id }}" name="jabatan" value="{{ $i->jabatan }}" required>
                             </div>
-                       
-                       
+
+
                             <div class="mb-3">
                                 <label for="alamat{{ $i->id }}" class="form-label">Alamat*</label>
                                 <textarea class="form-control" id="alamat{{ $i->id }}" name="alamat" required>{{ $i->alamat }}</textarea>
                                 <small class="form-text text-muted">Masukkan alamat lengkap lokasi PKL di sini ya.</small></div>
-                            
+
                             <div class="mb-3">
                                 <label for="kode_pos{{ $i->id }}" class="form-label">Kode Pos*</label>
                                 <input type="text" class="form-control" id="kode_pos{{ $i->id }}" name="kode_pos" value="{{ $i->kode_pos }}" required>
                                 <small class="form-text text-muted">Masukkan nomor telepon aktif. Pastikan bisa diakses ya!</small></div>
-                            
+
                             <div class="mb-3">
                                 <label for="telepon{{ $i->id }}" class="form-label">Telepon*</label>
                                 <input type="text" class="form-control" id="telepon{{ $i->id }}" name="telepon" value="{{ $i->telepon }}" required>
                                 <small class="form-text text-muted">Masukkan nomor telepon aktif. Pastikan bisa diakses ya!</small> </div>
-                            
+
                             <div class="mb-3">
                                 <label for="email{{ $i->id }}" class="form-label">Email*</label>
                                 <input type="email" class="form-control" id="email{{ $i->id }}" name="email" value="{{ $i->email }}" required>
                                 <small class="form-text text-muted">Masukkan email aktif. Pastikan bisa diakses ya!</small></div>
-                            
+
                             <div class="mb-3">
                                 <label for="password{{ $i->id }}" class="form-label">Password (Biarkan kosong jika tidak ingin diubah)</label>
                                 <input type="password" class="form-control" id="password{{ $i->id }}" name="password" placeholder="Kosongkan jika tidak diubah">
                         <small class="form-text text-muted">Password minimal 8 karakter.</small>
                     </div>
-                       
-                    
-                
-                 
+
+
+
+
                             <div class="mb-3">
                                 <label for="bidang_industri{{ $i->id }}" class="form-label">Bidang Industri*</label>
                                 <input type="text" class="form-control" id="bidang_industri{{ $i->id }}" name="bidang_industri" value="{{ $i->bidang_industri }}" required>
                                 <small class="form-text text-muted">Silakan isi bidang industri yang Anda tekuni secara spesifik dan sesuai dengan sektor usaha.</small></div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Kerjasama*</label>
                                 <select class="form-select" name="kerjasama" id="kerjasama{{ $i->id }}" required>
@@ -520,19 +520,19 @@
                                     <option value="Lainnya" {{ $i->kerjasama == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                                 </select>
                             </div>
-                            
+
                             <div class="mb-3" id="kerjasama_lainnya_container{{ $i->id }}" style="{{ $i->kerjasama == 'Lainnya' ? '' : 'display:none;' }}">
                                 <label for="kerjasama_lainnya{{ $i->id }}" class="form-label">Jenis Kerjasama Lainnya</label>
                                 <input type="text" class="form-control" id="kerjasama_lainnya{{ $i->id }}" name="kerjasama_lainnya" value="{{ $i->kerjasama_lainnya }}">
                             </div>
-                    
-                        
-                      
+
+
+
                             <div class="mb-3">
                                 <label for="kuota_pkl{{ $i->id }}" class="form-label">Kuota PKL*</label>
                                 <input type="number" class="form-control" id="kuota_pkl{{ $i->id }}" name="kuota_pkl" value="{{ $i->kuota_pkl }}" required>
                                 <small class="form-text text-muted">Masukkan jumlah kuota PKL yang tersedia untuk siswa.</small>  </div>
-                            
+
                             @if(auth()->user()->role == 'hubin')
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="rekomendasi{{ $i->id }}" name="rekomendasi" value="1" {{ $i->rekomendasi ? 'checked' : '' }}>
@@ -551,7 +551,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
-                
+
             </form>
         </div>
     </div>
@@ -566,26 +566,45 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- Script --}}
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle kerjasama lainnya
-        @foreach($iduka as $i)
-        document.getElementById('kerjasama{{ $i->id }}').addEventListener('change', function() {
-            const container = document.getElementById('kerjasama_lainnya_container{{ $i->id }}');
-            if (this.value === 'Lainnya') {
-                container.style.display = 'block';
-            } else {
-                container.style.display = 'none';
-            }
-        });
-        @endforeach
+{{-- SweetAlert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        // Validasi form
-        @foreach($iduka as $i)
-        document.querySelector('form[action="{{ route('iduka.update', $i->id) }}"]').addEventListener('submit', function(e) {
-            const kerjasama = document.getElementById('kerjasama{{ $i->id }}').value;
-            const lainnya = document.getElementById('kerjasama_lainnya{{ $i->id }}').value;
-            
+{{-- Script --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* =========================================================
+       1. HANDLE KERJASAMA LAINNYA (di modal edit)
+       ========================================================= */
+    @foreach($iduka as $i)
+    (function () {
+        const selectKerjasama = document.getElementById('kerjasama{{ $i->id }}');
+        const containerLainnya = document.getElementById('kerjasama_lainnya_container{{ $i->id }}');
+        if (selectKerjasama && containerLainnya) {
+            selectKerjasama.addEventListener('change', function () {
+                containerLainnya.style.display = (this.value === 'Lainnya') ? 'block' : 'none';
+            });
+        }
+    })();
+    @endforeach
+
+    /* =========================================================
+       2. VALIDASI FORM EDIT IDUKA
+       ========================================================= */
+    @foreach($iduka as $i)
+    (function () {
+        const form = document.querySelector('form[action="{{ route('updateiduka.update', $i->id) }}"]')
+                  || document.querySelector('form[action="{{ route('iduka.update', $i->id) }}"]');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            const kerjasamaEl = document.getElementById('kerjasama{{ $i->id }}');
+            const lainnyaEl   = document.getElementById('kerjasama_lainnya{{ $i->id }}');
+            if (!kerjasamaEl) return;
+
+            const kerjasama = kerjasamaEl.value;
+            const lainnya   = lainnyaEl ? lainnyaEl.value.trim() : '';
+
             if (kerjasama === 'Lainnya' && !lainnya) {
                 e.preventDefault();
                 Swal.fire({
@@ -595,131 +614,121 @@
                 });
             }
         });
-        @endforeach
-    });
+    })();
+    @endforeach
 
+    /* =========================================================
+       3. DROPDOWN Z-INDEX MANAGEMENT
+       ========================================================= */
+    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const dropdownMenu = this.nextElementSibling;
+            if (!dropdownMenu) return;
 
-
-           document.addEventListener("DOMContentLoaded", function() {
-                document.querySelectorAll(".dropdown-btn").forEach(function(btn) {
-                    btn.addEventListener("click", function() {
-                        let dropdownMenu = this.nextElementSibling;
-
-                        // Hapus semua dropdown yang sudah aktif
-                        document.querySelectorAll(".dropdown-menu").forEach(menu => {
-                            if (menu !== dropdownMenu) {
-                                menu.style.zIndex =
-                                "9999"; // Pastikan semua dropdown tetap di atas
-                            }
-                        });
-
-                        // Pastikan dropdown saat ini di atas semua elemen
-                        dropdownMenu.style.zIndex = "10000";
-                    });
-                });
-
-                // Tutup dropdown saat klik di luar
-                document.addEventListener("click", function(event) {
-                    if (!event.target.matches(".dropdown-btn")) {
-                        document.querySelectorAll(".dropdown-menu").forEach(menu => {
-                            menu.style.zIndex = "9999";
-                        });
-                    }
-                });
-            });
-        document.addEventListener('DOMContentLoaded', function() {
-            // Konfirmasi Hapus
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: "Apakah kamu yakin?",
-                        text: "Data ini tidak bisa dikembalikan!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Ya, hapus!",
-                        cancelButtonText: "Batal"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            this.closest('form').submit();
-                        }
-                    });
-                });
+            document.querySelectorAll(".dropdown-menu").forEach(menu => {
+                if (menu !== dropdownMenu) menu.style.zIndex = "9999";
             });
 
-            // SweetAlert Sukses
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: @json(session('success')),
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            @endif
-
-          document.getElementById('filterIduka').addEventListener('change', function() {
-        // Ketika filter berubah, submit form tanpa membawa query string lain
-        document.getElementById('filterForm').submit();
+            dropdownMenu.style.zIndex = "10000";
+        });
     });
-    // Filter + Search
-    const filterSelect = document.getElementById('filterIduka');
+
+    document.addEventListener("click", function (event) {
+        if (!event.target.matches(".dropdown-btn")) {
+            document.querySelectorAll(".dropdown-menu").forEach(menu => {
+                menu.style.zIndex = "9999";
+            });
+        }
+    });
+
+    /* =========================================================
+       4. KONFIRMASI HAPUS (FIX: simpan form ke variabel)
+       ========================================================= */
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const form = this.closest('form');   // <-- FIX: simpan dulu
+            if (!form) return;
+
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Data ini tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();   // <-- FIX: pakai variabel form
+                }
+            });
+        });
+    });
+
+    /* =========================================================
+       5. SWEETALERT SUKSES
+       ========================================================= */
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+
+    /* =========================================================
+       6. FILTER IDUKA (desktop + mobile)
+       ========================================================= */
+    const filterForm         = document.getElementById('filterForm');
+    const filterSelect       = document.getElementById('filterIduka');
     const filterSelectMobile = document.getElementById('filterIdukaMobile');
-    const idukaCards = document.querySelectorAll('#idukaContainer .card-hover');
-    
+    const idukaCards         = document.querySelectorAll('#idukaContainer .card-hover');
+
     function filterIduka() {
+        if (!filterSelect) return;
         const filter = filterSelect.value;
-        
+
         idukaCards.forEach(card => {
-            const rekomendasi = card.getAttribute('data-rekomendasi');
+            const rekomendasi  = card.getAttribute('data-rekomendasi');
             const hiddenStatus = card.getAttribute('data-hidden');
-            
-            // Logika filter
+
             let shouldShow = false;
-            
-            if (filter === 'all') {
-                shouldShow = true;
-            } else if (filter === 'rekomendasi') {
-                shouldShow = rekomendasi === 'rekomendasi';
-            } else if (filter === 'ajuan') {
-                shouldShow = rekomendasi === 'ajuan';
-            } else if (filter === 'hidden') {
-                shouldShow = hiddenStatus === 'true';
-            }
-            
+            if (filter === 'all')              shouldShow = true;
+            else if (filter === 'rekomendasi') shouldShow = (rekomendasi === 'rekomendasi');
+            else if (filter === 'ajuan')       shouldShow = (rekomendasi === 'ajuan');
+            else if (filter === 'hidden')      shouldShow = (hiddenStatus === 'true');
+
             card.style.display = shouldShow ? 'block' : 'none';
         });
     }
 
-    // Event listeners
-    filterSelect.addEventListener('change', filterIduka);
-    filterSelectMobile.addEventListener('change', function() {
-        filterSelect.value = this.value;
-        filterIduka();
-    });
-    
-    // Inisialisasi filter saat pertama kali load
+    // Desktop: reload via form (agar pagination & query tetap konsisten)
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function () {
+            if (filterForm) filterForm.submit();
+            else filterIduka();
+        });
+    }
+
+    // Mobile: sinkronkan ke desktop lalu submit form (bukan filter lokal saja)
+    if (filterSelectMobile) {
+        filterSelectMobile.addEventListener('change', function () {
+            if (filterSelect) filterSelect.value = this.value;
+            if (filterForm) filterForm.submit();
+            else filterIduka();
+        });
+    }
+
+    // Inisialisasi filter saat load
     filterIduka();
 
-
-            filterSelect.addEventListener('change', filterIduka);
-            filterSelectMobile.addEventListener('change', function() {
-                filterSelect.value = this.value;
-                filterIduka();
-            });
-            searchButton.addEventListener('click', filterIduka);
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    filterIduka();
-                }
-            });
-        });
-
-     
-
-    </script>
+    // ⚠️ searchButton & searchInput sudah dihapus karena search sekarang via modal form GET.
+});
+</script>
 
 
 @endsection

@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('content')
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid py-3 px-2 px-md-4">
 
     {{-- ===== ALERT ===== --}}
     @if(session('success'))
@@ -12,7 +12,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Berhasil!</strong> {{ session('success') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertSuccess')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertSuccess')">✕</button>
     </div>
     @endif
 
@@ -24,7 +24,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Gagal!</strong> {{ session('error') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertError')">âœ•</button>
+        <button class="alert-close" onclick="closeAlert('alertError')">✕</button>
     </div>
     @endif
 
@@ -40,12 +40,12 @@
                 </div>
                 <div>
                     <h4 class="page-title mb-0">Rekap Nilai Akhir Siswa</h4>
-                    <p class="page-subtitle mb-0">Ringkasan penilaian PKL dari guru pembimbing & instruktur IDUKA</p>
+                    <p class="page-subtitle mb-0">Ringkasan penilaian PKL dari guru pembimbing &amp; instruktur IDUKA</p>
                 </div>
             </div>
 
             {{-- Summary Badge --}}
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="d-flex gap-2 flex-wrap summary-wrap">
                 <div class="summary-badge badge-total">
                     <span class="badge-num">{{ count($data) }}</span>
                     <span class="badge-label">Total Siswa</span>
@@ -69,7 +69,7 @@
     {{-- ===== CARD TABEL ===== --}}
     <div class="card-modern">
         <div class="card-modern-header">
-            <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -91,7 +91,10 @@
 
         <div class="card-modern-body p-0">
             @if(count($data) > 0)
-            <div class="table-responsive text-nowrap">
+            <div class="table-scroll-hint">
+                <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+            </div>
+            <div class="table-responsive">
                 <table class="table-modern" id="rekapTable">
                     <thead>
                         <tr>
@@ -145,32 +148,33 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('penilaian.export', ['id' => $d['id']]) }}"
-                                   class="btn-export"
-                                   title="Export Lembar Penilaian {{ $d['nama'] }}">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    Export
-                                </a>
-                                <div class="dropdown d-inline-block">
-                                    <button class="btn-export dropdown-toggle" type="button" data-bs-toggle="dropdown" 
-                                            style="margin-top:6px;background:linear-gradient(135deg,#f7c32e,#c1272d);color:#222; width: 100%; justify-content: center;">
-                                        <i class="fas fa-print me-1"></i> Cetak
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px; font-size:13px;">
-                                        <li>
-                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.preview', ['id' => $d['id']]) }}" target="_blank">
-                                                <i class="fas fa-edit text-warning" style="width:16px;"></i> Preview & Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank">
-                                                <i class="fas fa-file-pdf text-danger" style="width:16px;"></i> Cetak PDF Langsung
-                                            </a>
-                                        </li>
-                                    </ul>
+                                <div class="aksi-wrap">
+                                    <a href="{{ route('penilaian.export', ['id' => $d['id']]) }}"
+                                       class="btn-export"
+                                       title="Export Lembar Penilaian {{ $d['nama'] }}">
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Export
+                                    </a>
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn-export btn-print dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-print me-1"></i> Cetak
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+                                            <li>
+                                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.preview', ['id' => $d['id']]) }}" target="_blank">
+                                                    <i class="fas fa-edit text-warning" style="width:16px;"></i> Preview &amp; Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank">
+                                                    <i class="fas fa-file-pdf text-danger" style="width:16px;"></i> Cetak PDF Langsung
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -190,13 +194,13 @@
 
             @else
             {{-- Empty State --}}
-            <div class="text-center py-5">
+            <div class="text-center py-5 px-3">
                 <svg width="60" height="60" fill="none" stroke="#c4b5fd" viewBox="0 0 24 24" style="display:block;margin:0 auto 16px">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <h6 style="color:#4c1d95;font-weight:600;">Belum Ada Data Rekap</h6>
-                <p class="text-muted small">Data rekap nilai akan muncul setelah penilaian dari guru dan instruktur IDUKA selesai diinput.</p>
+                <p class="text-muted small mb-0">Data rekap nilai akan muncul setelah penilaian dari guru dan instruktur IDUKA selesai diinput.</p>
             </div>
             @endif
         </div>
@@ -208,7 +212,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                Menampilkan <strong>{{ count($data) }}</strong> data siswa yang sudah dinilai oleh kedua pihak.
+                Menampilkan <strong class="mx-1">{{ count($data) }}</strong> data siswa yang sudah dinilai oleh kedua pihak.
             </p>
         </div>
         @endif
@@ -242,6 +246,7 @@
     background: linear-gradient(135deg, #6c63ff, #a78bfa);
     border-radius:12px; display:flex; align-items:center; justify-content:center;
     color:white; box-shadow:0 4px 12px rgba(108,99,255,0.3);
+    flex-shrink: 0;
 }
 .page-title   { font-size:20px; font-weight:700; color:#1e1b4b; }
 .page-subtitle{ font-size:13px; color:#6b7280; margin-top:2px; }
@@ -307,7 +312,6 @@
 /* ===========================
    TABLE MODERN
 =========================== */
-.table-responsive { overflow: visible !important; }
 .table-modern { width:100%; border-collapse:collapse; font-size:13px; }
 .table-modern thead tr { background:linear-gradient(135deg, #6c63ff, #7c3aed); }
 .table-modern thead th {
@@ -386,6 +390,7 @@
     text-decoration:none; white-space:nowrap;
     transition:transform .15s, box-shadow .15s;
     box-shadow:0 2px 8px rgba(108,99,255,0.25);
+    justify-content: center;
 }
 .btn-export:hover {
     transform:translateY(-1px);
@@ -394,12 +399,150 @@
 }
 .btn-export:active { transform:translateY(0); color:white; }
 
+/* Tombol Cetak (kuning) */
+.btn-print {
+    background: linear-gradient(135deg,#f7c32e,#c1272d);
+    color: #222;
+    margin-top: 6px;
+    width: 100%;
+}
+.btn-print:hover { color: #222; }
+
+/* Wrap aksi: stack vertical biar rapi */
+.aksi-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+    min-width: 100px;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+/* ===========================
+   HINT SCROLL (default hidden)
+=========================== */
+.table-scroll-hint {
+    display: none;
+    font-size: .72rem;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: 12px 12px 8px;
+}
+
 /* ===========================
    ANIMASI
 =========================== */
 @keyframes slideDown {
     from { opacity:0; transform:translateY(-12px); }
     to   { opacity:1; transform:translateY(0); }
+}
+
+/* ============================================================ */
+/* ===== MOBILE FIXES =====                                       */
+/* ============================================================ */
+
+@media (max-width: 991.98px) {
+
+    /* 1) Buka overflow:hidden dari card biar tabel bisa digeser */
+    .card-modern { overflow: visible !important; }
+
+    /* 2) Balikin rounded corner biar card tetap cantik */
+    .card-modern-header {
+        border-top-left-radius: 16px !important;
+        border-top-right-radius: 16px !important;
+    }
+    .card-modern-footer {
+        border-bottom-left-radius: 16px !important;
+        border-bottom-right-radius: 16px !important;
+    }
+    .card-modern-body.p-0:last-child {
+        border-bottom-left-radius: 16px !important;
+        border-bottom-right-radius: 16px !important;
+    }
+    /* Body padding normal tetap punya radius juga */
+    .card-modern-body:last-child:not(.p-0) {
+        border-bottom-left-radius: 16px !important;
+        border-bottom-right-radius: 16px !important;
+    }
+
+    /* 3) Hint muncul di HP */
+    .table-scroll-hint { display: block; }
+
+    /* 4) Paksa .table-responsive jadi scroll container beneran */
+    .table-responsive {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-x: contain !important;
+        touch-action: pan-x pan-y !important;
+    }
+
+    /* 5) Tabel harus lebih lebar dari container supaya bisa di-scroll */
+    #rekapTable {
+        min-width: 850px !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* 6) Scrollbar tipis sebagai petunjuk bisa digeser */
+    .table-responsive::-webkit-scrollbar { height: 6px; }
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+}
+
+/* === Extra small (≤ 767px) === */
+@media (max-width: 767.98px) {
+
+    /* Summary badges: 2 per baris biar seimbang */
+    .summary-wrap {
+        width: 100%;
+    }
+    .summary-badge {
+        flex: 1 1 calc(50% - 4px);
+        min-width: calc(50% - 4px);
+        padding: 8px 12px;
+    }
+    .badge-num   { font-size: 18px; }
+    .badge-label { font-size: 10px; }
+
+    /* Search box full width */
+    .search-box { width: 100%; }
+    .search-box input { width: 100%; }
+
+    /* Header card: stack */
+    .card-modern-header { padding: 12px 14px; }
+
+    .card-modern-body { padding: 14px; }
+    .card-modern-footer { padding: 12px 14px; }
+}
+
+/* === Extra small (≤ 575px) === */
+@media (max-width: 575.98px) {
+    .page-title    { font-size: 17px; }
+    .page-subtitle { font-size: 12px; }
+    .header-icon   { width: 40px; height: 40px; }
+
+    /* Tombol export/cetak full width dalam cell */
+    .aksi-wrap { min-width: 90px; }
+    .btn-export { font-size: 11px; padding: 6px 10px; }
 }
 </style>
 

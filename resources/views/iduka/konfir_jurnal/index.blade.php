@@ -4,8 +4,8 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="mb-4">
             {{-- PERUBAHAN: Judul dinamis berdasarkan role --}}
-            <h3 class="fw-bold">Persetujuan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} ??</h3>
-            <p class="text-muted">Daftar jurnal yang membutuhkan persetujuan</p>
+            <h3 class="fw-bold">Persetujan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} ??</h3>
+            <p class="text-muted">Daftar jurnal yag membutuhkan persetujuan</p>
 
             {{-- Tab Navigation --}}
             <ul class="nav nav-tabs mb-4">

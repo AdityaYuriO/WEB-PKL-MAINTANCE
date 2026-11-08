@@ -29,8 +29,8 @@
                             <h5 class="card-title mb-0 fs-6 fs-md-5">Menu Konfirmasi</h5>
                         </div>
                         <div class="card-body p-2 p-md-3">
-                            {{-- Desktop: vertical pills | Mobile: horizontal scroll --}}
-                            <div class="nav nav-pills gap-2 flex-row flex-lg-column flex-nowrap overflow-auto nav-scroll"
+                            {{-- Desktop: vertical pills | Mobile: wrap pills (semua kelihatan) --}}
+                            <div class="nav nav-pills gap-2 flex-row flex-lg-column flex-wrap flex-lg-nowrap overflow-visible"
                                  id="v-pills-tab" role="tablist" aria-orientation="vertical">
 
                                 <button class="nav-link active rounded-pill text-start px-3 px-md-4 flex-shrink-0 text-nowrap"
@@ -101,6 +101,9 @@
                                     <span class="badge bg-primary" id="tanggal-hari-ini">{{ date('d-m-Y') }}</span>
                                 </div>
                                 <div class="card-body p-2 p-md-3">
+                                    <div class="table-scroll-hint">
+                                        <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle" id="tabel-absen-hari-ini">
                                             <thead>
@@ -121,7 +124,7 @@
                                                                      width="32" height="32">
                                                                 <div class="ms-1 ms-md-2 text-truncate">
                                                                     <div class="fw-semibold text-truncate">{{ $absensi->user->name }}</div>
-                                                                    <div class="text-muted small text-truncate">{{ $absensi->user->email }}</div>
+                                                                    <div class="text-muted small text-truncate hide-on-xs">{{ $absensi->user->email }}</div>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -168,25 +171,28 @@
                                 <div class="card-body p-2 p-md-3">
                                     <form method="POST" action="{{ route('iduka.konfirmasi-banyak-absen') }}" id="formKonfirmasiBanyak">
                                         @csrf
-                                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-2 mb-3 bulk-actions-wrap">
                                             <div class="form-check">
                                                 <input type="checkbox" id="check-all" class="form-check-input">
                                                 <label for="check-all" class="form-check-label ms-1">Pilih Semua</label>
                                             </div>
-                                            <div class="d-flex flex-wrap gap-2">
+                                            <div class="d-flex flex-column flex-sm-row gap-2">
                                                 <button type="submit" name="status" value="disetujui"
-                                                        class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">
+                                                        class="btn btn-sm btn-success rounded-pill px-3 shadow-sm btn-bulk-submit">
                                                     <i class="bi bi-check-lg"></i> <span class="d-none d-sm-inline">Setujui yang Dipilih</span>
                                                     <span class="d-inline d-sm-none">Setujui</span>
                                                 </button>
                                                 <button type="submit" name="status" value="ditolak"
-                                                        class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm">
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm btn-bulk-submit">
                                                     <i class="bi bi-x-lg"></i> <span class="d-none d-sm-inline">Tolak yang Dipilih</span>
                                                     <span class="d-inline d-sm-none">Tolak</span>
                                                 </button>
                                             </div>
                                         </div>
 
+                                        <div class="table-scroll-hint">
+                                            <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                                        </div>
                                         <div class="table-responsive">
                                             <table class="table table-hover align-middle">
                                                 <thead>
@@ -252,80 +258,79 @@
                             </div>
                         </div>
 
-{{-- ============ TAB: DINAS LUAR ============ --}}
-<div class="tab-pane fade" id="v-pills-dinas-pending" role="tabpanel" aria-labelledby="v-pills-dinas-pending-tab">
-    <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0 fs-6 fs-md-5">Dinas Luar Perlu Konfirmasi</h5>
-        </div>
-        <div class="card-body p-2 p-md-3">
+                        {{-- ============ TAB: DINAS LUAR ============ --}}
+                        <div class="tab-pane fade" id="v-pills-dinas-pending" role="tabpanel" aria-labelledby="v-pills-dinas-pending-tab">
+                            <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0 fs-6 fs-md-5">Dinas Luar Perlu Konfirmasi</h5>
+                                </div>
+                                <div class="card-body p-2 p-md-3">
 
-            {{-- Info scroll untuk mobile --}}
-            <div class="d-block d-md-none text-muted small mb-2">
-                <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
-            </div>
+                                    <div class="table-scroll-hint">
+                                        <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                                    </div>
 
-            <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                <table class="table table-hover align-middle" style="min-width: 720px;">
-                    <thead>
-                        <tr>
-                            <th style="min-width: 180px;">Nama Siswa</th>
-                            <th style="min-width: 110px;">Tanggal</th>
-                            <th style="min-width: 110px;">Jenis Dinas</th>
-                            <th style="min-width: 180px;">Alasan</th>
-                            <th style="min-width: 90px;">Status</th>
-                            <th style="min-width: 100px;" class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($dinasPending as $dinas)
-                            <tr data-dinas-id="{{ $dinas->id }}">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ asset('snet/assets/img/avatars/1.png') }}"
-                                             alt="Avatar" class="rounded-circle me-2 flex-shrink-0" width="32" height="32">
-                                        <div class="ms-1 ms-md-2">
-                                            <div class="fw-semibold">{{ $dinas->user->name }}</div>
-                                            <div class="text-muted small">{{ $dinas->created_at->format('d-m-Y H:i') }} WIB</div>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Siswa</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Jenis Dinas</th>
+                                                    <th>Alasan</th>
+                                                    <th>Status</th>
+                                                    <th class="text-center">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($dinasPending as $dinas)
+                                                    <tr data-dinas-id="{{ $dinas->id }}">
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="{{ asset('snet/assets/img/avatars/1.png') }}"
+                                                                     alt="Avatar" class="rounded-circle me-2 flex-shrink-0" width="32" height="32">
+                                                                <div class="ms-1 ms-md-2">
+                                                                    <div class="fw-semibold">{{ $dinas->user->name }}</div>
+                                                                    <div class="text-muted small hide-on-xs">{{ $dinas->created_at->format('d-m-Y H:i') }} WIB</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-nowrap">{{ $dinas->tanggal->format('d-m-Y') }}</td>
+                                                        <td>
+                                                            <span class="badge bg-primary text-nowrap">
+                                                                {{ ucfirst(str_replace('_', ' ', $dinas->jenis_dinas)) }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="text-truncate" style="max-width: 220px;" title="{{ $dinas->keterangan }}">
+                                                                {{ $dinas->keterangan }}
+                                                            </div>
+                                                        </td>
+                                                        <td><span class="badge bg-warning">Pending</span></td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 justify-content-center">
+                                                                <button type="button" class="btn btn-sm btn-success rounded-pill px-2 px-md-3 shadow-sm"
+                                                                        onclick="konfirmasiDinas({{ $dinas->id }}, 'disetujui')" title="Setujui">
+                                                                    <i class="bi bi-check-lg"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-danger rounded-pill px-2 px-md-3 shadow-sm"
+                                                                        onclick="konfirmasiDinas({{ $dinas->id }}, 'ditolak')" title="Tolak">
+                                                                    <i class="bi bi-x-lg"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">Tidak ada dinas luar yang perlu dikonfirmasi</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </td>
-                                <td class="text-nowrap">{{ $dinas->tanggal->format('d-m-Y') }}</td>
-                                <td>
-                                    <span class="badge bg-primary text-nowrap">
-                                        {{ ucfirst(str_replace('_', ' ', $dinas->jenis_dinas)) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="text-truncate" style="max-width: 220px;" title="{{ $dinas->keterangan }}">
-                                        {{ $dinas->keterangan }}
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-warning">Pending</span></td>
-                                <td>
-                                    <div class="d-flex gap-1 justify-content-center">
-                                        <button type="button" class="btn btn-sm btn-success rounded-pill px-2 px-md-3 shadow-sm"
-                                                onclick="konfirmasiDinas({{ $dinas->id }}, 'disetujui')" title="Setujui">
-                                            <i class="bi bi-check-lg"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-danger rounded-pill px-2 px-md-3 shadow-sm"
-                                                onclick="konfirmasiDinas({{ $dinas->id }}, 'ditolak')" title="Tolak">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">Tidak ada dinas luar yang perlu dikonfirmasi</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- ============ TAB: IZIN ============ --}}
                         <div class="tab-pane fade" id="v-pills-perlu-konfirmasi" role="tabpanel" aria-labelledby="v-pills-perlu-konfirmasi-tab">
@@ -334,6 +339,9 @@
                                     <h5 class="card-title mb-0 fs-6 fs-md-5">Izin Perlu Konfirmasi</h5>
                                 </div>
                                 <div class="card-body p-2 p-md-3">
+                                    <div class="table-scroll-hint">
+                                        <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle">
                                             <thead>
@@ -356,7 +364,7 @@
                                                                      alt="Avatar" class="rounded-circle me-2 flex-shrink-0" width="32" height="32">
                                                                 <div class="ms-1 ms-md-2">
                                                                     <div class="fw-semibold text-truncate">{{ $izin->user->name }}</div>
-                                                                    <div class="text-muted small">{{ $izin->created_at->format('d-m-Y H:i') }} WIB</div>
+                                                                    <div class="text-muted small hide-on-xs">{{ $izin->created_at->format('d-m-Y H:i') }} WIB</div>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -440,6 +448,9 @@
                                     </div>
                                 </div>
                                 <div class="card-body p-2 p-md-3">
+                                    <div class="table-scroll-hint">
+                                        <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle">
                                             <thead>
@@ -473,7 +484,7 @@
                                         <div class="card-body p-2 p-md-3">
                                             <div class="row g-2 g-md-3 mb-4">
                                                 <div class="col-6 col-md-3">
-                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100">
+                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100 stat-card">
                                                         <div class="card-body p-3">
                                                             <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
                                                             <h4 class="mt-2 mb-1">{{ $statistik['persentase_kehadiran'] }}%</h4>
@@ -482,7 +493,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3">
-                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100">
+                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100 stat-card">
                                                         <div class="card-body p-3">
                                                             <i class="bi bi-clock text-warning" style="font-size: 2rem;"></i>
                                                             <h4 class="mt-2 mb-1">{{ $statistik['terlambat'] }}</h4>
@@ -491,7 +502,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3">
-                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100">
+                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100 stat-card">
                                                         <div class="card-body p-3">
                                                             <i class="bi bi-x-circle text-danger" style="font-size: 2rem;"></i>
                                                             <h4 class="mt-2 mb-1">{{ $statistik['alpha'] }}</h4>
@@ -500,7 +511,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-md-3">
-                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100">
+                                                    <div class="card text-center border-0 rounded-4 shadow-sm card-hover h-100 stat-card">
                                                         <div class="card-body p-3">
                                                             <i class="bi bi-file-earmark-text text-info" style="font-size: 2rem;"></i>
                                                             <h4 class="mt-2 mb-1">{{ $statistik['izin'] }}</h4>
@@ -714,43 +725,327 @@
     </div>
 </div>
 
+<style>
+    /* ===== Base tweaks ===== */
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important; }
+
+    .form-check-input { width: 1.2em; height: 1.2em; margin-top: 0.3em; cursor: pointer; }
+    tbody tr:hover { background-color: rgba(0, 0, 0, 0.03); }
+    th:first-child { cursor: pointer; }
+    .form-check-input:checked { background-color: #0d6efd; border-color: #0d6efd; }
+    .form-check-input:indeterminate { background-color: #6c757d; border-color: #6c757d; }
+    .spinner-border-sm { width: 1rem; height: 1rem; }
+
+    /* Mobile nav scrollbar */
+    .nav-scroll::-webkit-scrollbar { height: 4px; }
+    .nav-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
+    .nav-scroll { scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+
+    /* Desktop: force vertical sidebar nav */
+    @media (min-width: 992px) {
+        #v-pills-tab { flex-direction: column !important; overflow: visible !important; }
+        #v-pills-tab .nav-link { width: 100%; }
+    }
+
+    /* Chart containers */
+    .chart-container canvas { max-width: 100%; }
+
+    /* ============================================================ */
+    /* ===== MOBILE FIXES ===== */
+    /* ============================================================ */
+
+    .table-scroll-hint {
+        display: none;
+        font-size: .72rem;
+        color: #64748b;
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 6px 10px;
+        margin-bottom: 8px;
+    }
+
+    /* === Mobile (≤ 767px) === */
+    @media (max-width: 767.98px) {
+        .table-scroll-hint { display: block; }
+
+        .card-body   { padding: .85rem !important; }
+        .card-header { padding: .75rem 1rem !important; }
+
+        .bulk-actions-wrap {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 8px !important;
+        }
+        .bulk-actions-wrap > * { width: 100%; }
+        .bulk-actions-wrap .btn { width: 100%; justify-content: center; }
+
+        .stat-card .card-body { padding: .6rem .4rem !important; }
+        .stat-card i      { font-size: 1.6rem !important; }
+        .stat-card h4     { font-size: 1.15rem !important; }
+        .stat-card p      { font-size: .7rem !important; line-height: 1.2; }
+
+        .chart-container { height: 230px !important; }
+
+        .position-fixed.bottom-0.end-0 {
+            left: 0 !important;
+            right: 0 !important;
+            padding: .75rem !important;
+            display: flex;
+            justify-content: center;
+        }
+        .position-fixed.bottom-0.end-0 .toast {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        table .btn-sm { padding: .35rem .6rem; font-size: .75rem; }
+    }
+
+    /* === Extra small (≤ 575px) === */
+    @media (max-width: 575.98px) {
+        .table { font-size: .82rem; }
+        .table > :not(caption) > * > * { padding: .5rem .4rem; }
+        .badge { font-size: .68rem; }
+        .card-body   { padding: .7rem !important; }
+        .btn-sm { padding: .3rem .55rem; font-size: .72rem; }
+
+        .stat-card i  { font-size: 1.3rem !important; }
+        .stat-card h4 { font-size: 1rem !important; }
+        .stat-card p  { font-size: .62rem !important; }
+
+        .chart-container { height: 200px !important; }
+
+        .card-title.fs-6 { font-size: .9rem !important; }
+
+        #filterRiwayatForm,
+        #filterRiwayatForm input,
+        #filterRiwayatForm select,
+        #filterRiwayatForm button { width: 100%; }
+
+        .hide-on-xs { display: none !important; }
+    }
+
+    /* ============================================================ */
+    /* Menu Konfirmasi: wrap pills biar semua kelihatan */
+    /* ============================================================ */
+    @media (max-width: 991.98px) {
+        #v-pills-tab {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            overflow: visible !important;
+            gap: 6px !important;
+            min-height: 40px;
+        }
+        #v-pills-tab .nav-link {
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 4px !important;
+            font-size: .74rem !important;
+            padding: .38rem .7rem !important;
+            line-height: 1.25 !important;
+            white-space: normal !important;
+        }
+        #v-pills-tab .nav-link i {
+            font-size: .75rem !important;
+            margin-right: 2px !important;
+        }
+        #v-pills-tab .nav-link .badge {
+            font-size: .62rem !important;
+            padding: 2px 6px !important;
+            margin-left: 4px !important;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        #v-pills-tab { gap: 4px !important; }
+        #v-pills-tab .nav-link {
+            font-size: .68rem !important;
+            padding: .3rem .55rem !important;
+        }
+        #v-pills-tab .nav-link i {
+            font-size: .7rem !important;
+            margin-right: 0 !important;
+        }
+    }
+
+    /* ============================================================ */
+    /* ⚡ CRITICAL FIX: Bikin tabel bisa di-scroll di HP             */
+    /* ============================================================ */
+    @media (max-width: 991.98px) {
+
+        /* 1) HAPUS overflow:hidden dari card (ini biang keroknya!) */
+        .card {
+            overflow: visible !important;
+        }
+
+        /* 2) Balikin rounded corners biar card tetap cantik */
+        .card > .card-header:first-child {
+            border-top-left-radius: .6rem !important;
+            border-top-right-radius: .6rem !important;
+        }
+        .card > .card-body:last-child {
+            border-bottom-left-radius: .6rem !important;
+            border-bottom-right-radius: .6rem !important;
+        }
+
+        /* 3) Paksa .table-responsive jadi scroll container beneran */
+        .table-responsive {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior-x: contain !important;
+            touch-action: pan-x pan-y !important;
+        }
+
+        /* 4) Tabel harus lebih lebar dari container supaya bisa di-scroll */
+        .table-responsive > .table { margin-bottom: 0 !important; }
+
+        #tabel-absen-hari-ini {
+            min-width: 560px !important;
+        }
+        #v-pills-absen-pending .table-responsive > .table {
+            min-width: 880px !important;
+        }
+        #v-pills-perlu-konfirmasi .table-responsive > .table {
+            min-width: 880px !important;
+        }
+        #v-pills-dinas-pending .table-responsive > .table {
+            min-width: 720px !important;
+        }
+        #v-pills-riwayat .table-responsive > .table {
+            min-width: 640px !important;
+        }
+
+        /* 5) Scrollbar tipis biar kelihatan bisa digeser */
+        .table-responsive::-webkit-scrollbar { height: 6px; }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    }
+</style>
+@endsection
+
+@push('scripts')
 <script>
-    // ============ KEEP ALL ORIGINAL JS FUNCTIONS ============
-    function konfirmasiAbsensi(pendingId, status) {
+(function() {
+    'use strict';
+
+    // ============================================================
+    // UTILITY
+    // ============================================================
+    function getCsrfToken() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.content : null;
+    }
+
+    window.showToast = function(title, message, type = 'success') {
+        if (typeof bootstrap === 'undefined' || !bootstrap.Toast) {
+            alert(`${title}: ${message}`);
+            return;
+        }
+        const toastEl = document.getElementById('liveToast');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMessage = document.getElementById('toast-message');
+        if (!toastEl) return;
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+        toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+        const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+        toast.show();
+        const csrf = getCsrfToken();
+        if (csrf) {
+            fetch("{{ route('clear.session') }}", {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf }
+            }).catch(function() {});
+        }
+    };
+
+    // ============================================================
+    // TAB MANAGEMENT
+    // ============================================================
+    function activateTabFromHash() {
+        const hash = window.location.hash;
+        if (!hash) return;
+
+        const tabTrigger = document.querySelector(`[data-bs-target="${hash}"]`);
+        const tabPane = document.querySelector(hash);
+        if (!tabTrigger || !tabPane) return;
+
+        if (typeof bootstrap === 'undefined' || !bootstrap.Tab) {
+            document.querySelectorAll('#v-pills-tab .nav-link').forEach(function(link) {
+                link.classList.remove('active');
+                link.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('#v-pills-tabContent .tab-pane').forEach(function(pane) {
+                pane.classList.remove('show', 'active');
+            });
+            tabTrigger.classList.add('active');
+            tabTrigger.setAttribute('aria-selected', 'true');
+            tabPane.classList.add('show', 'active');
+            return;
+        }
+
+        const tab = bootstrap.Tab.getOrCreateInstance(tabTrigger);
+        tab.show();
+    }
+
+    // ============================================================
+    // KONFIRMASI FUNCTIONS
+    // ============================================================
+    window.konfirmasiAbsensi = function(pendingId, status) {
         if (status === 'ditolak') { konfirmasiTolakAbsensi(pendingId); return; }
-        if (!confirm(`Apakah Anda yakin ingin menyetujui absensi ini?`)) return;
+        if (!confirm('Apakah Anda yakin ingin menyetujui absensi ini?')) return;
         const row = document.getElementById(`row-pending-${pendingId}`);
         if (row) row.style.opacity = '0.5';
+        const csrf = getCsrfToken();
+        if (!csrf) { showToast('Error!', 'CSRF token tidak ditemukan. Refresh halaman.', 'danger'); return; }
         fetch(`{{ route('iduka.konfirmasi-absen.proses', ['id' => ':id']) }}`.replace(':id', pendingId), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': csrf,
                 'Accept': 'application/json'
             },
             body: JSON.stringify({ status: status })
         })
-        .then(response => { if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return response.json(); })
-        .then(data => {
+        .then(function(response) {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(function(data) {
             if (data.success) {
                 showToast('Berhasil!', data.message, 'success');
-                setTimeout(() => {
-                    const currentUrl = window.location.href.split('#')[0];
-                    window.location.href = currentUrl + '#v-pills-hari-ini';
+                setTimeout(function() {
+                    window.location.href = window.location.pathname + '#v-pills-hari-ini';
                 }, 1500);
             } else {
                 showToast('Gagal!', data.message || 'Terjadi kesalahan', 'danger');
                 if (row) row.style.opacity = '1';
             }
         })
-        .catch(error => {
+        .catch(function(error) {
             console.error('Error:', error);
             showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
             if (row) row.style.opacity = '1';
         });
-    }
+    };
 
-    function konfirmasiIzin(izinId, status) {
+    window.konfirmasiIzin = function(izinId, status) {
         if (!izinId) { showToast('Error!', 'ID izin tidak ditemukan', 'danger'); return; }
         const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
         if (!confirm(`Apakah Anda yakin ingin ${actionText} izin ini?`)) return;
@@ -763,12 +1058,12 @@
         const row = document.querySelector(`tr[data-izin-id="${izinId}"]`);
         if (row) {
             row.style.opacity = '0.5';
-            row.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            row.querySelectorAll('button').forEach(function(btn) { btn.disabled = true; });
         }
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        if (!csrfToken) {
-            showToast('Error!', 'CSRF token tidak ditemukan. Silakan refresh halaman.', 'danger');
-            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(btn => btn.disabled = false); }
+        const csrf = getCsrfToken();
+        if (!csrf) {
+            showToast('Error!', 'CSRF token tidak ditemukan. Refresh halaman.', 'danger');
+            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(function(btn){ btn.disabled = false; }); }
             return;
         }
         const url = `{{ route('iduka.konfirmasi-izin', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', izinId);
@@ -776,32 +1071,34 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
+                'X-CSRF-TOKEN': csrf,
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({ status: status, catatan: catatan })
         })
-        .then(response => {
+        .then(function(response) {
             if (response.redirected) { window.location.href = response.url; return Promise.reject('Redirecting'); }
-            return response.json().then(data => { if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan'); return data; });
+            return response.json().then(function(data) {
+                if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan');
+                return data;
+            });
         })
-        .then(data => {
+        .then(function(data) {
             showToast('Berhasil!', data.message, 'success');
-            setTimeout(() => {
-                const currentUrl = window.location.href.split('#')[0];
-                window.location.href = currentUrl + '#v-pills-hari-ini';
+            setTimeout(function() {
+                window.location.href = window.location.pathname + '#v-pills-perlu-konfirmasi';
             }, 1500);
         })
-        .catch(error => {
+        .catch(function(error) {
             if (error === 'Redirecting') return;
             console.error('Error:', error);
-            showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
-            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(btn => btn.disabled = false); }
+            showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
+            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(function(btn){ btn.disabled = false; }); }
         });
-    }
+    };
 
-    function konfirmasiDinas(dinasId, status) {
+    window.konfirmasiDinas = function(dinasId, status) {
         if (!dinasId) { showToast('Error!', 'ID dinas tidak ditemukan', 'danger'); return; }
         const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
         if (!confirm(`Apakah Anda yakin ingin ${actionText} dinas luar ini?`)) return;
@@ -814,12 +1111,12 @@
         const row = document.querySelector(`tr[data-dinas-id="${dinasId}"]`);
         if (row) {
             row.style.opacity = '0.5';
-            row.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            row.querySelectorAll('button').forEach(function(btn) { btn.disabled = true; });
         }
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        if (!csrfToken) {
-            showToast('Error!', 'CSRF token tidak ditemukan. Silakan refresh halaman.', 'danger');
-            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(btn => btn.disabled = false); }
+        const csrf = getCsrfToken();
+        if (!csrf) {
+            showToast('Error!', 'CSRF token tidak ditemukan. Refresh halaman.', 'danger');
+            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(function(btn){ btn.disabled = false; }); }
             return;
         }
         const url = `{{ route('iduka.konfirmasi-dinas', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', dinasId);
@@ -827,30 +1124,32 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
+                'X-CSRF-TOKEN': csrf,
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({ status: status, catatan: catatan })
         })
-        .then(response => {
+        .then(function(response) {
             if (response.redirected) { window.location.href = response.url; return Promise.reject('Redirecting'); }
-            return response.json().then(data => { if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan'); return data; });
+            return response.json().then(function(data) {
+                if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan');
+                return data;
+            });
         })
-        .then(data => {
+        .then(function(data) {
             showToast('Berhasil!', data.message, 'success');
-            setTimeout(() => {
-                const currentUrl = window.location.href.split('#')[0];
-                window.location.href = currentUrl + '#v-pills-hari-ini';
+            setTimeout(function() {
+                window.location.href = window.location.pathname + '#v-pills-dinas-pending';
             }, 1500);
         })
-        .catch(error => {
+        .catch(function(error) {
             if (error === 'Redirecting') return;
             console.error('Error:', error);
-            showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
-            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(btn => btn.disabled = false); }
+            showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
+            if (row) { row.style.opacity = '1'; row.querySelectorAll('button').forEach(function(btn){ btn.disabled = false; }); }
         });
-    }
+    };
 
     function konfirmasiTolakAbsensi(pendingId) {
         const catatan = prompt('Masukkan alasan penolakan:');
@@ -858,165 +1157,70 @@
         if (catatan.trim() === '') { showToast('Peringatan', 'Alasan penolakan harus diisi!', 'warning'); return; }
         const row = document.getElementById(`row-pending-${pendingId}`);
         if (row) row.style.opacity = '0.5';
+        const csrf = getCsrfToken();
+        if (!csrf) { showToast('Error!', 'CSRF token tidak ditemukan.', 'danger'); return; }
         fetch(`{{ route('iduka.tolak-absen', ['id' => ':id']) }}`.replace(':id', pendingId), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': csrf,
                 'Accept': 'application/json'
             },
             body: JSON.stringify({ catatan: catatan })
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
             if (data.success) {
                 showToast('Berhasil!', data.message, 'success');
-                setTimeout(() => {
-                    const currentUrl = window.location.href.split('#')[0];
-                    window.location.href = currentUrl + '#v-pills-hari-ini';
+                setTimeout(function() {
+                    window.location.href = window.location.pathname + '#v-pills-hari-ini';
                 }, 1500);
             } else {
                 showToast('Gagal!', data.message, 'danger');
                 if (row) row.style.opacity = '1';
             }
         })
-        .catch(error => {
+        .catch(function(error) {
             console.error('Error:', error);
             showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
             if (row) row.style.opacity = '1';
         });
     }
 
-    function showToast(title, message, type = 'success') {
-        const toastEl = document.getElementById('liveToast');
-        const toastTitle = document.getElementById('toast-title');
-        const toastMessage = document.getElementById('toast-message');
-        toastTitle.textContent = title;
-        toastMessage.textContent = message;
-        toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
-        fetch("{{ route('clear.session') }}", {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-        });
-    }
-
-    // ============ BULK CONFIRM ============
-    document.getElementById('formKonfirmasiBanyak')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const checkedBoxes = document.querySelectorAll('.absen-check:checked');
-        if (checkedBoxes.length === 0) {
-            showToast('Peringatan', 'Silakan pilih minimal satu absensi untuk dikonfirmasi', 'warning');
-            return false;
+    // ============================================================
+    // RIWAYAT
+    // ============================================================
+    function getStatusBadgeClass(status) {
+        switch (status) {
+            case 'tepat_waktu': return 'bg-success';
+            case 'terlambat': return 'bg-warning';
+            case 'izin': return 'bg-info';
+            case 'sakit': return 'bg-danger';
+            case 'alpha': return 'bg-danger';
+            case 'ditolak': return 'bg-danger';
+            default: return 'bg-secondary';
         }
-        const formData = new FormData();
-        const status = document.querySelector('button[type="submit"][clicked]')?.value ||
-                       document.querySelector('button[type="submit"]').value;
-        formData.append('status', status);
-        checkedBoxes.forEach(checkbox => formData.append('absen_ids[]', checkbox.value));
-        if (!confirm(`Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`)) return false;
-        const submitButtons = this.querySelectorAll('button[type="submit"]');
-        submitButtons.forEach(btn => {
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <span class="d-none d-sm-inline">Memproses...</span>';
-        });
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message || `HTTP error! status: ${response.status}`); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast('Berhasil!', data.message, 'success');
-                setTimeout(() => {
-                    const currentUrl = window.location.href.split('#')[0];
-                    window.location.href = currentUrl + '#v-pills-hari-ini';
-                }, 1500);
-            } else {
-                showToast('Gagal!', data.message, 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
-        })
-        .finally(() => {
-            submitButtons.forEach(btn => {
-                btn.disabled = false;
-                if (btn.name === 'status' && btn.value === 'disetujui') {
-                    btn.innerHTML = '<i class="bi bi-check-lg"></i> <span class="d-none d-sm-inline">Setujui yang Dipilih</span><span class="d-inline d-sm-none">Setujui</span>';
-                } else if (btn.name === 'status' && btn.value === 'ditolak') {
-                    btn.innerHTML = '<i class="bi bi-x-lg"></i> <span class="d-none d-sm-inline">Tolak yang Dipilih</span><span class="d-inline d-sm-none">Tolak</span>';
-                }
-            });
-        });
-    });
-
-    document.querySelectorAll('#formKonfirmasiBanyak button[type="submit"]').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('#formKonfirmasiBanyak button[type="submit"]').forEach(btn => {
-                btn.removeAttribute('clicked');
-            });
-            this.setAttribute('clicked', 'true');
-        });
-    });
-
-    // ============ RIWAYAT ============
-    function loadRiwayatData() {
-        const tanggalDari = document.getElementById('tanggal_dari').value;
-        const tanggalSampai = document.getElementById('tanggal_sampai').value;
-        const filterSiswa = document.getElementById('filter_siswa_riwayat').value;
-        if (!tanggalDari) { showToast('Peringatan', 'Silakan pilih tanggal awal', 'warning'); return; }
-        const riwayatBody = document.getElementById('riwayatBody');
-        riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>`;
-        fetch(`{{ route('iduka.get-riwayat-absen') }}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ tanggal_dari: tanggalDari, tanggal_sampai: tanggalSampai, siswa_id: filterSiswa })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) { renderRiwayatTable(data.data); }
-            else { riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">${data.message || 'Tidak ada data'}</td></tr>`; }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Terjadi kesalahan: ${error.message}</td></tr>`;
-        });
     }
+    function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
     function renderRiwayatTable(data) {
         const riwayatBody = document.getElementById('riwayatBody');
         if (!data || data.length === 0) {
-            riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Tidak ada data riwayat untuk periode yang dipilih</td></tr>`;
+            riwayatBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Tidak ada data riwayat untuk periode yang dipilih</td></tr>';
             return;
         }
         let html = '';
-        data.forEach(item => {
+        const avatarUrl = "{{ asset('snet/assets/img/avatars/1.png') }}";
+        data.forEach(function(item) {
             html += `
                 <tr>
                     <td class="text-nowrap">${item.tanggal}</td>
                     <td>
                         <div class="d-flex align-items-center">
-                            <img src="{{ asset('snet/assets/img/avatars/1.png') }}" alt="Avatar" class="rounded-circle me-2 flex-shrink-0" width="32" height="32">
+                            <img src="${avatarUrl}" alt="Avatar" class="rounded-circle me-2 flex-shrink-0" width="32" height="32">
                             <div class="ms-1 ms-md-2">
                                 <div class="fw-semibold">${item.nama_siswa}</div>
-                                <div class="text-muted small">${item.email}</div>
+                                <div class="text-muted small hide-on-xs">${item.email}</div>
                             </div>
                         </div>
                     </td>
@@ -1029,82 +1233,190 @@
         riwayatBody.innerHTML = html;
     }
 
-    function getStatusBadgeClass(status) {
-        switch(status) {
-            case 'tepat_waktu': return 'bg-success';
-            case 'terlambat': return 'bg-warning';
-            case 'izin': return 'bg-info';
-            case 'sakit': return 'bg-danger';
-            case 'alpha': return 'bg-danger';
-            case 'ditolak': return 'bg-danger';
-            default: return 'bg-secondary';
-        }
+    function loadRiwayatData() {
+        const tanggalDari = document.getElementById('tanggal_dari').value;
+        const tanggalSampai = document.getElementById('tanggal_sampai').value;
+        const filterSiswa = document.getElementById('filter_siswa_riwayat').value;
+        if (!tanggalDari) { showToast('Peringatan', 'Silakan pilih tanggal awal', 'warning'); return; }
+        const riwayatBody = document.getElementById('riwayatBody');
+        riwayatBody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
+        const csrf = getCsrfToken();
+        fetch("{{ route('iduka.get-riwayat-absen') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ tanggal_dari: tanggalDari, tanggal_sampai: tanggalSampai, siswa_id: filterSiswa })
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) { renderRiwayatTable(data.data); }
+            else { riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">${data.message || 'Tidak ada data'}</td></tr>`; }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            riwayatBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Terjadi kesalahan: ${error.message}</td></tr>`;
+        });
     }
-    function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
-    // ============ DOM READY ============
+    // ============================================================
+    // DOM READY
+    // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
-        function toggleAll(source) {
-            document.querySelectorAll('.absen-check').forEach(checkbox => { checkbox.checked = source.checked; });
+
+        // ---------- Tab: sync hash ----------
+        document.querySelectorAll('#v-pills-tab [data-bs-toggle="pill"]').forEach(function(tabEl) {
+            tabEl.addEventListener('shown.bs.tab', function(e) {
+                const target = e.target.getAttribute('data-bs-target');
+                if (target && history.replaceState) {
+                    history.replaceState(null, null, target);
+                }
+            });
+        });
+
+        // ---------- Tab: back/forward ----------
+        window.addEventListener('hashchange', function() {
+            const ae = document.activeElement;
+            if (ae && ae.matches && ae.matches('[data-bs-toggle="pill"]')) return;
+            activateTabFromHash();
+        });
+
+        // ---------- Tab: aktivasi dari hash ----------
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+            activateTabFromHash();
+        } else {
+            let tries = 0;
+            const t = setInterval(function() {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                    clearInterval(t);
+                    activateTabFromHash();
+                } else if (++tries > 30) {
+                    clearInterval(t);
+                    activateTabFromHash();
+                }
+            }, 100);
         }
 
+        // ---------- Checkbox: select all ----------
+        function toggleAll(source) {
+            document.querySelectorAll('.absen-check').forEach(function(cb) { cb.checked = source.checked; });
+        }
         const checkAllHeader = document.getElementById('check-all-header');
+        const checkAllOutside = document.getElementById('check-all');
+
         if (checkAllHeader) {
             checkAllHeader.addEventListener('change', function() {
                 toggleAll(this);
-                const checkAllOutside = document.getElementById('check-all');
                 if (checkAllOutside) checkAllOutside.checked = this.checked;
             });
         }
-
-        const checkAllOutside = document.getElementById('check-all');
         if (checkAllOutside) {
             checkAllOutside.addEventListener('change', function() {
                 toggleAll(this);
-                const checkAllHeader = document.getElementById('check-all-header');
                 if (checkAllHeader) checkAllHeader.checked = this.checked;
             });
         }
-
-        document.querySelectorAll('.absen-check').forEach(checkbox => {
-            checkbox.addEventListener('change', updateCheckAllState);
+        document.querySelectorAll('.absen-check').forEach(function(cb) {
+            cb.addEventListener('change', updateCheckAllState);
         });
 
         function updateCheckAllState() {
-            const allCheckboxes = document.querySelectorAll('.absen-check');
-            const checkedCheckboxes = document.querySelectorAll('.absen-check:checked');
-            const checkAllHeader = document.getElementById('check-all-header');
-            const checkAllOutside = document.getElementById('check-all');
-            if (allCheckboxes.length === 0) return;
-            const allChecked = allCheckboxes.length === checkedCheckboxes.length;
-            const someChecked = checkedCheckboxes.length > 0;
-            if (checkAllHeader) { checkAllHeader.checked = allChecked; checkAllHeader.indeterminate = someChecked && !allChecked; }
-            if (checkAllOutside) { checkAllOutside.checked = allChecked; checkAllOutside.indeterminate = someChecked && !allChecked; }
+            const all = document.querySelectorAll('.absen-check');
+            const checked = document.querySelectorAll('.absen-check:checked');
+            if (all.length === 0) return;
+            const allChecked = all.length === checked.length;
+            const someChecked = checked.length > 0;
+            [checkAllHeader, checkAllOutside].forEach(function(el) {
+                if (!el) return;
+                el.checked = allChecked;
+                el.indeterminate = someChecked && !allChecked;
+            });
         }
-
-        function activateTabFromHash() {
-            const hash = window.location.hash;
-            if (hash) {
-                const tabElement = document.querySelector(`[data-bs-target="${hash}"]`);
-                const tabPane = document.querySelector(hash);
-                if (tabElement && tabPane) {
-                    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
-                    tabElement.classList.add('active');
-                    tabPane.classList.add('show', 'active');
-                }
-            }
-        }
-        activateTabFromHash();
-        window.addEventListener('hashchange', activateTabFromHash);
-
-        const successMessage = "{{ session('success') }}";
-        const errorMessage = "{{ session('error') }}";
-        if (successMessage) showToast('Berhasil!', successMessage, 'success');
-        if (errorMessage) showToast('Error!', errorMessage, 'danger');
-
         updateCheckAllState();
 
+        // ---------- Bulk submit ----------
+        let selectedBulkStatus = null;
+        document.querySelectorAll('#formKonfirmasiBanyak .btn-bulk-submit').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                selectedBulkStatus = this.value;
+            });
+        });
+
+        const formBulk = document.getElementById('formKonfirmasiBanyak');
+        if (formBulk) {
+            formBulk.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const checkedBoxes = document.querySelectorAll('.absen-check:checked');
+                if (checkedBoxes.length === 0) {
+                    showToast('Peringatan', 'Silakan pilih minimal satu absensi untuk dikonfirmasi', 'warning');
+                    return false;
+                }
+                if (!selectedBulkStatus) {
+                    showToast('Peringatan', 'Pilih aksi (Setujui/Tolak) terlebih dahulu', 'warning');
+                    return false;
+                }
+                if (!confirm(`Apakah Anda yakin ingin ${selectedBulkStatus === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi?`)) {
+                    return false;
+                }
+
+                const formData = new FormData();
+                formData.append('status', selectedBulkStatus);
+                checkedBoxes.forEach(function(cb) { formData.append('absen_ids[]', cb.value); });
+
+                const submitButtons = formBulk.querySelectorAll('button[type="submit"]');
+                submitButtons.forEach(function(btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <span class="d-none d-sm-inline">Memproses...</span>';
+                });
+
+                const csrf = getCsrfToken();
+                fetch(formBulk.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrf
+                    }
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        return response.json().then(function(err) {
+                            throw new Error(err.message || `HTTP error! status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        showToast('Berhasil!', data.message, 'success');
+                        setTimeout(function() {
+                            window.location.href = window.location.pathname + '#v-pills-hari-ini';
+                        }, 1500);
+                    } else {
+                        showToast('Gagal!', data.message, 'danger');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
+                })
+                .finally(function() {
+                    submitButtons.forEach(function(btn) {
+                        btn.disabled = false;
+                        if (btn.value === 'disetujui') {
+                            btn.innerHTML = '<i class="bi bi-check-lg"></i> <span class="d-none d-sm-inline">Setujui yang Dipilih</span><span class="d-inline d-sm-none">Setujui</span>';
+                        } else if (btn.value === 'ditolak') {
+                            btn.innerHTML = '<i class="bi bi-x-lg"></i> <span class="d-none d-sm-inline">Tolak yang Dipilih</span><span class="d-inline d-sm-none">Tolak</span>';
+                        }
+                    });
+                });
+            });
+        }
+
+        // ---------- Filter Riwayat ----------
         const filterRiwayatForm = document.getElementById('filterRiwayatForm');
         if (filterRiwayatForm) {
             filterRiwayatForm.addEventListener('submit', function(e) {
@@ -1112,172 +1424,126 @@
                 loadRiwayatData();
             });
         }
+
+        // ---------- Session toast ----------
+        const successMessage = @json(session('success'));
+        const errorMessage = @json(session('error'));
+        if (successMessage) showToast('Berhasil!', successMessage, 'success');
+        if (errorMessage) showToast('Error!', errorMessage, 'danger');
     });
+})();
 </script>
 
-<style>
-    /* ===== Responsive tweaks ===== */
-    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important; }
-
-    .form-check-input { width: 1.2em; height: 1.2em; margin-top: 0.3em; cursor: pointer; }
-    tbody tr:hover { background-color: rgba(0, 0, 0, 0.03); }
-    th:first-child { cursor: pointer; }
-    .form-check-input:checked { background-color: #0d6efd; border-color: #0d6efd; }
-    .form-check-input:indeterminate { background-color: #6c757d; border-color: #6c757d; }
-    .spinner-border-sm { width: 1rem; height: 1rem; }
-
-    /* Hide scrollbar on mobile nav but keep scrollable */
-    .nav-scroll::-webkit-scrollbar { height: 4px; }
-    .nav-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
-    .nav-scroll { scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
-
-    /* Tables: comfortable on mobile */
-    @media (max-width: 575.98px) {
-        .table { font-size: 0.85rem; }
-        .table > :not(caption) > * > * { padding: 0.5rem 0.4rem; }
-        .badge { font-size: 0.7rem; }
-        .card-body { padding: 0.75rem; }
-        .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
-        .nav-link { font-size: 0.85rem; padding-top: 0.4rem; padding-bottom: 0.4rem; }
-    }
-
-    /* Desktop: force vertical sidebar nav */
-    @media (min-width: 992px) {
-        #v-pills-tab { flex-direction: column !important; overflow: visible !important; }
-        #v-pills-tab .nav-link { width: 100%; }
-    }
-
-    /* Ensure tabs fill nicely on mobile horizontally */
-    @media (max-width: 991.98px) {
-        #v-pills-tab { padding-bottom: 4px; }
-        #v-pills-tab .nav-link { font-size: 0.85rem; }
-    }
-
-    /* Chart containers responsive */
-    .chart-container canvas { max-width: 100%; }
-
-    /* Make filter form stack on very small screens */
-    @media (max-width: 575.98px) {
-        #filterRiwayatForm { width: 100%; }
-        #filterRiwayatForm input, #filterRiwayatForm select, #filterRiwayatForm button { width: 100%; }
-    }
-</style>
-@endsection
-
-@push('scripts')
+{{-- jQuery + Select2 & Holiday --}}
 <script>
-    $(document).ready(function() {
-        // Select2 init
-        $('.select2').each(function() {
-            $(this).select2({
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal') : $(this).parent(),
-                placeholder: "-- Pilih IDUKA --",
-                allowClear: true,
-                width: '100%',
-                dropdownPosition: 'below'
-            });
-        });
-
-        // IDUKA data fetch
-        $('#iduka_id').on('change', function() {
-            const idukaId = $(this).val();
-            if (idukaId) {
-                $.ajax({
-                    url: `/iduka/get-data/${idukaId}`,
-                    method: 'GET',
-                    success: function(data) {
-                        if (data.error) { alert(data.error); }
-                        else {
-                            $('input[name="latitude"]').val(data.latitude || '');
-                            $('input[name="longitude"]').val(data.longitude || '');
-                            $('input[name="radius"]').val(data.radius || '');
-                            $('input[name="jam_masuk"]').val(data.jam_masuk || '08:00');
-                            $('input[name="jam_pulang"]').val(data.jam_pulang || '15:00');
-                        }
-                    },
-                    error: function() { console.error('Gagal mengambil data IDUKA.'); }
-                });
-            } else {
-                $('input[name="latitude"]').val('');
-                $('input[name="longitude"]').val('');
-                $('input[name="radius"]').val('');
-                $('input[name="jam_masuk"]').val('08:00');
-                $('input[name="jam_pulang"]').val('15:00');
-            }
-        });
-
-        // Holiday management
-        function loadHolidaysFor(idukaId) {
-            if (!idukaId) {
-                $('#holidaysList').html('<div class="text-danger">Pilih IDUKA terlebih dahulu.</div>');
-                return;
-            }
-            $('#holidaysList').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
-            $.get(`/iduka/holidays/${idukaId}`, function(res) {
-                if (!res.success) {
-                    $('#holidaysList').html('<div class="text-danger">Gagal memuat data.</div>');
-                    return;
-                }
-                const data = res.data;
-                if (!data || data.length === 0) {
-                    $('#holidaysList').html('<div class="text-muted">Belum ada hari libur untuk IDUKA ini.</div>');
-                    return;
-                }
-                let html = '<div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Tanggal</th><th>Nama</th><th>Ulang</th><th>Aksi</th></tr></thead><tbody>';
-                data.forEach(item => {
-                    const tanggal = new Date(item.date).toLocaleDateString('id-ID');
-                    html += `<tr><td class="text-nowrap">${tanggal}</td><td>${item.name || '-'}</td><td>${item.recurring ? 'Ya' : 'Tidak'}</td><td><button class="btn btn-sm btn-danger btn-delete-holiday" data-id="${item.id}">Hapus</button></td></tr>`;
-                });
-                html += '</tbody></table></div>';
-                $('#holidaysList').html(html);
-            }).fail(function() {
-                $('#holidaysList').html('<div class="text-danger">Gagal memuat data (network).</div>');
-            });
-        }
-
-        $('#btnLoadHolidays').on('click', function(e) {
-            e.preventDefault();
-            const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
-            if (!idukaId) { alert('Pilih IDUKA terlebih dahulu'); return; }
-            $('#holiday_form_iduka_id').val(idukaId);
-            $('#holidayFormContainer').show();
-            loadHolidaysFor(idukaId);
-        });
-
-        $('#holidayForm').on('submit', function(e) {
-            e.preventDefault();
-            const form = $(this);
-            const payload = {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                iduka_id: $('#holiday_form_iduka_id').val(),
-                date: form.find('input[name="date"]').val(),
-                name: form.find('input[name="name"]').val(),
-                recurring: form.find('input[name="recurring"]')[0].checked ? 1 : 0
-            };
-            $.post('/iduka/holidays', payload, function() {
-                loadHolidaysFor(payload.iduka_id);
-                form[0].reset();
-            }).fail(function(xhr) {
-                alert('Gagal menyimpan hari libur: ' + (xhr.responseJSON?.message || 'error'));
-            });
-        });
-
-        $(document).on('click', '.btn-delete-holiday', function() {
-            if (!confirm('Hapus hari libur ini?')) return;
-            const id = $(this).data('id');
-            const token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: '/iduka/holidays/' + id,
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': token },
-                success: function() {
-                    const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
-                    loadHolidaysFor(idukaId);
-                },
-                error: function() { alert('Gagal menghapus hari libur'); }
-            });
+$(document).ready(function() {
+    $('.select2').each(function() {
+        $(this).select2({
+            dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal') : $(this).parent(),
+            placeholder: "-- Pilih IDUKA --",
+            allowClear: true,
+            width: '100%',
+            dropdownPosition: 'below'
         });
     });
+
+    $('#iduka_id').on('change', function() {
+        const idukaId = $(this).val();
+        if (idukaId) {
+            $.ajax({
+                url: `/iduka/get-data/${idukaId}`,
+                method: 'GET',
+                success: function(data) {
+                    if (data.error) { alert(data.error); }
+                    else {
+                        $('input[name="latitude"]').val(data.latitude || '');
+                        $('input[name="longitude"]').val(data.longitude || '');
+                        $('input[name="radius"]').val(data.radius || '');
+                        $('input[name="jam_masuk"]').val(data.jam_masuk || '08:00');
+                        $('input[name="jam_pulang"]').val(data.jam_pulang || '15:00');
+                    }
+                },
+                error: function() { console.error('Gagal mengambil data IDUKA.'); }
+            });
+        } else {
+            $('input[name="latitude"]').val('');
+            $('input[name="longitude"]').val('');
+            $('input[name="radius"]').val('');
+            $('input[name="jam_masuk"]').val('08:00');
+            $('input[name="jam_pulang"]').val('15:00');
+        }
+    });
+
+    function loadHolidaysFor(idukaId) {
+        if (!idukaId) {
+            $('#holidaysList').html('<div class="text-danger">Pilih IDUKA terlebih dahulu.</div>');
+            return;
+        }
+        $('#holidaysList').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
+        $.get(`/iduka/holidays/${idukaId}`, function(res) {
+            if (!res.success) {
+                $('#holidaysList').html('<div class="text-danger">Gagal memuat data.</div>');
+                return;
+            }
+            const data = res.data;
+            if (!data || data.length === 0) {
+                $('#holidaysList').html('<div class="text-muted">Belum ada hari libur untuk IDUKA ini.</div>');
+                return;
+            }
+            let html = '<div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Tanggal</th><th>Nama</th><th>Ulang</th><th>Aksi</th></tr></thead><tbody>';
+            data.forEach(function(item) {
+                const tanggal = new Date(item.date).toLocaleDateString('id-ID');
+                html += `<tr><td class="text-nowrap">${tanggal}</td><td>${item.name || '-'}</td><td>${item.recurring ? 'Ya' : 'Tidak'}</td><td><button class="btn btn-sm btn-danger btn-delete-holiday" data-id="${item.id}">Hapus</button></td></tr>`;
+            });
+            html += '</tbody></table></div>';
+            $('#holidaysList').html(html);
+        }).fail(function() {
+            $('#holidaysList').html('<div class="text-danger">Gagal memuat data (network).</div>');
+        });
+    }
+
+    $('#btnLoadHolidays').on('click', function(e) {
+        e.preventDefault();
+        const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
+        if (!idukaId) { alert('Pilih IDUKA terlebih dahulu'); return; }
+        $('#holiday_form_iduka_id').val(idukaId);
+        $('#holidayFormContainer').show();
+        loadHolidaysFor(idukaId);
+    });
+
+    $('#holidayForm').on('submit', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const payload = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            iduka_id: $('#holiday_form_iduka_id').val(),
+            date: form.find('input[name="date"]').val(),
+            name: form.find('input[name="name"]').val(),
+            recurring: form.find('input[name="recurring"]')[0].checked ? 1 : 0
+        };
+        $.post('/iduka/holidays', payload, function() {
+            loadHolidaysFor(payload.iduka_id);
+            form[0].reset();
+        }).fail(function(xhr) {
+            alert('Gagal menyimpan hari libur: ' + (xhr.responseJSON?.message || 'error'));
+        });
+    });
+
+    $(document).on('click', '.btn-delete-holiday', function() {
+        if (!confirm('Hapus hari libur ini?')) return;
+        const id = $(this).data('id');
+        const token = $('meta[name="csrf-token"]').attr('content');
+        $.ajax({
+            url: '/iduka/holidays/' + id,
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': token },
+            success: function() {
+                const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
+                loadHolidaysFor(idukaId);
+            },
+            error: function() { alert('Gagal menghapus hari libur'); }
+        });
+    });
+});
 </script>
 @endpush
