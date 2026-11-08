@@ -1,13 +1,178 @@
 ﻿@extends('layout.main')
 
 @section('content')
+<style>
+    /* ============================================================ */
+    /* TABLE SCROLL HINT */
+    /* ============================================================ */
+    .table-scroll-hint {
+        display: none;
+        font-size: .72rem;
+        color: #64748b;
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 6px 10px;
+        margin: 10px 12px 8px;
+    }
+
+    /* ============================================================ */
+    /* TABLE CARD — paksa bisa scroll di HP                          */
+    /* ============================================================ */
+    @media (max-width: 991.98px) {
+
+        /* 1) HAPUS overflow:hidden dari card (biang kerok tabel gak bisa digeser) */
+        .card { overflow: visible !important; }
+
+        /* 2) Balikin rounded corner */
+        .card > .card-header:first-child {
+            border-top-left-radius: .5rem !important;
+            border-top-right-radius: .5rem !important;
+        }
+        .card > .card-body:last-child,
+        .card > .card-body + .table-responsive:last-child {
+            border-bottom-left-radius: .5rem !important;
+            border-bottom-right-radius: .5rem !important;
+        }
+
+        /* 3) Hint scroll muncul */
+        .table-scroll-hint { display: block; }
+
+        /* 4) Paksa table-responsive jadi scroll container */
+        .table-responsive {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior-x: contain !important;
+            touch-action: pan-x pan-y !important;
+        }
+
+        /* 5) Tabel harus lebih lebar dari container */
+        .table-responsive > .table {
+            min-width: 640px !important;
+            margin-bottom: 0 !important;
+        }
+
+        /* 6) Scrollbar tipis petunjuk bisa digeser */
+        .table-responsive::-webkit-scrollbar { height: 6px; }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* 7) Sembunyikan image welcome di HP */
+        .welcome-image-col { display: none !important; }
+
+        /* 8) Card welcome info jadi full width */
+        .welcome-info-col { width: 100% !important; flex: 0 0 100% !important; }
+    }
+
+    /* ============================================================ */
+    /* MOBILE (≤ 767px) */
+    /* ============================================================ */
+    @media (max-width: 767.98px) {
+        /* Alert card */
+        .alert-card-body {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px;
+            text-align: left;
+        }
+        .alert-card-icon { margin-bottom: 0; }
+
+        /* Action buttons */
+        .action-buttons-wrap {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 8px !important;
+            width: 100%;
+        }
+        .action-buttons-wrap .btn,
+        .action-buttons-wrap .btn-group {
+            width: 100%;
+        }
+        .action-buttons-wrap .btn-group .btn {
+            width: 100%;
+            border-radius: .5rem !important;
+        }
+        .action-buttons-wrap .dropdown-menu {
+            width: 100%;
+        }
+
+        /* Header card info */
+        .action-header-wrap {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+        }
+
+        /* Padding card */
+        .card-body { padding: 1rem !important; }
+        .card-header { padding: .75rem 1rem !important; }
+        .card-header h6 { font-size: .85rem !important; }
+
+        /* Table font size */
+        .table { font-size: .82rem; }
+        .table > :not(caption) > * > * { padding: .55rem .5rem; }
+        .badge { font-size: .68rem; }
+
+        /* Welcome card */
+        .welcome-card-body { padding: 1rem !important; }
+        .welcome-card-body h5 { font-size: 1rem !important; }
+        .welcome-card-body p { font-size: .82rem !important; }
+
+        /* Info pembimbing pill */
+        .info-pembimbing {
+            font-size: .78rem !important;
+            padding: 6px 10px !important;
+        }
+
+        /* Tombol Lengkapi Data */
+        .btn-lengkapi {
+            width: 100% !important;
+            justify-content: center;
+        }
+    }
+
+    /* ============================================================ */
+    /* EXTRA SMALL (≤ 575px) */
+    /* ============================================================ */
+    @media (max-width: 575.98px) {
+        .card-body { padding: .85rem !important; }
+        .card-header { padding: .65rem .85rem !important; }
+
+        .table { font-size: .78rem; }
+        .table > :not(caption) > * > * { padding: .5rem .4rem; }
+        .badge { font-size: .62rem; padding: .35em .55em; }
+
+        /* Icon dalam table aksi lebih kecil */
+        .table .btn-icon { width: 32px; height: 32px; padding: 0 !important; }
+
+        /* Alert icon kecilkan */
+        .alert-card-icon-inner { width: 40px !important; height: 40px !important; }
+        .alert-card-icon-inner i { font-size: 16px !important; }
+        .alert-card-body h6 { font-size: .85rem !important; }
+        .alert-card-body p { font-size: .78rem !important; }
+    }
+</style>
+
+<div class="container-fluid py-3 px-2 px-md-4">
 <div class="container-xxl flex-grow-1 container-p-y">
 
     {{-- Alert Status Pindah PKL --}}
     @if(isset($statusPindahPkl))
         @php
             $alertContent = '';
-            
+
             if($statusPindahPkl->status == 'menunggu') {
                 $alertContent = [
                     'bg' => 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
@@ -59,9 +224,9 @@
         @if($alertContent)
             <div class="card mb-4 shadow-sm border-0" style="background: {{ $alertContent['bg'] }}; border-left: 4px solid {{ $alertContent['border'] }} !important;">
                 <div class="card-body py-3">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div style="width: 48px; height: 48px; background: {{ $alertContent['icon_bg'] }}; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <div class="d-flex align-items-center alert-card-body">
+                        <div class="flex-shrink-0 alert-card-icon">
+                            <div class="alert-card-icon-inner" style="width: 48px; height: 48px; background: {{ $alertContent['icon_bg'] }}; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <i class="{{ $alertContent['icon'] }} text-white" style="font-size:20px;"></i>
                             </div>
                         </div>
@@ -79,9 +244,9 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card" style="border-left:4px solid #3b82f6;">
-                <div class="d-flex align-items-center row">
-                    <div class="col-sm-7">
-                        <div class="card-body">
+                <div class="d-flex align-items-center row g-0">
+                    <div class="col-12 col-sm-7 welcome-info-col">
+                        <div class="card-body welcome-card-body">
                             <div class="d-flex align-items-center gap-3 mb-2">
                                 <div style="width:44px;height:44px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                     <i class="fas fa-user-graduate" style="font-size:20px;color:#3b82f6;"></i>
@@ -91,8 +256,8 @@
                                     <small style="color:#64748b;">Siswa PKL</small>
                                 </div>
                             </div>
-                            
-                            <div class="d-flex align-items-center gap-2 mb-3 mt-3 px-3 py-2" style="background:#f8fafc; border-radius:8px; display:inline-flex;">
+
+                            <div class="d-flex align-items-center gap-2 mb-3 mt-3 px-3 py-2 info-pembimbing" style="background:#f8fafc; border-radius:8px; display:inline-flex; flex-wrap: wrap;">
                                 <i class="fas fa-chalkboard-teacher text-primary"></i>
                                 <span style="font-size:14px; color:#475569;">Pembimbing:</span>
                                 <span style="font-size:14px; font-weight:600; color:#0f172a;">
@@ -106,14 +271,14 @@
 
                             <div class="d-flex gap-2 flex-wrap">
                                 @if (auth()->user()->role == 'siswa')
-                                    <a href="{{ route('siswa.data_pribadi.create') }}" class="btn btn-primary btn-sm px-3">
+                                    <a href="{{ route('siswa.data_pribadi.create') }}" class="btn btn-primary btn-sm px-3 btn-lengkapi">
                                         <i class="fas fa-user-edit me-1"></i> Lengkapi Data
                                     </a>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-5 text-center">
+                    <div class="col-sm-5 text-center welcome-image-col">
                         <div class="card-body pb-0 px-md-4">
                             <img src="{{ asset('snet/assets/img/illustrations/man-with-laptop-light.png') }}"
                                 height="130" alt="Siswa" />
@@ -128,7 +293,7 @@
         {{-- Pengajuan Actions --}}
         <div class="card mb-4" style="overflow: visible;">
             <div class="card-body">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 action-header-wrap">
                     <div class="d-flex align-items-center gap-3">
                         <div style="width:40px;height:40px;background:#f0fdf4;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="fas fa-file-signature" style="font-size:18px;color:#22c55e;"></i>
@@ -138,8 +303,8 @@
                             <small class="text-muted">Kelola pengajuan dan mutasi tempat PKL Anda</small>
                         </div>
                     </div>
-                    
-                    <div class="d-flex gap-2">
+
+                    <div class="d-flex gap-2 action-buttons-wrap">
                         {{-- Dropdown Buat Pengajuan --}}
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -181,9 +346,9 @@
                             @endphp
 
                             @if(!$pengajuanAktif)
-                                <form action="{{ route('pindah-pkl.ajukan') }}" method="POST" class="m-0">
+                                <form action="{{ route('pindah-pkl.ajukan') }}" method="POST" class="m-0 w-100 w-md-auto">
                                     @csrf
-                                    <button type="submit" class="btn btn-warning" onclick="return confirmAjukanPindah()">
+                                    <button type="submit" class="btn btn-warning w-100" onclick="return confirmAjukanPindah()">
                                         <i class="fas fa-exchange-alt me-1"></i> Pindah Tempat
                                     </button>
                                 </form>
@@ -208,7 +373,10 @@
                 <div class="card-header border-bottom">
                     <h6 class="m-0 fw-bold"><i class="fas fa-history text-primary me-2"></i>Riwayat Permintaan Pindah Tempat PKL</h6>
                 </div>
-                <div class="table-responsive text-nowrap">
+                <div class="table-scroll-hint">
+                    <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+                </div>
+                <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -245,7 +413,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-icon btn-outline-primary" style="border-radius:8px;" onclick="showDetailPindah({{ $pindah }})">
+                                        <button class="btn btn-sm btn-icon btn-outline-primary" style="border-radius:8px;" onclick='showDetailPindah(@json($pindah))'>
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
@@ -262,7 +430,10 @@
             <div class="card-header border-bottom">
                 <h6 class="m-0 fw-bold"><i class="fas fa-list-alt text-primary me-2"></i>Riwayat Pengajuan Tempat PKL</h6>
             </div>
-            <div class="table-responsive text-nowrap">
+            <div class="table-scroll-hint">
+                <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+            </div>
+            <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -288,23 +459,25 @@
                                         <span class="badge bg-label-danger"><i class="fas fa-times-circle me-1"></i> Ditolak</span>
                                     @endif
                                 </td>
-                                <td class="text-center d-flex justify-content-center gap-2">
-                                    <a href="{{ route('detail.usulan', $usulan->id) }}" class="btn btn-sm btn-icon btn-outline-info" style="border-radius:8px;" title="Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    @if ($usulan->status == 'diterima')
-                                        <a href="{{ route('usulan.pdf', $usulan->id) }}" class="btn btn-sm btn-icon btn-outline-danger" style="border-radius:8px;" title="Unduh PDF">
-                                            <i class="fas fa-file-pdf"></i>
+                                <td class="text-center">
+                                    <div class="d-inline-flex gap-1 flex-wrap justify-content-center">
+                                        <a href="{{ route('detail.usulan', $usulan->id) }}" class="btn btn-sm btn-icon btn-outline-info" style="border-radius:8px;" title="Detail">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                    @endif
-                                    @if ($usulan->status == 'diterima' || $usulan->status == 'proses')
-                                        <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usulan->id) }}" method="POST" class="m-0" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-warning" style="border-radius:8px;" title="Batal Pengajuan">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                        @if ($usulan->status == 'diterima')
+                                            <a href="{{ route('usulan.pdf', $usulan->id) }}" class="btn btn-sm btn-icon btn-outline-danger" style="border-radius:8px;" title="Unduh PDF">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        @endif
+                                        @if ($usulan->status == 'diterima' || $usulan->status == 'proses')
+                                            <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usulan->id) }}" method="POST" class="m-0 d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-icon btn-outline-warning" style="border-radius:8px;" title="Batal Pengajuan">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -333,23 +506,25 @@
                                         <span class="badge bg-label-danger"><i class="fas fa-times-circle me-1"></i> Ditolak</span>
                                     @endif
                                 </td>
-                                <td class="text-center d-flex justify-content-center gap-2">
-                                    <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-sm btn-icon btn-outline-info" style="border-radius:8px;" title="Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    @if ($usul->status == 'diterima')
-                                        <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-sm btn-icon btn-outline-danger" style="border-radius:8px;" title="Unduh PDF">
-                                            <i class="fas fa-file-pdf"></i>
+                                <td class="text-center">
+                                    <div class="d-inline-flex gap-1 flex-wrap justify-content-center">
+                                        <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-sm btn-icon btn-outline-info" style="border-radius:8px;" title="Detail">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                    @endif
-                                    @if ($usul->status == 'diterima' || $usul->status == 'proses')
-                                        <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usul->id) }}" method="POST" class="m-0" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-warning" style="border-radius:8px;" title="Batal Pengajuan">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                        @if ($usul->status == 'diterima')
+                                            <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-sm btn-icon btn-outline-danger" style="border-radius:8px;" title="Unduh PDF">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        @endif
+                                        @if ($usul->status == 'diterima' || $usul->status == 'proses')
+                                            <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usul->id) }}" method="POST" class="m-0 d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-icon btn-outline-warning" style="border-radius:8px;" title="Batal Pengajuan">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -364,7 +539,10 @@
             <div class="card-header border-bottom">
                 <h6 class="m-0 fw-bold"><i class="fas fa-folder-open text-primary me-2"></i>Riwayat Status Penetapan PKL</h6>
             </div>
-            <div class="table-responsive text-nowrap">
+            <div class="table-scroll-hint">
+                <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
+            </div>
+            <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -406,6 +584,7 @@
             </div>
         </div>
     @endif
+</div>
 </div>
 
 {{-- Scripts & SweetAlert --}}
@@ -463,12 +642,14 @@
             default: statusText = pindah.status; statusIcon = 'fa-info-circle'; statusColor = '#64748b';
         }
 
+        const idukaLamaNama = pindah.iduka_lama ? pindah.iduka_lama.nama : (pindah.idukaLama ? pindah.idukaLama.nama : 'Tidak Diketahui');
+
         Swal.fire({
             title: '<strong>Detail Pengajuan Mutasi</strong>',
             html: `
                 <div class="text-start p-3 bg-light rounded-3 mt-3 shadow-sm border">
-                    <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Tempat PKL Lama:</strong><br><span class="fw-semibold text-dark">${pindah.iduka_lama ? pindah.iduka_lama.nama : 'Tidak Diketahui'}</span></div>
-                    <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Tempat PKL Baru:</strong><br><span class="fw-bold text-primary">${pindah.iduka_baru_nama}</span></div>
+                    <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Tempat PKL Lama:</strong><br><span class="fw-semibold text-dark">${idukaLamaNama}</span></div>
+                    <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Tempat PKL Baru:</strong><br><span class="fw-bold text-primary">${pindah.iduka_baru_nama || '-'}</span></div>
                     <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Tanggal Pengajuan:</strong><br><span class="fw-semibold text-dark">${new Date(pindah.created_at).toLocaleDateString('id-ID')}</span></div>
                     <div class="mb-2"><strong class="text-muted" style="font-size:12px;">Status Mutasi:</strong><br><span style="color:${statusColor};" class="fw-bold"><i class="fas ${statusIcon} me-1"></i> ${statusText}</span></div>
                     ${pindah.alasan ? `<div class="mb-2"><strong class="text-muted" style="font-size:12px;">Alasan Mutasi:</strong><br><span class="text-dark">${pindah.alasan}</span></div>` : ''}
@@ -506,5 +687,3 @@
     @endif
 </script>
 @endsection
-
-

@@ -55,12 +55,12 @@ class AbsensiController extends Controller
             // Cek status hari libur
             try {
                 if (Carbon::today()->isSunday()) {
-                    $isHoliday = true;
+                    $isHoliday = false;
                     $holidayLabel = 'Hari Minggu (Libur Umum)';
                 } else {
                     $hols = IdukaHoliday::getHolidaysOn($user->idukaDiterima->id, Carbon::today()->toDateString());
                     if ($hols && $hols->isNotEmpty()) {
-                        $isHoliday = true;
+                        $isHoliday = false;
                         $names = $hols->pluck('name')->filter()->values();
                         $holidayLabel = $names->count() ? $names->implode(', ') : 'Hari libur';
                     }
