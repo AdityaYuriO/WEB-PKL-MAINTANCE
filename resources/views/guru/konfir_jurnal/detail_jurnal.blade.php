@@ -191,7 +191,7 @@
                         <div class="text-center">
                             <img src="{{ asset($journal->foto) }}" alt="Dokumentasi kegiatan"
                                 class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
-                                onclick="showImageModal('{{ asset($journal->foto) }}')">
+                                onclick="showImageModal(this.src)">
                         </div>
                     </div>
                 </div>
@@ -227,26 +227,3 @@
         </div>
     </div>
 </div>
-
-<!-- Modal untuk menampilkan gambar besar -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Dokumentasi Kegiatan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" alt="Dokumentasi Kegiatan" class="img-fluid">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function showImageModal(src) {
-        document.getElementById('modalImage').src = src;
-        var modal = new bootstrap.Modal(document.getElementById('imageModal'));
-        modal.show();
-    }
-</script>

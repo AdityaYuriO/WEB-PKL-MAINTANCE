@@ -31,6 +31,9 @@
                     data-bs-target="#tab-riwayat" type="button" role="tab">
                     <i class="fas fa-check-circle me-2"></i>
                     <span>Riwayat</span>
+                    @if ($historyJurnals->count() > 0)
+                        <span class="badge bg-success ms-2">{{ $historyJurnals->count() }}</span>
+                    @endif
                 </button>
             </li>
         </ul>
@@ -110,7 +113,18 @@
                         <div class="card-body text-center py-5">
                             <i class="fas fa-book-open text-muted mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
                             <h5 class="fw-bold text-muted">Belum Ada Jurnal</h5>
-                            <p class="text-muted mb-0">Kamu belum memiliki jurnal yang masuk kriteria ini.</p>
+                            @if ($historyJurnals->count() > 0)
+                                <p class="text-muted mb-3">
+                                    Jurnal yang sudah diproses tidak ditampilkan di sini.
+                                    Ada {{ $historyJurnals->count() }} jurnal di Riwayat.
+                                </p>
+                                <button type="button" class="btn btn-success"
+                                    onclick="bootstrap.Tab.getOrCreateInstance(document.getElementById('history-tab')).show()">
+                                    <i class="fas fa-check-circle me-1"></i>Lihat Status Jurnal
+                                </button>
+                            @else
+                                <p class="text-muted mb-0">Kamu belum memiliki jurnal yang masuk kriteria ini.</p>
+                            @endif
                         </div>
                     </div>
                 @endforelse
@@ -149,13 +163,18 @@
                                     </div>
 
                                     <!-- Status Badge -->
-                                    <span class="badge bg-success px-3 py-2">
-                                        <i class="fas fa-check-circle me-1"></i>
-                                        DISETUJUI
-                                    </span>
-                                    @if($jurnal->approved_by)
-                                        <small class="text-muted ms-2">Oleh: {{ $jurnal->approved_by }}</small>
-                                    @endif
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        @if ($jurnal->validasi_pembimbing === 'sudah')
+                                            <span class="badge bg-success px-3 py-2">
+                                                <i class="fas fa-check-circle me-1"></i>Disetujui Pembimbing
+                                            </span>
+                                        @endif
+                                        @if ($jurnal->validasi_iduka === 'sudah')
+                                            <span class="badge bg-success px-3 py-2">
+                                                <i class="fas fa-check-circle me-1"></i>Disetujui IDUKA
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
 
                                 <!-- Action Button -->
@@ -186,11 +205,11 @@
     <div class="modal fade" id="createJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header bg-primary text-white student-edit-modal-header">
                     <h5 class="modal-title fw-bold">
                         <i class="fas fa-plus-circle me-2"></i>Tambah Jurnal Baru
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <form action="{{ route('jurnal.store') }}" method="POST" enctype="multipart/form-data"
@@ -280,11 +299,11 @@
     <div class="modal fade" id="viewJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header bg-primary text-white student-edit-modal-header">
                     <h5 class="modal-title fw-bold">
                         <i class="fas fa-eye me-2"></i>Detail Jurnal
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" id="journalDetailContent">
@@ -749,4 +768,3 @@
         });
     </script>
 @endsection
-

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jurnal;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,9 +16,6 @@ class JournalController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        // Hapus otomatis foto jurnal yang lebih dari 24 jam
-        $this->hapusFotoLama();
 
         // Get all journals for both active and history
         $jurnalsQuery = Jurnal::where(function ($query) use ($user) {
@@ -76,39 +74,11 @@ class JournalController extends Controller
             'is_dalam_mapel' => $request->has('is_dalam_mapel') ? 1 : 0,
         ];
 
-        // Pastikan folder upload tersedia
-        $uploadPath = public_path('uploads/jurnals');
-        if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
-        }
-
-        // Simpan dan kompres gambar
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $destinationPath = $uploadPath . '/' . $fileName;
-
-            // Kompres gambar menjadi sangat kecil (kualitas 30)
-            try {
-                $image = imagecreatefromstring(file_get_contents($file));
-                if ($image !== false) {
-                    imagejpeg($image, $destinationPath, 30);
-                    imagedestroy($image);
-                } else {
-                    $file->move($uploadPath, $fileName);
-                }
-            } catch (\Exception $e) {
-                Log::error('Gagal kompres foto: ' . $e->getMessage());
-                $file->move($uploadPath, $fileName);
-            }
-
-            $data['foto'] = 'uploads/jurnals/' . $fileName;
+            $data['foto'] = $this->storeJournalPhoto($request->file('foto'));
         }
 
         Jurnal::create($data);
-
-        // Jalankan hapus otomatis setiap kali menambah jurnal
-        $this->hapusFotoLama();
 
         return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil ditambahkan dan menunggu persetujuan.');
     }
@@ -158,23 +128,7 @@ class JournalController extends Controller
                     unlink(public_path($jurnal->foto));
                 }
 
-                $file = $request->file('foto');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('uploads/jurnals/' . $fileName);
-
-                try {
-                    $image = imagecreatefromstring(file_get_contents($file));
-                    if ($image !== false) {
-                        imagejpeg($image, $destinationPath, 30);
-                        imagedestroy($image);
-                    } else {
-                        $file->move(public_path('uploads/jurnals'), $fileName);
-                    }
-                } catch (\Exception $e) {
-                    $file->move(public_path('uploads/jurnals'), $fileName);
-                }
-
-                $data['foto'] = 'uploads/jurnals/' . $fileName;
+                $data['foto'] = $this->storeJournalPhoto($request->file('foto'));
             }
 
             $jurnal->update($data);
@@ -375,22 +329,28 @@ class JournalController extends Controller
         return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil dihapus.');
     }
 
-    // ======================
-    // AUTO DELETE FOTO 24 JAM
-    // ======================
-    private function hapusFotoLama()
+    private function storeJournalPhoto(UploadedFile $file): string
     {
-        $path = public_path('uploads/jurnals');
-        if (!file_exists($path)) {
-            return;
+        $uploadPath = public_path('uploads/jurnals');
+        if (!is_dir($uploadPath) && !mkdir($uploadPath, 0777, true) && !is_dir($uploadPath)) {
+            throw new \RuntimeException('Folder penyimpanan foto jurnal tidak dapat dibuat.');
         }
 
-        $files = glob($path . '/*');
-        foreach ($files as $file) {
-            if (is_file($file) && (time() - filemtime($file)) > 86400) { // 24 jam
-                @unlink($file);
+        $image = @imagecreatefromstring(file_get_contents($file->getRealPath()));
+        if ($image === false) {
+            $fileName = $file->hashName();
+            $file->move($uploadPath, $fileName);
+        } else {
+            $fileName = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.jpg';
+            $saved = imagejpeg($image, $uploadPath . DIRECTORY_SEPARATOR . $fileName, 30);
+            imagedestroy($image);
+
+            if (!$saved) {
+                throw new \RuntimeException('Foto jurnal gagal disimpan.');
             }
         }
+
+        return 'uploads/jurnals/' . $fileName;
     }
 
     public function siswaBelumIsi()

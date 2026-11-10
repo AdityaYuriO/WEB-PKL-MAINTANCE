@@ -215,7 +215,7 @@
                     modalElement.setAttribute('aria-modal', 'true');
 
                     // Show modal
-                    activeModal = new bootstrap.Modal(modalElement);
+                    activeModal = bootstrap.Modal.getOrCreateInstance(modalElement);
                     activeModal.show();
 
                     // Fetch detail
@@ -328,13 +328,6 @@
 
         // Fungsi untuk menginisialisasi event handlers di dalam modal
         function initializeModalEvents() {
-            // Event handler untuk menampilkan gambar dalam modal terpisah
-            document.querySelectorAll('#detailModal img[onclick^="showImageModal"]').forEach(img => {
-                img.addEventListener('click', function() {
-                    showImageModal(this.src);
-                });
-            });
-
             // Inisialisasi semua tooltip dalam modal
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('#detailModal [data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
@@ -346,27 +339,34 @@
         function showImageModal(src) {
             const imageModal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
+            const detailModal = document.getElementById('detailModal');
+            const detailInstance = bootstrap.Modal.getInstance(detailModal);
+            const imageInstance = bootstrap.Modal.getOrCreateInstance(imageModal);
+            const openImageModal = function() {
+                imageModal.removeAttribute('aria-hidden');
+                imageModal.setAttribute('aria-modal', 'true');
+                modalImage.src = src;
+                imageInstance.show();
+            };
 
-            // Atur atribut aksesibilitas modal
-            imageModal.removeAttribute('aria-hidden');
-            imageModal.setAttribute('aria-modal', 'true');
-
-            // Set sumber gambar
-            modalImage.src = src;
-
-            // Tampilkan modal
-            const modal = new bootstrap.Modal(imageModal);
-            modal.show();
-
-            // Atur event untuk mengembalikan atribut aksesibilitas saat modal ditutup
-            imageModal.addEventListener('hidden.bs.modal', function() {
+            imageModal.addEventListener('hidden.bs.modal', function handleImageModalHidden() {
                 this.setAttribute('aria-hidden', 'true');
                 this.removeAttribute('aria-modal');
-                // Reset gambar untuk mengosongkan memori
                 modalImage.src = '';
-            }, {
-                once: true
-            });
+                if (detailModal.dataset.reopenAfterImage === 'true') {
+                    delete detailModal.dataset.reopenAfterImage;
+                    bootstrap.Modal.getOrCreateInstance(detailModal).show();
+                }
+            }, { once: true });
+
+            if (detailModal.classList.contains('show') && detailInstance) {
+                detailModal.dataset.reopenAfterImage = 'true';
+                detailModal.addEventListener('hidden.bs.modal', openImageModal, { once: true });
+                detailInstance.hide();
+                return;
+            }
+
+            openImageModal();
         }
 
         // Handle form submissions
