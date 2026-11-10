@@ -1,48 +1,5 @@
 Perbaikan
 
-Tampilan
-- Sidebar fixed + animasi minimize + tombol panah `<` `>` di luar sidebar + logo/teks fade di navbar. Keadaan diingat.
-- Navbar atas menempel saat di-scroll.
-- Titik submenu tidak menimpa huruf.
-- Judul banner dashboard putih.
-- Menu Dashboard menyala (active).
-- Modal: posisi tombol close diperbaiki, tetap di dalam modal dan tidak bergeser saat di-hover.
-- Tombol Tutup dikomentari agar tidak tampil; skrip penyembunyiannya dihapus.
-- Perapian jarak dan alignment pada modal Pembimbing, Laporan Iduka, Daftar Cetak Usulan, dan dashboard Hubin.
-
-Tabel
-- Akar masalah: `.table-responsive { overflow: hidden }` diganti jadi bisa scroll horizontal.
-- 16 halaman tabel dibungkus `table-responsive`.
-- Teks Saran di monitoring tidak meluber.
-- Paginator Bootstrap 5 (tombol next normal).
-
-Tombol
-- Jarak tombol aksi di semua tabel (btn-group dipisah, gap diperlebar).
-- Tombol yang hanya berisi ikon seragam 34 px (pensil, mata, hapus). Tombol ikon+teks tidak disentuh.
-- Ikon hapus muncul lagi (`fa-trash-alt3` jadi `fa-trash`) di data siswa dan jurnal siswa.
-- Jarak tombol di indikator, tujuan pembelajaran, data TK/siswa/proker/konke/guru, konfirmasi absen iduka, kelas siswa.
-
-Data
-- Rekap Absensi: nama kelas mencakup tingkat, termasuk pada filter dan ekspor.
-- Data Siswa: dropdown kelas menampilkan tingkat dan menyesuaikan opsi berdasarkan jurusan; validasi server diperbarui.
-
-CSS dan teks
-- `@stack('styles')` di layout. CSS 9 halaman akhirnya termuat.
-- Huruf rusak (`â€”`, `âœ•`, `Â±`) diperbaiki di 8 file.
-- Form Tambah User tidak terisi otomatis oleh Chrome.
-<<<<<<< HEAD
-
-Absensi & navigasi
-- Peringatan hari libur IDUKA dirapikan: ikon, judul, deskripsi, dan tombol disejajarkan.
-- Filter grafik Absensi dan Kaprog memakai dropdown yang bisa diubah, dengan ikon panah.
-- Animasi loading navigasi ditampilkan jika perpindahan memakan waktu lebih dari 2 detik, sekaligus memblokir interaksi.
-- Active state sidebar dipertahankan pada halaman turunan; menu Data Kelas dan Daftar Siswa dibedakan.
-
-
-Data siswa & modal
-- Opsi kelas dibatasi ke kelas XII dan disaring sesuai jurusan; validasi server ikut diperketat dan mapping diuji.
-- Modal edit siswa diperbaiki agar tampil di atas konten tabel.
-- Tampilan tombol close modal Data Kelas/Pembimbing disamakan dengan modal Edit Program Keahlian.
-- Ikon search Daftar IDUKA disatukan dengan tombol Cari.
-- Tombol Batal pada modal yang ditangani dikomentari Terlebih Dahulu.
-
+-Memperbaiki foto jurnal yang tidak muncul saat detail jurnal dibuka oleh Guru.
+-Memperbaiki akses foto jurnal/di detail journal dan alur modal detail.
+-Memperjelas status jurnal yang sudah diproses di halaman siswa.
