@@ -3,12 +3,21 @@
 @section('content')
 <div class="container">
     <h2>Konfirmasi Absensi Siswa</h2>
+    @if (!empty($pageError))
+        <div class="alert alert-warning" role="alert">{{ $pageError }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+    @endif
     <ul class="nav nav-tabs" id="absensiTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="absensi-tab" data-toggle="tab" href="#absensi" role="tab">Absensi</a>
+            <a class="nav-link active" id="absensi-tab" data-bs-toggle="tab" href="#absensi" role="tab">Absensi</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="izin-tab" data-toggle="tab" href="#izin" role="tab">Izin</a>
+            <a class="nav-link" id="izin-tab" data-bs-toggle="tab" href="#izin" role="tab">Izin</a>
         </li>
     </ul>
     <div class="tab-content" id="absensiTabContent">
@@ -54,8 +63,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#approveModal{{ $absensi->id }}">Setujui</button>
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejectModal{{ $absensi->id }}">Tolak</button>
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal{{ $absensi->id }}">Setujui</button>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $absensi->id }}">Tolak</button>
                                     <!-- Modal Approve -->
                                     <div class="modal fade" id="approveModal{{ $absensi->id }}" tabindex="-1">
                                         <div class="modal-dialog">
@@ -64,14 +73,14 @@
                                                     @csrf
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Setujui Absensi</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <p>Apakah Anda yakin ingin menyetujui absensi ini?</p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-success">Ya, Setujui</button>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button> --}}
                                                     </div>
                                                 </form>
                                             </div>
@@ -85,7 +94,7 @@
                                                     @csrf
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Tolak Absensi</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
@@ -95,7 +104,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-danger">Tolak</button>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button> --}}
                                                     </div>
                                                 </form>
                                             </div>
@@ -153,8 +162,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#approveIzinModal{{ $izin->id }}">Setujui</button>
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejectIzinModal{{ $izin->id }}">Tolak</button>
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveIzinModal{{ $izin->id }}">Setujui</button>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectIzinModal{{ $izin->id }}">Tolak</button>
                                     <!-- Modal Approve Izin -->
                                     <div class="modal fade" id="approveIzinModal{{ $izin->id }}" tabindex="-1">
                                         <div class="modal-dialog">
@@ -163,14 +172,14 @@
                                                     @csrf
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Setujui Izin</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <p>Apakah Anda yakin ingin menyetujui izin ini?</p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-success">Ya, Setujui</button>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button> --}}
                                                     </div>
                                                 </form>
                                             </div>
@@ -184,7 +193,7 @@
                                                     @csrf
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Tolak Izin</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
@@ -194,7 +203,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-danger">Tolak</button>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button> --}}
                                                     </div>
                                                 </form>
                                             </div>

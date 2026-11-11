@@ -574,6 +574,14 @@ nav.layout-navbar {
     outline: none !important;
 }
 
+.attendance-chart-filter {
+    padding-right: 2.25rem !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.65rem center !important;
+    background-size: 16px 12px !important;
+}
+
 .form-control-lg {
     padding: 13px 16px !important;
     font-size: 15px !important;
@@ -654,6 +662,46 @@ nav.layout-navbar {
 .modal-header .btn-close:focus,
 .modal-header .btn-close:active {
     transform: translateY(-50%) !important;
+}
+
+.iduka-edit-modal-header {
+    background-color: #3b82f6 !important;
+}
+
+.iduka-edit-modal-header .modal-title {
+    color: #fff !important;
+}
+
+.iduka-edit-modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    background-color: rgba(15, 23, 42, 0.18);
+    border-radius: 0.5rem;
+    opacity: 1;
+}
+
+.student-edit-modal-header,
+.detail-pembimbing-modal-header {
+    background-color: #3b82f6 !important;
+}
+
+.student-edit-modal-header .modal-title,
+.detail-pembimbing-modal-header .modal-title {
+    color: #fff !important;
+}
+
+.modal-header .modal-close-light {
+    filter: none !important;
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+    opacity: 0.75;
+}
+
+.modal-header .modal-close-light:hover,
+.modal-header .modal-close-light:focus {
+    background-color: #fff !important;
+    opacity: 1;
 }
 
 .modal-title {

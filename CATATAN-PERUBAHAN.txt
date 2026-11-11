@@ -1,3 +1,4 @@
+
 PEMBARUAN DEBUGGING KAPROG DAN AKUN TESTING LOKAL
 =================================================
 
@@ -28,3 +29,10 @@ Belum termasuk dalam perubahan ini:
 - Konfir Jurnal pada role Kaprog belum diperbaiki/diverifikasi.
 - Audit kelengkapan data akun dummy untuk seluruh role belum dilakukan.
 - Relasi jurusan dan data akun lokal tidak disertakan dalam repository.
+=======
+Perbaikan
+
+-Memperbaiki foto jurnal yang tidak muncul saat detail jurnal dibuka oleh Guru.
+-Memperbaiki akses foto jurnal/di detail journal dan alur modal detail.
+-Memperjelas status jurnal yang sudah diproses di halaman siswa.
+

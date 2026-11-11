@@ -113,7 +113,7 @@
                                                         <td>{{ $s->name }}</td>
                                                         <td>{{ $s->nip }}</td>
                                                         <td>
-                                                            {{ optional($s->kelas)->name_kelas ?? '' }}
+                                                            {{ trim(($s->kelas->kelas ?? '') . ' ' . ($s->kelas->name_kelas ?? '')) }}
                                                             <small class="text-muted d-block">ID :
                                                                 {{ $s->kelas_id ?? '-' }}</small>
                                                         </td>
@@ -145,92 +145,6 @@
                                                         </td>
                                                     </tr>
 
-                                                    <!-- Modal Edit Siswa untuk setiap siswa -->
-                                                    <div class="modal fade" id="editSiswaModal{{ $s->id }}"
-                                                        tabindex="-1" aria-labelledby="editSiswaModalLabel"
-                                                        aria-hidden="true">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">Edit Data Siswa</h5>
-                                                                    <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"></button>
-                                                                </div>
-                                                                <form action="{{ route('siswa.update', $s->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('PUT')
-                                                                    <div class="modal-body">
-                                                                        <div class="mb-3">
-                                                                            <label class="form-label">Nama Siswa</label>
-                                                                            <input type="text" class="form-control"
-                                                                                name="name"
-                                                                                value="{{ $s->name }}" required>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <label class="form-label">NIS</label>
-                                                                            <input type="text" class="form-control"
-                                                                                name="nip"
-                                                                                value="{{ $s->nip }}" required>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <label class="form-label">Kelas</label>
-                                                                            <select class="form-control" name="kelas_id"
-                                                                                required>
-                                                                                <option value="">Pilih Kelas</option>
-                                                                                @foreach ($kelas as $kls)
-                                                                                    <option value="{{ $kls->id }}"
-                                                                                        {{ $s->kelas_id == $kls->id ? 'selected' : '' }}>
-                                                                                        {{ $kls->kelas }}
-                                                                                        {{ $kls->name_kelas }}
-                                                                                    </option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <label class="form-label"> Konsentrasi
-                                                                                Keahlian</label>
-                                                                            <select class="form-control" name="konke_id"
-                                                                                required>
-                                                                                <option value="">Pilih Konsentrasi
-                                                                                    Keahlian</option>
-                                                                                @foreach ($konke as $k)
-                                                                                    <option value="{{ $k->id }}"
-                                                                                        {{ $s->konke_id == $k->id ? 'selected' : '' }}>
-                                                                                        {{ $k->name_konke }}
-                                                                                    </option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <label class="form-label">Email</label>
-                                                                            <input type="text" class="form-control"
-                                                                                name="email"
-                                                                                value="{{ $s->email }}" required>
-                                                                        </div>
-                                                                      <div class="mb-3">
-    <label class="form-label">Password Baru (Opsional)</label>
-    <div class="input-group">
-        <input type="password" class="form-control" id="password-optional" name="password">
-        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-optional" tabindex="-1">
-            <i class="fas fa-eye-slash"></i>
-        </button>
-    </div>
-</div>
-
-
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary"
-                                                                            data-bs-dismiss="modal">Batal</button>
-                                                                        <button type="submit"
-                                                                            class="btn btn-primary">Simpan
-                                                                            Perubahan</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -242,7 +156,75 @@
                 </div>
             </div>
         </div>
-    </body>
+    @foreach ($siswa as $s)
+        <div class="modal fade" id="editSiswaModal{{ $s->id }}" tabindex="-1"
+            aria-labelledby="editSiswaModalLabel{{ $s->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white student-edit-modal-header">
+                        <h5 class="modal-title" id="editSiswaModalLabel{{ $s->id }}">Edit Data Siswa</h5>
+                        <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('siswa.update', $s->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nama Siswa</label>
+                                <input type="text" class="form-control" name="name" value="{{ $s->name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">NIS</label>
+                                <input type="text" class="form-control" name="nip" value="{{ $s->nip }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Jurusan</label>
+                                <select class="form-control student-jurusan" name="konke_id" required>
+                                    <option value="">Pilih Konsentrasi Keahlian</option>
+                                    @foreach ($konke as $k)
+                                        <option value="{{ $k->id }}" @selected($s->konke_id == $k->id)>
+                                            {{ $k->name_konke }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Kelas (XII)</label>
+                                <select class="form-control student-kelas" name="kelas_id" required disabled>
+                                    <option value="">Pilih Jurusan terlebih dahulu</option>
+                                    @foreach ($kelas as $kls)
+                                        <option value="{{ $kls->id }}" data-konke-id="{{ $kls->konke_id }}"
+                                            data-kelas="{{ $kls->name_kelas }}" @selected($s->kelas_id == $kls->id)>
+                                            {{ trim(($kls->kelas ?? 'XII') . ' ' . $kls->name_kelas) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" value="{{ $s->email }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password Baru (Opsional)</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control"
+                                        id="password-optional-{{ $s->id }}" name="password">
+                                    <button type="button" class="btn btn-outline-secondary toggle-password"
+                                        data-target="password-optional-{{ $s->id }}" tabindex="-1">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
     {{-- create datasiswa --}}
     <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel"
         aria-hidden="true">
@@ -304,7 +286,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
 
                         <button type="submit" class="btn btn-primary">Simpan</button>
 
@@ -317,6 +299,40 @@
     @include('siswa.datasiswa.createSiswa')
     @include('siswa.datasiswa.editSiswa')
 
+        </body>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const kelasByKonkeId = @json($kelasByKonkeId);
+
+                document.querySelectorAll('.student-jurusan').forEach(jurusanSelect => {
+                    const modal = jurusanSelect.closest('.modal-content');
+                    const kelasSelect = modal.querySelector('.student-kelas');
+                    const options = Array.from(kelasSelect.options).filter(option => option.value);
+
+                    const updateOptions = function (preserveSelection = false) {
+                        const selectedJurusan = jurusanSelect.value;
+                        const allowedClasses = kelasByKonkeId[selectedJurusan] || [];
+
+                        options.forEach(option => {
+                            option.hidden = option.dataset.konkeId !== selectedJurusan ||
+                                !allowedClasses.includes(option.dataset.kelas);
+                        });
+                        kelasSelect.disabled = allowedClasses.length === 0;
+                        kelasSelect.options[0].textContent = selectedJurusan
+                            ? (allowedClasses.length ? 'Pilih Kelas XII' : 'Tidak ada kelas untuk jurusan ini')
+                            : 'Pilih Jurusan terlebih dahulu';
+
+                        if (!preserveSelection || !kelasSelect.selectedOptions[0] ||
+                            kelasSelect.selectedOptions[0].hidden) {
+                            kelasSelect.value = '';
+                        }
+                    };
+
+                    jurusanSelect.addEventListener('change', () => updateOptions());
+                    updateOptions(true);
+                });
+            });
+        </script>
     </html>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

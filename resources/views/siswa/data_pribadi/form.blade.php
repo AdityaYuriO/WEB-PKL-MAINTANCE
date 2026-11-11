@@ -118,24 +118,27 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Kelas <span class="text-danger">*</span></label>
-                                <select class="form-select" name="kelas_id" required>
-                                    <option value="">-- Pilih Kelas --</option>
-                                    @foreach ($kelas as $kls)
-                                        <option value="{{ $kls->id }}" {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
-                                            {{ $kls->name_kelas }}
+                                <label class="form-label">Konsentrasi Keahlian <span class="text-danger">*</span></label>
+                                <select class="form-select student-jurusan" name="konke_id" required>
+                                    <option value="">-- Pilih Jurusan --</option>
+                                    @foreach ($konke as $k)
+                                        <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
+                                            {{ $k->name_konke }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Konsentrasi Keahlian <span class="text-danger">*</span></label>
-                                <select class="form-select" name="konke_id" required>
-                                    <option value="">-- Pilih Jurusan --</option>
-                                    @foreach ($konke as $k)
-                                        <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
-                                            {{ $k->name_konke }}
+                                <label class="form-label">Kelas (XII) <span class="text-danger">*</span></label>
+                                <select class="form-select student-kelas" name="kelas_id" required disabled>
+                                    <option value="">Pilih Jurusan terlebih dahulu</option>
+                                    @foreach ($kelas as $kls)
+                                        <option value="{{ $kls->id }}"
+                                            data-konke-id="{{ $kls->konke_id }}"
+                                            data-kelas="{{ $kls->name_kelas }}"
+                                            @selected($siswa->kelas_id == $kls->id)>
+                                            {{ trim(($kls->kelas ?? 'XII') . ' ' . $kls->name_kelas) }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -318,7 +321,38 @@
     </form>
 </div>
 
-<!-- SweetAlert2 Scripts & Handlers -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kelasByKonkeId = @json($kelasByKonkeId);
+            document.querySelectorAll('.student-jurusan').forEach(jurusanSelect => {
+                const form = jurusanSelect.closest('form');
+                const kelasSelect = form.querySelector('.student-kelas');
+                const options = Array.from(kelasSelect.options).filter(option => option.value);
+                const updateOptions = function (preserveSelection = false) {
+                    const selectedJurusan = jurusanSelect.value;
+                    const allowedClasses = kelasByKonkeId[selectedJurusan] || [];
+
+                    options.forEach(option => {
+                        option.hidden = option.dataset.konkeId !== selectedJurusan ||
+                            !allowedClasses.includes(option.dataset.kelas);
+                    });
+                    kelasSelect.disabled = allowedClasses.length === 0;
+                    kelasSelect.options[0].textContent = selectedJurusan
+                        ? (allowedClasses.length ? 'Pilih Kelas XII' : 'Tidak ada kelas untuk jurusan ini')
+                        : 'Pilih Jurusan terlebih dahulu';
+                    if (!preserveSelection || !kelasSelect.selectedOptions[0] ||
+                        kelasSelect.selectedOptions[0].hidden) {
+                        kelasSelect.value = '';
+                    }
+                };
+
+                jurusanSelect.addEventListener('change', () => updateOptions());
+                updateOptions(true);
+            });
+        });
+    </script>
+
+    <!-- SweetAlert2 Scripts & Handlers -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if (session('success'))
     <script>

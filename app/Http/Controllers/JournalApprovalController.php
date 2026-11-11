@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Log;
 class JournalApprovalController extends Controller
 {
     /**
-     * Helper method untuk mencari atau membuat data guru
+     * Helper method untuk mencari data guru milik user (tanpa membuat data baru)
      */
-    private function findOrCreateGuru($user)
+    private function findGuru($user)
     {
         // Cari berdasarkan user_id (cara normal)
         $guru = Guru::where('user_id', $user->id)->first();
@@ -48,16 +48,29 @@ class JournalApprovalController extends Controller
             return $guru;
         }
 
-        // Jika tidak ditemukan sama sekali, buat data guru baru
-        $guru = new Guru();
-        $guru->user_id = $user->id;
-        $guru->nama = $user->name;
-        $guru->email = $user->email;
-        $guru->nip = 'AUTO-' . date('Ymd') . '-' . $user->id; // NIP otomatis
-        $guru->save();
+        // Cari berdasarkan NIP (akun user dan data guru memakai NIP yang sama)
+        if (!empty($user->nip)) {
+            $guru = Guru::where('nip', $user->nip)->first();
 
-        Log::info("Created new guru for user: {$user->name}");
-        return $guru;
+            if ($guru) {
+                $guru->user_id = $user->id;
+                $guru->save();
+                Log::info("Linked guru by nip for guru: {$guru->nama}");
+                return $guru;
+            }
+        }
+
+        // Tidak ditemukan: JANGAN membuat baris baru di tabel gurus.
+        // Tabel gurus punya banyak kolom wajib tanpa default (nik, tempat_lahir, tanggal_lahir,
+        // jenis_kelamin, alamat, no_hp, password, konke_id), jadi insert otomatis selalu gagal.
+        // Kembalikan guru kosong (id = 0, tidak disimpan) agar daftar jurnal tampil kosong
+        // dan pengecekan otorisasi tetap menolak, tanpa error.
+        Log::warning("Data guru tidak ditemukan untuk user_id: {$user->id} ({$user->email})");
+
+        $guruKosong = new Guru();
+        $guruKosong->id = 0;
+
+        return $guruKosong;
     }
 
     /**
@@ -96,8 +109,8 @@ class JournalApprovalController extends Controller
             }
 
             if ($user->role === 'guru' || $user->role === 'kaprog') {
-                // Gunakan helper method untuk mencari/membuat data guru
-                $pembimbing = $this->findOrCreateGuru($user);
+                // Gunakan helper method untuk mencari data guru
+                $pembimbing = $this->findGuru($user);
 
                 // Query menggunakan relasi langsung
                 // Hanya tampilkan jurnal yang belum disetujui oleh Pembimbing/Kaprog dan belum disetujui oleh IDUKA
@@ -124,6 +137,9 @@ class JournalApprovalController extends Controller
             return redirect()->back()->with('error', 'Akses tidak diizinkan.');
         } catch (\Exception $e) {
             Log::error('Error in index: ' . $e->getMessage());
+            if (auth()->user()?->role === 'guru') {
+                throw $e;
+            }
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -153,8 +169,8 @@ class JournalApprovalController extends Controller
             }
 
             if ($user->role === 'guru' || $user->role === 'kaprog') {
-                // Gunakan helper method untuk mencari/membuat data guru
-                $pembimbing = $this->findOrCreateGuru($user);
+                // Gunakan helper method untuk mencari data guru
+                $pembimbing = $this->findGuru($user);
 
                 // PERUBAHAN: Tampilkan semua jurnal yang sudah disetujui atau ditolak
                 $jurnals = Jurnal::with('user')
@@ -174,6 +190,9 @@ class JournalApprovalController extends Controller
             return redirect()->back()->with('error', 'Akses tidak diizinkan.');
         } catch (\Exception $e) {
             Log::error('Error in riwayat: ' . $e->getMessage());
+            if (auth()->user()?->role === 'guru') {
+                throw $e;
+            }
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -203,7 +222,7 @@ class JournalApprovalController extends Controller
                 $journal->status = 'approved';
 
             } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
-                $pembimbing = $this->findOrCreateGuru($user);
+                $pembimbing = $this->findGuru($user);
 
                 if ($journal->pembimbing_id !== $pembimbing->id) {
                     Log::warning("Unauthorized approval attempt by " . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . " {$pembimbing->id} for journal {$id}");
@@ -263,7 +282,7 @@ class JournalApprovalController extends Controller
                 ]);
 
             } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
-                $pembimbing = $this->findOrCreateGuru($user);
+                $pembimbing = $this->findGuru($user);
 
                 if ($journal->pembimbing_id !== $pembimbing->id) {
                     Log::warning("Unauthorized rejection attempt by " . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . " {$pembimbing->id} for journal {$id}");
@@ -287,6 +306,48 @@ class JournalApprovalController extends Controller
             Log::error('Error in reject: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menolak: ' . $e->getMessage());
         }
+    }
+
+    public function showPhoto($id)
+    {
+        $journal = Jurnal::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user->role === 'iduka') {
+            $iduka = Iduka::where('user_id', $user->id)->first();
+            abort_unless($iduka && $journal->iduka_id === $iduka->id, 403);
+        } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
+            $pembimbing = $this->findGuru($user);
+            abort_unless($pembimbing && $journal->pembimbing_id === $pembimbing->id, 403);
+        } else {
+            abort(403);
+        }
+
+        $storedPath = ltrim(str_replace('\\', '/', (string) $journal->foto), '/');
+        if (str_starts_with($storedPath, 'uploads/jurnals/')) {
+            $directory = public_path('uploads/jurnals');
+            $relativePath = substr($storedPath, strlen('uploads/jurnals/'));
+        } elseif (str_starts_with($storedPath, 'storage/')) {
+            $directory = storage_path('app/public');
+            $relativePath = substr($storedPath, strlen('storage/'));
+        } else {
+            abort(404);
+        }
+
+        $basePath = realpath($directory);
+        $photoPath = realpath($directory . DIRECTORY_SEPARATOR . $relativePath);
+        abort_unless(
+            $basePath && $photoPath && str_starts_with($photoPath, $basePath . DIRECTORY_SEPARATOR),
+            404
+        );
+
+        $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->file($photoPath);
+        abort_unless(is_string($mimeType) && str_starts_with($mimeType, 'image/'), 404);
+
+        return response()->file($photoPath, [
+            'Content-Type' => $mimeType,
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 
     /**
@@ -313,7 +374,7 @@ class JournalApprovalController extends Controller
                     ], 403);
                 }
             } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
-                $pembimbing = $this->findOrCreateGuru($user);
+                $pembimbing = $this->findGuru($user);
 
                 if (!$pembimbing || $journal->pembimbing_id !== $pembimbing->id) {
                     Log::warning('Unauthorized ' . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . ' access attempt for journal ' . $id);

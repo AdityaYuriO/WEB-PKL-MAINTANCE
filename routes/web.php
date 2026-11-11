@@ -4,6 +4,7 @@
 use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AbsensiGuruController;
+use App\Http\Controllers\GuruAbsensiController;
 use App\Http\Controllers\DataAbsensiController;
 use App\Http\Controllers\Hubin\JurnalController;
 use App\Http\Controllers\IndikatorPenilaianController;
@@ -525,6 +526,15 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
     Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
     Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.detail');
+    Route::get('/approval/{id}/photo', [JournalApprovalController::class, 'showPhoto'])->name('approval.photo');
+});
+
+Route::middleware(['auth', 'hakakses:guru'])->prefix('guru/absensi')->name('guru.absensi.')->group(function () {
+    Route::get('/', [GuruAbsensiController::class, 'index'])->name('index');
+    Route::post('/{id}/approve', [GuruAbsensiController::class, 'approveAbsensi'])->name('approve');
+    Route::post('/{id}/reject', [GuruAbsensiController::class, 'rejectAbsensi'])->name('reject');
+    Route::post('/izin/{id}/approve', [GuruAbsensiController::class, 'approveIzin'])->name('approveIzin');
+    Route::post('/izin/{id}/reject', [GuruAbsensiController::class, 'rejectIzin'])->name('rejectIzin');
 });
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {

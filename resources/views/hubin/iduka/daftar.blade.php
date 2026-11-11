@@ -52,14 +52,11 @@
                         <div class="col-md-6">
                             <form action="{{ route('hubin.iduka.daftar') }}" method="GET">
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input type="text" class="form-control border-start-0 ps-0"
+                                    <input type="text" class="form-control"
                                         placeholder="Cari nama, NIP, atau email..." name="search"
                                         value="{{ $search ?? '' }}">
                                     <button class="btn btn-primary" type="submit">
-                                        Cari
+                                        <i class="bi bi-search me-1"></i>Cari
                                     </button>
                                     @if ($search ?? false)
                                         <a href="{{ route('hubin.iduka.daftar') }}" class="btn btn-outline-secondary">
@@ -280,7 +277,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle me-1"></i> Simpan Perubahan
                             </button>

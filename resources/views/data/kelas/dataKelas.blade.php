@@ -111,34 +111,37 @@
                                     <div class="modal-body">
                                         <form action="{{ route('kelas.index') }}" method="GET">
                                             <div class="mb-3">
-                                                <label for="kelas" class="form-label">Pilih Kelas</label>
-                                                <select name="kelas" id="kelas" class="form-control">
-                                                    <option value="">-- Pilih Kelas --</option>
-                                                    <option value="X" {{ request('kelas') == 'X' ? 'selected' : '' }}>X</option>
-                                                    <option value="XI" {{ request('kelas') == 'XI' ? 'selected' : '' }}>XI</option>
-                                                    <option value="XII" {{ request('kelas') == 'XII' ? 'selected' : '' }}>XII</option>
+                                                <label for="searchKonke" class="form-label">Pilih Jurusan</label>
+                                                <select name="konke_id" id="searchKonke" class="form-control">
+                                                    <option value="">-- Pilih Jurusan --</option>
+                                                    @foreach ($konke as $k)
+                                                        <option value="{{ $k->id }}" @selected(request('konke_id') == $k->id)>
+                                                            {{ $k->name_konke }}
+                                                        </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
-
                                             <div class="mb-3">
-                                                <label for="konsentrasi" class="form-label">Pilih Konsentrasi Keahlian</label>
-                                                <select name="konsentrasi" id="konsentrasi" class="form-control">
-                                                    <option value="">-- Pilih Konsentrasi Keahlian --</option>
-                                                    <option value="RPL" {{ request('konsentrasi') == 'RPL' ? 'selected' : '' }}>Rekayasa Perangkat Lunak</option>
-                                                    <option value="TKJ" {{ request('konsentrasi') == 'TKJ' ? 'selected' : '' }}>Teknik Komputer dan Jaringan</option>
-                                                    <option value="DKV" {{ request('konsentrasi') == 'DKV' ? 'selected' : '' }}>Desain Komunikasi Visual</option>
-                                                    <option value="TKRO" {{ request('konsentrasi') == 'TKRO' ? 'selected' : '' }}>Teknik Kendaraan Ringan Otomotif</option>
+                                                <label for="searchNameKelas" class="form-label">Pilih Kelas (XII)</label>
+                                                <select name="name_kelas" id="searchNameKelas" class="form-control" disabled>
+                                                    <option value="">Pilih Jurusan terlebih dahulu</option>
+                                                    @foreach ($konke as $k)
+                                                        @foreach ($kelasByKonkeId[$k->id] ?? [] as $className)
+                                                            <option value="{{ $className }}"
+                                                                data-konke-id="{{ $k->id }}"
+                                                                @selected(request('name_kelas') === $className && request('konke_id') == $k->id)>
+                                                                {{ $className }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endforeach
                                                 </select>
                                             </div>
-
+                                            <input type="hidden" name="kelas" value="XII">
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary btn-sm">Cari</button>
                                             </div>
-
                                         </form>
-
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -151,11 +154,10 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
-                    @if(request('kelas') || request('konsentrasi'))
+                    @if(request('konke_id') || request('name_kelas'))
                         <div class="alert alert-info">
-                            Menampilkan hasil untuk:
-                            @if(request('kelas')) <strong>Kelas {{ request('kelas') }}</strong> @endif
-                            @if(request('konsentrasi')) <strong>Konsentrasi {{ request('konsentrasi') }}</strong> @endif
+                            Menampilkan kelas XII
+                            @if(request('name_kelas')) <strong>{{ request('name_kelas') }}</strong> @endif
                             <a href="{{ route('kelas.index') }}" class="btn btn-sm btn-link">Reset Filter</a>
                         </div>
                     @endif
@@ -165,7 +167,9 @@
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="mb-0" style="font-size: 18px"> {{ $item->name_kelas ?? '-' }}</div>
+                                    <div class="mb-0 kelas-title" style="font-size: 18px">
+                                        {{ trim(($item->kelas ?? '') . ' ' . ($item->name_kelas ?? '-')) }}
+                                    </div>
                                     <small class="text-muted d-block">ID : {{ $item->id ?? '-' }}</small>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -204,30 +208,36 @@
                                     @method('PUT')
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label class="form-label">Kelas*</label>
-                                            <select class="form-control" name="kelas" required>
-                                                <option value="">Pilih Kelas</option>
-                                                <option value="X" {{ $item->kelas == 'X' ? 'selected' : '' }}>X</option>
-                                                <option value="XI" {{ $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
-                                                <option value="XII" {{ $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
-                                            </select>
+                                            <label class="form-label">Tingkat Kelas*</label>
+                                            <input type="text" class="form-control" value="XII" readonly>
+                                            <input type="hidden" name="kelas" value="XII">
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">Konsentrasi Keahlian*</label>
-                                            <select class="form-control" name="konke_id" required>
+                                            <label class="form-label">Jurusan*</label>
+                                            <select class="form-control kelas-jurusan" id="editKonke{{ $item->id }}" name="konke_id" required>
                                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                                 @foreach($konke as $k)
                                                     <option value="{{ $k->id }}" {{ $item->konke_id == $k->id ? 'selected' : '' }}>
-                                                        {{ $k->konke }} {{ $k->name_konke }}
+                                                        {{ $k->name_konke }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
-                                            <input type="text" class="form-control" id="name_kelas{{ $item->id }}" name="name_kelas" value="{{ $item->name_kelas }}" placeholder="Masukkan Nama Kelas" required>
+                                            <label for="editNameKelas{{ $item->id }}" class="form-label">Nama Kelas*</label>
+                                            <select class="form-control kelas-nama" id="editNameKelas{{ $item->id }}" name="name_kelas" required disabled>
+                                                <option value="">Pilih Jurusan terlebih dahulu</option>
+                                                @foreach($konke as $k)
+                                                    @foreach($kelasByKonkeId[$k->id] ?? [] as $className)
+                                                        <option value="{{ $className }}" data-konke-id="{{ $k->id }}"
+                                                            @selected($item->konke_id == $k->id && $item->name_kelas === $className)>
+                                                            {{ $className }}
+                                                        </option>
+                                                    @endforeach
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -267,17 +277,13 @@
 
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Kelas*</label>
-                            <select class="form-control" name="kelas" required>
-                                <option value="">Pilih Kelas</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-                            </select>
+                            <label class="form-label">Tingkat Kelas*</label>
+                            <input type="text" class="form-control" value="XII" readonly>
+                            <input type="hidden" name="kelas" value="XII">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian*</label>
-                            <select class="form-control" name="konke_id" required>
+                            <label class="form-label">Jurusan*</label>
+                            <select class="form-control kelas-jurusan" id="addKonke" name="konke_id" required>
                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                 @foreach($konke as $k)
                                 <option value="{{ $k->id }}">{{ $k->name_konke }}</option>
@@ -285,8 +291,15 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
-                            <input type="text" class="form-control" id="name_kelas" name="name_kelas" placeholder="Masukkan Nama Kelas" required>
+                            <label for="addNameKelas" class="form-label">Nama Kelas*</label>
+                            <select class="form-control kelas-nama" id="addNameKelas" name="name_kelas" required disabled>
+                                <option value="">Pilih Jurusan terlebih dahulu</option>
+                                @foreach($konke as $k)
+                                    @foreach($kelasByKonkeId[$k->id] ?? [] as $className)
+                                        <option value="{{ $className }}" data-konke-id="{{ $k->id }}">{{ $className }}</option>
+                                    @endforeach
+                                @endforeach
+                            </select>
                             <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar ya!</i></small>
                         </div>
                     </div>
@@ -308,6 +321,47 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kelasByKonkeId = @json($kelasByKonkeId);
+
+            function connectClassSelect(jurusanSelect, kelasSelect) {
+                if (!jurusanSelect || !kelasSelect) return;
+
+                const options = Array.from(kelasSelect.options).filter(option => option.value);
+                const updateOptions = function (preserveSelection = false) {
+                    const selectedJurusan = jurusanSelect.value;
+                    const allowedClasses = kelasByKonkeId[selectedJurusan] || [];
+
+                    options.forEach(option => {
+                        option.hidden = option.dataset.konkeId !== selectedJurusan ||
+                            !allowedClasses.includes(option.value);
+                    });
+
+                    kelasSelect.disabled = allowedClasses.length === 0;
+                    kelasSelect.options[0].textContent = selectedJurusan
+                        ? (allowedClasses.length ? 'Pilih Kelas XII' : 'Tidak ada kelas untuk jurusan ini')
+                        : 'Pilih Jurusan terlebih dahulu';
+
+                    if (!preserveSelection || !kelasSelect.selectedOptions[0] ||
+                        kelasSelect.selectedOptions[0].hidden) {
+                        kelasSelect.value = '';
+                    }
+                };
+
+                jurusanSelect.addEventListener('change', () => updateOptions());
+                updateOptions(true);
+            }
+
+            connectClassSelect(
+                document.getElementById('searchKonke'),
+                document.getElementById('searchNameKelas')
+            );
+            document.querySelectorAll('.kelas-jurusan').forEach(jurusanSelect => {
+                const modal = jurusanSelect.closest('.modal-content');
+                connectClassSelect(jurusanSelect, modal.querySelector('.kelas-nama'));
+            });
+        });
+
         document.querySelectorAll('.delete-btn').forEach(form => {
             form.addEventListener('submit', function(event) {
                 event.preventDefault();

@@ -281,6 +281,43 @@
         /* 8) JUDUL BANNER DASHBOARD: .card-title di app.css memaksa warna gelap,
               padahal di banner biru harus putih. */
         .card-title.text-white { color: #fff !important; }
+
+        .page-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(248, 250, 252, .78);
+            cursor: wait;
+        }
+        .page-loading-overlay.is-visible { display: flex; }
+        .page-loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 28px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+        }
+        .page-loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #dbeafe;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: page-loading-spin .8s linear infinite;
+        }
+        @keyframes page-loading-spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 
     {{-- Tombol minimize sidebar di desktop (>= 1200px). Layar kecil tetap memakai bawaan template. --}}
@@ -324,6 +361,14 @@
 </head>
 
 <body>
+    <div id="pageLoadingOverlay" class="page-loading-overlay" role="status" aria-live="polite"
+        aria-label="Memuat halaman">
+        <div class="page-loading-indicator">
+            <span class="page-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat halaman...</span>
+        </div>
+    </div>
+
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
         <!-- Tombol minimize sidebar (desktop). Sengaja di luar sidebar supaya tetap terlihat saat sidebar ditutup. -->
@@ -378,17 +423,17 @@
 
                     <!-- Layouts -->
                     @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
-                        <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('hubin.iduka.index', 'hubin.detail.iduka') ? 'active' : '' }}">
                             <a href="{{ route('hubin.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('kelas.index', 'siswa.kelas') ? 'active' : '' }}">
                             <a href="{{ route('kelas.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Basic">Data Siswa</div>
+                                <div data-i18n="Basic">Data Kelas</div>
                             </a>
                         </li>
 
@@ -400,20 +445,20 @@
                         </li>
 
                         <li
-                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                            class="menu-item {{ Request::routeIs('guru.*', 'tk.*') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('guru.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('guru.*') ? 'active' : '' }}">
                                     <a href="{{ route('guru.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item {{ Request::routeIs('tk.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('tk.*', 'kependik.*') ? 'active' : '' }}">
                                     <a href="{{ route('tk.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -468,15 +513,24 @@
                         </li>
                     @endif
 
-                    {{-- sementara akses dari hubin di blok dulu --}}
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog']))
+
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog', 'hubin']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                                 <div data-i18n="Basic">Konfir Journal</div>
                             </a>
                         </li>
+                    @endif
 
+                    @if (auth()->user()->role === 'guru')
+                        <li class="menu-item {{ Request::routeIs('guru.absensi.*') ? 'active' : '' }}">
+                            <a href="{{ route('guru.absensi.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-check-square"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a>
+                        </li>
+                    @elseif (in_array(auth()->user()->role, ['iduka', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('konfir.absen.index') ? 'active' : '' }}">
                             <a href="{{ route('konfir.absen.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-square"></i>
@@ -593,7 +647,7 @@ Request::routeIs('nilai-akhir.*')
                         <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
                             <a href="{{ route('data.siswa') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Basic">Data siswa</div>
+                                <div data-i18n="Basic">Daftar Siswa</div>
                             </a>
                         </li>
 
@@ -790,7 +844,7 @@ Request::routeIs('nilai-akhir.*')
                         </li>
 
                         <li
-                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                            class="menu-item {{ Request::routeIs('pendamping.guru.*', 'pendamping.tk.*') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
@@ -798,13 +852,13 @@ Request::routeIs('nilai-akhir.*')
 
                             <ul class="menu-sub">
                                 <li
-                                    class="menu-item {{ Request::routeIs('pendamping.guru.index') ? 'active' : '' }}">
+                                    class="menu-item {{ Request::routeIs('pendamping.guru.*') ? 'active' : '' }}">
                                     <a href="{{ route('pendamping.guru.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item {{ Request::routeIs('pendamping.tk.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('pendamping.tk.*') ? 'active' : '' }}">
                                     <a href="{{ route('pendamping.tk.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -836,20 +890,20 @@ Request::routeIs('nilai-akhir.*')
                         </li>
 
                         <li
-                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                            class="menu-item {{ Request::routeIs('kepsek.guru.*', 'kepsek.tk.*') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('kepsek.guru.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('kepsek.guru.*') ? 'active' : '' }}">
                                     <a href="{{ route('kepsek.guru.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item {{ Request::routeIs('kepsek.tk.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('kepsek.tk.*') ? 'active' : '' }}">
                                     <a href="{{ route('kepsek.tk.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -1040,6 +1094,104 @@ Request::routeIs('nilai-akhir.*')
 
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            const storageKey = 'page-navigation-started-at';
+            const loadingDelay = 2000;
+            let loadingTimer;
+
+            function getNavigationMarker() {
+                try {
+                    return sessionStorage.getItem(storageKey);
+                } catch (error) {
+                    console.error('Unable to access navigation session storage:', error);
+                    return null;
+                }
+            }
+
+            function showLoading() {
+                overlay.classList.add('is-visible');
+            }
+
+            function clearLoading() {
+                clearTimeout(loadingTimer);
+                overlay.classList.remove('is-visible');
+                try {
+                    sessionStorage.removeItem(storageKey);
+                } catch (error) {
+                    console.error('Unable to clear navigation session storage:', error);
+                }
+            }
+
+            function markNavigation() {
+                try {
+                    sessionStorage.setItem(storageKey, Date.now().toString());
+                } catch (error) {
+                    console.error('Unable to store navigation state:', error);
+                }
+                clearTimeout(loadingTimer);
+                loadingTimer = setTimeout(showLoading, loadingDelay);
+            }
+
+            const previousNavigation = Number(getNavigationMarker());
+            if (previousNavigation) {
+                const elapsed = Date.now() - previousNavigation;
+                if (elapsed >= loadingDelay) {
+                    showLoading();
+                } else {
+                    loadingTimer = setTimeout(showLoading, loadingDelay - elapsed);
+                }
+                window.addEventListener('load', clearLoading, { once: true });
+                window.addEventListener('pageshow', clearLoading, { once: true });
+            }
+
+            document.addEventListener('click', function (event) {
+                if (event.defaultPrevented || event.button !== 0 ||
+                    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+                const link = event.target.closest('a[href]');
+                if (!link || link.hasAttribute('download') || link.target ||
+                    link.classList.contains('logout-btn') ||
+                    link.hasAttribute('data-bs-toggle')) return;
+
+                const destination = new URL(link.href, window.location.href);
+                if (destination.origin !== window.location.origin ||
+                    destination.href === window.location.href ||
+                    destination.hash && destination.pathname === window.location.pathname &&
+                        destination.search === window.location.search) return;
+
+                markNavigation();
+                setTimeout(function () {
+                    if (event.defaultPrevented) clearLoading();
+                }, 0);
+            });
+
+            document.addEventListener('submit', function (event) {
+                const form = event.target;
+                if (form.target && form.target !== '_self') return;
+                markNavigation();
+                setTimeout(function () {
+                    if (event.defaultPrevented) clearLoading();
+                }, 0);
+            });
+
+            window.addEventListener('beforeunload', function () {
+                if (!getNavigationMarker()) {
+                    try {
+                        sessionStorage.setItem(storageKey, Date.now().toString());
+                    } catch (error) {
+                        console.error('Unable to store navigation state:', error);
+                    }
+                }
+            });
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) clearLoading();
+            });
+        })();
+    </script>
 
     <script>
         if ("serviceWorker" in navigator) {

@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Konke;
 use App\Imports\SiswaImport;
+use App\Support\KelasJurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -25,9 +27,10 @@ class SiswaController extends Controller
                 ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at descending
                 ->paginate(10);
         $konke = Konke::all();
-        $kelas = Kelas::all();
+        $kelas = Kelas::where('kelas', 'XII')->get();
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
 
-        return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas', 'status'));
+        return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas', 'kelasByKonkeId', 'status'));
     }
 
     // public function showSiswa($id) {
@@ -40,10 +43,12 @@ class SiswaController extends Controller
     public function show($id)
     {
         $konke = Konke::all();
-        $kelas = Kelas::all();
+        $kelas = Kelas::where('kelas', 'XII')->get();
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
         $siswa = User::with('dataPribadi')->findOrFail($id);
         $dataPribadi = User::with('dataPribadi')->where('id', Auth::id())->first();
-        return view('siswa.datasiswa.detailSiswa', compact('siswa', 'dataPribadi', 'konke', 'kelas'));
+
+        return view('siswa.datasiswa.detailSiswa', compact('siswa', 'dataPribadi', 'konke', 'kelas', 'kelasByKonkeId'));
     }
 
 
@@ -55,10 +60,20 @@ class SiswaController extends Controller
 
     public function store(Request $request)
     {
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
+
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => 'required|unique:users,nip',
-            'kelas_id' =>  'required|exists:kelas,id',
+            'kelas_id' => [
+                'required',
+                Rule::exists('kelas', 'id')->where(fn ($query) => $query
+                    ->where('kelas', 'XII')
+                    ->where('konke_id', $request->input('konke_id'))
+                    ->whereIn('name_kelas', $allowedClasses)),
+            ],
             'konke_id' => 'required|exists:konkes,id',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6'
@@ -80,12 +95,20 @@ class SiswaController extends Controller
 
     public function update(Request $request, $id)
     {
-
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
 
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => "required|unique:users,nip,$id",
-           'kelas_id' =>  'required|exists:kelas,id',
+            'kelas_id' => [
+                'required',
+                Rule::exists('kelas', 'id')->where(fn ($query) => $query
+                    ->where('kelas', 'XII')
+                    ->where('konke_id', $request->input('konke_id'))
+                    ->whereIn('name_kelas', $allowedClasses)),
+            ],
             'konke_id' => 'required|exists:konkes,id',
             'email' => "required|email|unique:users,email,$id",
             'password' => 'nullable|min:6',
@@ -169,10 +192,20 @@ public function updateSiswa(Request $request, $id)
 
     // Update berdasarkan tipe data yang dikirim
     if ($request->has('name')) { // Jika ada field data pribadi
+        $allowedClasses = KelasJurusan::namesFor(
+            Konke::find($request->input('konke_id'))?->name_konke
+        );
+
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => 'required|string|max:255',
-            'kelas_id' => 'required|exists:kelas,id',
+            'kelas_id' => [
+                'required',
+                Rule::exists('kelas', 'id')->where(fn ($query) => $query
+                    ->where('kelas', 'XII')
+                    ->where('konke_id', $request->input('konke_id'))
+                    ->whereIn('name_kelas', $allowedClasses)),
+            ],
             'konke_id' => 'required|exists:konkes,id',
             'alamat' => 'required|string|max:255',
             'no_hp' => 'required|string|max:20',

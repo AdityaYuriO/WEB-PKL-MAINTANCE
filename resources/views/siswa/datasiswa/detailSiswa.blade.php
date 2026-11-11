@@ -143,7 +143,7 @@
                                                 <tr>
                                                     <td>Kelas</td>
                                                     <td>:</td>
-                                                    <td>{{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
+                                                    <td>{{ trim(($siswa->kelas->kelas ?? '') . ' ' . ($siswa->kelas->name_kelas ?? '-')) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Konsentrasi Keahlian</td>
@@ -333,24 +333,27 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
-                            <select class="form-control" name="kelas_id" required>
-                                <option value="">Pilih Kelas</option>
-                                @foreach ($kelas as $kls)
-                                    <option value="{{ $kls->id }}" {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
-                                        {{ $kls->kelas }} {{ $kls->name_kelas }}
+                            <label class="form-label">Jurusan</label>
+                            <select class="form-control student-jurusan" name="konke_id" required>
+                                <option value="">Pilih Konsentrasi Keahlian</option>
+                                @foreach ($konke as $k)
+                                    <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
+                                        {{ $k->name_konke }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label"> Konsentrasi Keahlian</label>
-                            <select class="form-control" name="konke_id" required>
-                                <option value="">Pilih Konsentrasi Keahlian</option>
-                                @foreach ($konke as $k)
-                                    <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
-                                        {{ $k->name_konke }}
+                            <label class="form-label">Kelas (XII)</label>
+                            <select class="form-control student-kelas" name="kelas_id" required disabled>
+                                <option value="">Pilih Jurusan terlebih dahulu</option>
+                                @foreach ($kelas as $kls)
+                                    <option value="{{ $kls->id }}"
+                                        data-konke-id="{{ $kls->konke_id }}"
+                                        data-kelas="{{ $kls->name_kelas }}"
+                                        @selected($siswa->kelas_id == $kls->id)>
+                                        {{ trim(($kls->kelas ?? 'XII') . ' ' . $kls->name_kelas) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -417,7 +420,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
                         <button type="submit" class="btn btn-primary">Simpan
                             Perubahan</button>
                     </div>
@@ -511,7 +514,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
                     <button type="submit" class="btn btn-primary">Simpan
                         Perubahan</button>
                 </div>
@@ -523,6 +526,33 @@
     </html>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const kelasByKonkeId = @json($kelasByKonkeId);
+            document.querySelectorAll('.student-jurusan').forEach(jurusanSelect => {
+                const modal = jurusanSelect.closest('.modal-content');
+                const kelasSelect = modal.querySelector('.student-kelas');
+                const options = Array.from(kelasSelect.options).filter(option => option.value);
+                const updateOptions = function (preserveSelection = false) {
+                    const selectedJurusan = jurusanSelect.value;
+                    const allowedClasses = kelasByKonkeId[selectedJurusan] || [];
+
+                    options.forEach(option => {
+                        option.hidden = option.dataset.konkeId !== selectedJurusan ||
+                            !allowedClasses.includes(option.dataset.kelas);
+                    });
+                    kelasSelect.disabled = allowedClasses.length === 0;
+                    kelasSelect.options[0].textContent = selectedJurusan
+                        ? (allowedClasses.length ? 'Pilih Kelas XII' : 'Tidak ada kelas untuk jurusan ini')
+                        : 'Pilih Jurusan terlebih dahulu';
+                    if (!preserveSelection || !kelasSelect.selectedOptions[0] ||
+                        kelasSelect.selectedOptions[0].hidden) {
+                        kelasSelect.value = '';
+                    }
+                };
+
+                jurusanSelect.addEventListener('change', () => updateOptions());
+                updateOptions(true);
+            });
+
             const selectAgama = document.getElementById('agama-select');
             const inputLainnya = document.getElementById('agama-lainnya-input');
             const containerLainnya = document.getElementById('agama-lainnya-container');

@@ -24,19 +24,20 @@
             @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
                 <div class="row mb-4">
                     <div class="col-12">
-                        <div class="alert alert-warning d-flex align-items-start" role="alert">
-                            <div class="me-3">
+                        <div class="alert alert-warning d-flex align-items-start gap-3" role="alert">
+                            <div class="flex-shrink-0 pt-1">
                                 <i class="fas fa-calendar-day fa-2x"></i>
                             </div>
-                            <div>
+                            <div class="flex-grow-1">
                                 <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
-                                <p class="mb-1">
-                                    Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
-                                    mungkin tidak lengkap atau dinonaktifkan.
-
+                                <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+                                    <p class="mb-0">
+                                        Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
+                                        mungkin tidak lengkap atau dinonaktifkan.
+                                    </p>
                                     {{-- Tampilkan tombol modal jika lebih dari 2 IDUKA libur --}}
                                     @if (count($holidaysByIduka) > 2)
-                                        <button type="button" class="btn btn-sm btn-outline-warning mt-2"
+                                        <button type="button" class="btn btn-sm btn-outline-warning flex-shrink-0"
                                             data-bs-toggle="modal" data-bs-target="#holidayModal">
                                             Lihat Daftar Lengkap ({{ count($holidaysByIduka) }} IDUKA)
                                         </button>
@@ -50,7 +51,7 @@
                                             @endforeach
                                         </ul>
                                     @endif
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,18 +135,11 @@
                         <div class="card-header bg-white border-0 py-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0 fw-semibold text-dark">Grafik Kehadiran</h5>
-                                <div class="dropdown">
-                                    <button id="chartFilterBtn" class="btn btn-sm btn-light border dropdown-toggle"
-                                        type="button" data-bs-toggle="dropdown">
-                                        7 Hari Terakhir
-                                    </button>
-                                    <ul class="dropdown-menu shadow-sm">
-                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="today">Hari
-                                                Ini</a></li>
-                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="7">7 Hari
-                                                Terakhir</a></li>
-                                    </ul>
-                                </div>
+                                <select id="chartFilterBtn" class="form-select form-select-sm w-auto attendance-chart-filter"
+                                    aria-label="Periode grafik kehadiran">
+                                    <option value="7" selected>7 Hari Terakhir</option>
+                                    <option value="today">Hari Ini</option>
+                                </select>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -682,14 +676,8 @@
             // Default tampil "7 Hari Terakhir"
             loadAttendanceChart('7');
 
-            // Klik dropdown filter
-            document.querySelectorAll('.chart-filter').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const filter = this.dataset.filter;
-                    document.getElementById('chartFilterBtn').innerText = this.innerText;
-                    loadAttendanceChart(filter);
-                });
+            document.getElementById('chartFilterBtn').addEventListener('change', function() {
+                loadAttendanceChart(this.value);
             });
 
             // Grafik Distribusi Jurusan (ambil dari backend)

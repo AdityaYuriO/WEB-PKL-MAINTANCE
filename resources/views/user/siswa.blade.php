@@ -41,24 +41,6 @@
                                                 placeholder="Masukkan NIP/NIS" required>
                                         </div>
 
-                                        <!-- Kelas -->
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Kelas</label>
-                                            <select id="kelas_id" name="kelas_id" class="form-select" required disabled>
-                                                <option value="">Pilih Jurusan terlebih dahulu</option>
-                                                @foreach ($kelas as $k)
-                                                    <option value="{{ $k->id }}"
-                                                        data-konke-id="{{ $k->konke_id }}"
-                                                        data-jurusan="{{ $k->konke->name_konke ?? '' }}"
-                                                        data-kelas="{{ $k->name_kelas }}"
-                                                        data-tingkat="{{ $k->kelas }}"
-                                                        @selected(old('kelas_id') == $k->id)>
-                                                        {{ trim(($k->kelas ?? '') . ' ' . ($k->name_kelas ?? '')) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
                                         <div class="mb-3">
                                             <label class="form-label">Tahun Ajaran</label>
                                             <input type="text" name="tahun_ajaran" class="form-control"
@@ -82,7 +64,7 @@
                                                 placeholder="Masukkan password" required>
                                         </div>
 
-                                        <!-- Konsentrasi Keahlian -->
+                                        <!-- Jurusan -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Konsentrasi Keahlian</label>
                                             <select id="konke_id" name="konke_id" class="form-select" required>
@@ -91,6 +73,22 @@
                                                     <option value="{{ $kk->id }}"
                                                         @selected(old('konke_id') == $kk->id)>
                                                         {{ $kk->name_konke }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <!-- Kelas -->
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Kelas (XII)</label>
+                                            <select id="kelas_id" name="kelas_id" class="form-select" required disabled>
+                                                <option value="">Pilih Jurusan terlebih dahulu</option>
+                                                @foreach ($kelas as $k)
+                                                    <option value="{{ $k->id }}"
+                                                        data-konke-id="{{ $k->konke_id }}"
+                                                        data-kelas="{{ $k->name_kelas }}"
+                                                        @selected(old('kelas_id') == $k->id)>
+                                                        {{ trim(($k->kelas ?? 'XII') . ' ' . ($k->name_kelas ?? '')) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -124,31 +122,18 @@
         document.addEventListener('DOMContentLoaded', function () {
             const jurusanSelect = document.getElementById('konke_id');
             const kelasSelect = document.getElementById('kelas_id');
-            const kelasByJurusan = @json($kelasByJurusan);
+            const kelasByKonkeId = @json($kelasByKonkeId);
             const kelasOptions = Array.from(kelasSelect.options).filter(option => option.value);
             const previousKelas = @json((string) old('kelas_id'));
 
-            function normalize(value) {
-                return String(value || '')
-                    .toLowerCase()
-                    .replace(/&/g, ' dan ')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-            }
-
             function updateKelasOptions(restorePrevious = false) {
                 const selectedJurusanId = jurusanSelect.value;
-                const selectedJurusan = normalize(jurusanSelect.selectedOptions[0]?.textContent);
-                const mapping = Object.entries(kelasByJurusan).find(([name]) => {
-                    const mappedJurusan = normalize(name);
-                    return selectedJurusan === mappedJurusan || selectedJurusan.startsWith(mappedJurusan + ' ');
-                });
-                const allowedKelas = (mapping?.[1] || []).map(normalize);
+                const allowedKelas = kelasByKonkeId[selectedJurusanId] || [];
 
                 kelasOptions.forEach(option => {
                     const visible = Boolean(selectedJurusanId) &&
                         option.dataset.konkeId === selectedJurusanId &&
-                        allowedKelas.includes(normalize(option.dataset.kelas));
+                        allowedKelas.includes(option.dataset.kelas);
                     option.hidden = !visible;
                 });
 

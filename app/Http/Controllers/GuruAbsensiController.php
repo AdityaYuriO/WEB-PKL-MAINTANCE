@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AbsensiPending;
+use App\Models\Guru;
 use App\Models\IzinPending;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,17 @@ class GuruAbsensiController extends Controller
 {
     public function index()
     {
-        $guru = Auth::user();
+        $user = Auth::user();
+        $guru = Guru::where('user_id', $user->id)->first();
+
+        if (!$guru) {
+            return view('guru.absensi.index', [
+                'absensiPending' => collect(),
+                'izinPending' => collect(),
+                'pageError' => 'Data Guru belum terhubung ke akun ini. Periksa hubungan user_id pada data Guru.',
+            ]);
+        }
+
         $siswaIds = User::where('pembimbing_id', $guru->id)
                       ->where('role', 'siswa')
                       ->pluck('id');
@@ -32,15 +43,27 @@ class GuruAbsensiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('guru.absensi.index', compact('absensiPending', 'izinPending'));
+        return view('guru.absensi.index', [
+            'absensiPending' => $absensiPending,
+            'izinPending' => $izinPending,
+            'pageError' => null,
+        ]);
+    }
+
+    private function authorizePendingRecord($record): void
+    {
+        $guru = Guru::where('user_id', Auth::id())->first();
+        abort_unless(
+            $guru && $record->user && (int) $record->user->pembimbing_id === (int) $guru->id,
+            403,
+            'Anda tidak memiliki akses ke data ini.'
+        );
     }
 
     public function approveAbsensi($id)
     {
         $absensi = AbsensiPending::findOrFail($id);
-        if ($absensi->user->pembimbing_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
-        }
+        $this->authorizePendingRecord($absensi);
         $absensi->update([
             'status_konfirmasi_guru' => 'disetujui',
             'waktu_konfirmasi_guru' => Carbon::now(),
@@ -58,9 +81,7 @@ class GuruAbsensiController extends Controller
             'catatan_guru' => 'required|string|min:10|max:500',
         ]);
         $absensi = AbsensiPending::findOrFail($id);
-        if ($absensi->user->pembimbing_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
-        }
+        $this->authorizePendingRecord($absensi);
         $absensi->update([
             'status_konfirmasi_guru' => 'ditolak',
             'catatan_guru' => $request->catatan_guru,
@@ -72,9 +93,7 @@ class GuruAbsensiController extends Controller
     public function approveIzin($id)
     {
         $izin = IzinPending::findOrFail($id);
-        if ($izin->user->pembimbing_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
-        }
+        $this->authorizePendingRecord($izin);
         $izin->update([
             'status_konfirmasi_guru' => 'disetujui',
             'waktu_konfirmasi_guru' => Carbon::now(),
@@ -92,9 +111,7 @@ class GuruAbsensiController extends Controller
             'catatan_guru' => 'required|string|min:10|max:500',
         ]);
         $izin = IzinPending::findOrFail($id);
-        if ($izin->user->pembimbing_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
-        }
+        $this->authorizePendingRecord($izin);
         $izin->update([
             'status_konfirmasi_guru' => 'ditolak',
             'catatan_guru' => $request->catatan_guru,
