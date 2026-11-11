@@ -32,15 +32,25 @@ class KaprogController extends Controller
     {
         $user = Auth::user();
 
-        $kaprog = DB::table('gurus')->where('user_id', $user->id)->first();
-        if (!$kaprog) {
-            return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        $konkeId = $user->konke_id
+            ?? DB::table('gurus')->where('user_id', $user->id)->value('konke_id');
+        if (!$konkeId) {
+            $usulanIdukas = UsulanIduka::whereRaw('1 = 0')->paginate(10);
+            $pengajuanUsulans = PengajuanUsulan::whereRaw('1 = 0')->paginate(10);
+
+            return view('kaprog.review.reviewusulan', [
+                'usulanIdukas' => $usulanIdukas,
+                'pengajuanUsulans' => $pengajuanUsulans,
+                'groupedIduka' => collect(),
+                'pengajuanUsulanSemua' => collect(),
+                'configurationError' => 'Akun Kaprog belum terhubung ke jurusan. Hubungkan akun ke jurusan terlebih dahulu agar usulan yang sesuai dapat ditampilkan.',
+            ]);
         }
 
         // Menggunakan paginate untuk mendapatkan hasil yang terpisah ke dalam halaman
         $usulanIdukas = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->whereIn('status', ['proses', 'menunggu'])
-            ->where('konke_id', $kaprog->konke_id)
+            ->where('konke_id', $konkeId)
             ->paginate(10);  // Gunakan paginate
 
         $groupedIduka = $usulanIdukas->groupBy('email');
@@ -48,14 +58,14 @@ class KaprogController extends Controller
         // Ambil semua data pengajuan PKL (tanpa paginate), untuk menghitung jumlah total siswa per IDUKA
         $pengajuanUsulanSemua = PengajuanUsulan::with('iduka')
             ->whereIn('status', ['proses', 'menunggu'])
-            ->where('konke_id', $kaprog->konke_id)
+            ->where('konke_id', $konkeId)
             ->get()
             ->groupBy('iduka_id');
 
         // Ambil data paginate hanya untuk tampilan daftar
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->whereIn('status', ['proses', 'menunggu'])
-            ->where('konke_id', $kaprog->konke_id)
+            ->where('konke_id', $konkeId)
             ->paginate(10);
 
         return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka', 'pengajuanUsulanSemua'));
@@ -583,7 +593,11 @@ class KaprogController extends Controller
     public function dataAbsen()
 {
     $kaprog = auth()->user();
-    $konkeId = $kaprog->konke_id;
+    $konkeId = $kaprog->konke_id
+        ?? DB::table('gurus')->where('user_id', $kaprog->id)->value('konke_id');
+    $configurationError = $konkeId
+        ? null
+        : 'Akun Kaprog belum terhubung ke jurusan. Hubungkan akun ke jurusan terlebih dahulu agar data absensi dapat ditampilkan.';
     $today = Carbon::today();
 
     // Total siswa PKL per jurusan kaprog
@@ -901,7 +915,8 @@ class KaprogController extends Controller
         'kelasAnalisis',
         'detailAbsensiPerKelas',
         'jurusanData',
-        'holidaysByIduka'
+        'holidaysByIduka',
+        'configurationError'
     ));
 }
 

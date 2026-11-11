@@ -779,3 +779,233 @@ Route::get('/api/chart-data', function () {
         'ditolak' => $ditolak,
     ]);
 });
+
+// Local-only account switcher for manual testing. Remove this block before deployment.
+if (app()->environment('local')) {
+    $allowLocalAccountSwitcher = function (\Illuminate\Http\Request $request): void {
+        if (!app()->environment('local')
+            || !in_array($request->server('REMOTE_ADDR'), ['127.0.0.1', '::1'], true)) {
+            abort(404);
+        }
+    };
+
+    $accountSwitcherRoles = [
+        'hubin' => 'Hubin',
+        'siswa' => 'Siswa',
+        'kaprog' => 'Kaprog',
+        'guru' => 'Guru',
+        'ppkl' => 'PPKL',
+        'psekolah' => 'Pembimbing Sekolah',
+        'iduka' => 'IDUKA',
+        'orangtua' => 'Orang Tua',
+        'persuratan' => 'Persuratan',
+        'kepsek' => 'Kepala Sekolah',
+        'pendamping' => 'Pendamping',
+    ];
+
+    Route::get('/__dev/account-switcher', function (\Illuminate\Http\Request $request) use ($allowLocalAccountSwitcher, $accountSwitcherRoles) {
+        $allowLocalAccountSwitcher($request);
+
+        $demoAccountNips = [
+            '9999999999',
+            '8888888801',
+            '8888888802',
+            '8888888803',
+            '8888888804',
+            '8888888805',
+            '8888888806',
+            '8888888807',
+            '8888888808',
+            '8888888809',
+        ];
+        $demoAccountIds = \App\Models\User::query()
+            ->whereIn('nip', $demoAccountNips)
+            ->whereIn('role', array_keys($accountSwitcherRoles))
+            ->where('status', '!=', 'alumni')
+            ->pluck('id')
+            ->all();
+        $savedAccountIds = $request->session()->get('dev_account_switcher_ids', []);
+        $request->session()->put(
+            'dev_account_switcher_ids',
+            array_values(array_unique(array_merge($savedAccountIds, $demoAccountIds)))
+        );
+
+        $html = <<<'HTML'
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beralih Akun Lokal</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 32px 16px; background: #f1f5f9; color: #0f172a; font: 15px/1.5 Arial, sans-serif; }
+        main { max-width: 760px; margin: auto; }
+        h1 { margin: 0 0 8px; font-size: 26px; }
+        .notice { margin: 0 0 24px; padding: 12px 16px; border: 1px solid #facc15; border-radius: 12px; background: #fefce8; color: #854d0e; }
+        .current, section { margin-bottom: 16px; padding: 18px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: 0 4px 14px #0f172a0a; }
+        h2 { margin: 0 0 12px; font-size: 18px; }
+        label { display: block; margin: 12px 0 5px; font-weight: 600; }
+        input { width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
+        .primary { margin-top: 16px; padding: 11px 16px; border: 0; border-radius: 8px; background: #3b82f6; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+        .account { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; margin-top: 8px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; color: inherit; text-align: left; cursor: pointer; }
+        .account:hover { border-color: #3b82f6; background: #eff6ff; }
+        .account:disabled { border-color: #bbf7d0; background: #f0fdf4; cursor: default; }
+        .account small { color: #64748b; }
+        .error { margin: 12px 0; color: #b91c1c; }
+        @media (max-width: 480px) { body { padding: 20px 12px; } section, .current { padding: 14px; } }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Beralih Akun</h1>
+    <p class="notice"><strong>Mode testing lokal.</strong> Masukkan NIP dan password akun yang memang bisa kamu akses. Password hanya diverifikasi dan tidak disimpan; daftar akun disimpan di session browser ini.</p>
+HTML;
+
+        $currentUser = \Illuminate\Support\Facades\Auth::user();
+        if ($currentUser) {
+            $html .= '<div class="current"><strong>Akun aktif:</strong> '
+                . e($currentUser->name) . ' <small>(' . e($currentUser->role) . ')</small></div>';
+        } else {
+            $html .= '<div class="current"><strong>Belum login.</strong> Tambahkan akun melalui formulir di bawah.</div>';
+        }
+
+        if ($request->session()->has('status')) {
+            $html .= '<p class="current" style="color:#166534">'
+                . e($request->session()->get('status')) . '</p>';
+        }
+
+        foreach ($request->session()->get('dev_account_switcher_ids', []) as $accountId) {
+            $account = \App\Models\User::query()
+                ->whereIn('role', array_keys($accountSwitcherRoles))
+                ->find($accountId);
+
+            if (!$account) {
+                continue;
+            }
+
+            $isCurrent = $currentUser && $currentUser->is($account);
+            $html .= '<form method="POST" action="/__dev/account-switcher/' . (int) $account->id . '">'
+                    . '<input type="hidden" name="_token" value="' . e(csrf_token()) . '">'
+                    . '<button class="account" type="submit"'
+                    . ($isCurrent ? ' disabled' : '')
+                    . '><span><strong>' . e($account->name) . '</strong><br><small>'
+                    . e($accountSwitcherRoles[$account->role]) . ' · '
+                    . ($isCurrent ? 'Sedang digunakan' : 'NIP: ' . e($account->nip))
+                    . '</small></span><span aria-hidden="true">' . ($isCurrent ? '&#10003;' : '&#8594;') . '</span></button>'
+                    . '</form>'
+                    . '<form method="POST" action="/__dev/account-switcher/' . (int) $account->id . '/remove">'
+                    . '<input type="hidden" name="_token" value="' . e(csrf_token()) . '">'
+                    . '<button type="submit" style="margin:6px 0 12px;border:0;background:none;color:#64748b;cursor:pointer">Hapus dari daftar</button>'
+                    . '</form>';
+        }
+
+        $html .= <<<'HTML'
+<section>
+    <h2>Tambahkan akun</h2>
+    <form method="POST" action="/__dev/account-switcher/add">
+        <input type="hidden" name="_token" value="
+HTML;
+        $html .= e(csrf_token()) . '">';
+        $html .= '<label for="nip">NIP</label><input id="nip" name="nip" autocomplete="username" required value="'
+            . e(old('nip', '')) . '">';
+        $html .= <<<'HTML'
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" autocomplete="current-password" required>
+        <button class="primary" type="submit">Verifikasi &amp; Simpan Akun</button>
+    </form>
+HTML;
+
+        $errorBag = $request->session()->get('errors');
+        if ($errorBag instanceof \Illuminate\Support\ViewErrorBag) {
+            foreach ($errorBag->all() as $message) {
+                $html .= '<p class="error">' . e($message) . '</p>';
+            }
+        }
+
+        $html .= '</section></main></body></html>';
+
+        return response($html)->header('Content-Type', 'text/html; charset=UTF-8');
+    })->name('dev.account-switcher.index');
+
+    Route::post('/__dev/account-switcher/add', function (
+        \Illuminate\Http\Request $request
+    ) use ($allowLocalAccountSwitcher, $accountSwitcherRoles) {
+        $allowLocalAccountSwitcher($request);
+        $credentials = $request->validate([
+            'nip' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = \App\Models\User::query()
+            ->where('nip', $credentials['nip'])
+            ->whereIn('role', array_keys($accountSwitcherRoles))
+            ->first();
+
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)
+            || $user->status === 'alumni') {
+            return redirect()->route('dev.account-switcher.index')
+                ->withErrors(['credentials' => 'NIP atau password tidak sesuai, atau akun tidak dapat digunakan.'])
+                ->withInput(['nip' => $credentials['nip']]);
+        }
+
+        $accountIds = $request->session()->get('dev_account_switcher_ids', []);
+        $accountIds[] = $user->id;
+        $request->session()->put('dev_account_switcher_ids', array_values(array_unique($accountIds)));
+
+        return redirect()->route('dev.account-switcher.index')
+            ->with('status', 'Akun berhasil diverifikasi dan disimpan di daftar browser ini.');
+    })->name('dev.account-switcher.add');
+
+    Route::post('/__dev/account-switcher/{userId}/remove', function (
+        \Illuminate\Http\Request $request,
+        int $userId
+    ) use ($allowLocalAccountSwitcher) {
+        $allowLocalAccountSwitcher($request);
+
+        $accountIds = $request->session()->get('dev_account_switcher_ids', []);
+        $request->session()->put(
+            'dev_account_switcher_ids',
+            array_values(array_filter($accountIds, fn ($id) => (int) $id !== $userId))
+        );
+
+        return redirect()->route('dev.account-switcher.index');
+    })->whereNumber('userId')->name('dev.account-switcher.remove');
+
+    Route::post('/__dev/account-switcher/{userId}', function (
+        \Illuminate\Http\Request $request,
+        int $userId
+    ) use ($allowLocalAccountSwitcher, $accountSwitcherRoles) {
+        $allowLocalAccountSwitcher($request);
+
+        $savedAccountIds = array_map(
+            'intval',
+            $request->session()->get('dev_account_switcher_ids', [])
+        );
+        abort_unless(in_array($userId, $savedAccountIds, true), 404);
+
+        $user = \App\Models\User::query()->whereIn('role', array_keys($accountSwitcherRoles))->findOrFail($userId);
+        \Illuminate\Support\Facades\Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->put('dev_account_switcher_ids', $savedAccountIds);
+        $request->session()->regenerateToken();
+        \Illuminate\Support\Facades\Auth::login($user);
+        $request->session()->regenerate();
+
+        $dashboardRoutes = [
+            'hubin' => 'hubin.dashboard',
+            'siswa' => 'siswa.dashboard',
+            'kaprog' => 'kaprog.dashboard',
+            'guru' => 'guru.dashboard',
+            'ppkl' => 'ppkl.dashboard',
+            'psekolah' => 'psekolah.dashboard',
+            'iduka' => 'iduka.dashboard',
+            'orangtua' => 'orangtua.dashboard',
+            'persuratan' => 'persuratan.dashboard',
+            'kepsek' => 'kepsek.dashboard',
+            'pendamping' => 'pendamping.dashboard',
+        ];
+
+        return redirect()->route($dashboardRoutes[$user->role]);
+    })->whereNumber('userId')->name('dev.account-switcher.switch');
+}

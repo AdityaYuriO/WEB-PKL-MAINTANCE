@@ -28,6 +28,7 @@ class RekapAbsensiController extends Controller
         if ($user && $role === 'guru') {
             $guruId = optional($user->guru)->id ?: $user->id;
         }
+        $kaprogKonkeId = $role === 'kaprog' ? $this->getKaprogKonkeId($user) : null;
 
         $jurusanQuery = \App\Models\Konke::query();
         $kelasQuery   = \App\Models\Kelas::query();
@@ -36,9 +37,9 @@ class RekapAbsensiController extends Controller
         if (in_array($role, ['hubin', 'kepsek'])) {
             // akses semua
         } elseif ($role === 'kaprog') {
-            $jurusanQuery->where('id', $user->konke_id);
-            $kelasQuery->where('konke_id', $user->konke_id);
-            $siswaQuery->where('konke_id', $user->konke_id);
+            $jurusanQuery->where('id', $kaprogKonkeId);
+            $kelasQuery->where('konke_id', $kaprogKonkeId);
+            $siswaQuery->where('konke_id', $kaprogKonkeId);
         } elseif ($role === 'guru') {
             if ($guruId) {
                 $jurusanQuery->whereHas('kelas.siswa', function ($q) use ($guruId) {
@@ -70,7 +71,16 @@ class RekapAbsensiController extends Controller
 
     public function index(Request $request)
     {
-        return view('rekap_absensi.index');
+        $user = Auth::user();
+        $kaprogKonkeId = $user && $user->role === 'kaprog'
+            ? $this->getKaprogKonkeId($user)
+            : null;
+
+        return view('rekap_absensi.index', [
+            'kaprogKonkeId' => $kaprogKonkeId,
+            'startDate' => $request->input('start_date', now()->subDays(30)->toDateString()),
+            'endDate' => $request->input('end_date', now()->toDateString()),
+        ]);
     }
 
    public function data(Request $request)
@@ -88,8 +98,8 @@ class RekapAbsensiController extends Controller
         $end = $request->input('end_date');
 
         if (!$start || !$end) {
-            $start = '2025-10-14';
-            $end = '2026-02-14';
+            $start = now()->subDays(30)->toDateString();
+            $end = now()->toDateString();
         }
 
         // === 2. QUERY DATA ABSENSI ===
@@ -101,7 +111,7 @@ class RekapAbsensiController extends Controller
         if (in_array($role, ['hubin', 'kepsek'])) {
             // akses semua siswa
         } elseif ($role === 'kaprog') {
-            $konke = $user->konke_id ?? null;
+            $konke = $this->getKaprogKonkeId($user);
             if ($konke) {
                 $query->whereHas('user', function ($q) use ($konke) {
                     $q->where('konke_id', $konke);
@@ -256,14 +266,14 @@ class RekapAbsensiController extends Controller
         $end = $request->input('end_date');
 
         if (!$start || !$end) {
-            $start = '2025-10-14';
-            $end = '2026-02-14';
+            $start = now()->subDays(30)->toDateString();
+            $end = now()->toDateString();
         }
 
         $konkeId = null;
         $kelasId = $request->input('kelas_id');
         if ($role === 'kaprog') {
-            $konkeId = $user->konke_id ?? null;
+            $konkeId = $this->getKaprogKonkeId($user);
         }
 
         $konkeName = null;
@@ -289,5 +299,11 @@ class RekapAbsensiController extends Controller
         $export = new DataAbsenPerKelas($start, $end, $konkeId, $kelasId, $guruId, $konkeName, $kelasName);
 
         return Excel::download($export, $fileName);
+    }
+
+    private function getKaprogKonkeId($user)
+    {
+        return $user->konke_id
+            ?? optional($user->guru)->konke_id;
     }
 }

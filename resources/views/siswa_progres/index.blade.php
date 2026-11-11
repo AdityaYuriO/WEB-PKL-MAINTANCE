@@ -74,9 +74,9 @@
         </div>
 
         {{-- Filter --}}
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4" id="progres-filter">
             <div class="card-body">
-                <form method="GET" action="{{ route('progres.siswa.index') }}">
+                <form method="GET" action="{{ route('progres.siswa.index') }}#progres-filter">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}" class="form-control"

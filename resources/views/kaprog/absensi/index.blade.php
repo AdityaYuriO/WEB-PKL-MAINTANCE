@@ -3,6 +3,9 @@
 @section('content')
     <div class="container-fluid">
         <div class="container-xxl flex-grow-1 container-p-y">
+            @if (!empty($configurationError))
+                <div class="alert alert-warning" role="alert">{{ $configurationError }}</div>
+            @endif
             <!-- Simple Header Card -->
             <div class="row mb-4">
                 <div class="col-12">

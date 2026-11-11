@@ -6,10 +6,13 @@
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0 text-white">
-                        Siswa Bimbingan {{ auth()->user()->guru->nama ?? 'Guru tidak terdaftar' }}
+                        {{ $title }}
                     </h5>
                 </div>
                 <div class="card-body">
+                    @if ($error)
+                        <div class="alert alert-warning mb-3">{{ $error }}</div>
+                    @endif
                     @if ($siswas->count())
                         <div class="table-responsive my-2">
                             <table class="table table-bordered table-striped align-middle">

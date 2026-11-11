@@ -20,7 +20,13 @@
     $isGuru = auth()->check() && auth()->user()->role === 'guru';
     $isKaprog = auth()->check() && auth()->user()->role === 'kaprog';
 @endphp
-                            <div class="row mb-4">
+    @if ($isKaprog && !$kaprogKonkeId)
+        <div class="alert alert-warning" role="alert">
+            Akun Kaprog belum terhubung ke jurusan. Hubungkan akun ke jurusan terlebih dahulu
+            agar opsi kelas dan data absensi dapat ditampilkan.
+        </div>
+    @endif
+    <div class="row mb-4">
                                 <div class="col-md-12">
                                     <form id="filter-form">
                                         <div class="row">
@@ -29,6 +35,7 @@
                                                 <div class="form-group">
                                                     <label>Tanggal Awal</label>
                                                     <input type="date" name="start_date" class="form-control"
+                                                        value="{{ $startDate }}"
                                                         {{ $isGuru ? '' : 'required' }}>
                                                 </div>
                                             </div>
@@ -36,6 +43,7 @@
                                                 <div class="form-group">
                                                     <label>Tanggal Akhir</label>
                                                     <input type="date" name="end_date" class="form-control"
+                                                        value="{{ $endDate }}"
                                                         {{ $isGuru ? '' : 'required' }}>
                                                 </div>
                                             </div>
@@ -52,7 +60,7 @@
                                                     </div>
                                                 </div>
                                                 @if($isKaprog)
-                                                    <input type="hidden" name="konke_id" value="{{ auth()->user()->konke_id }}">
+                                                    <input type="hidden" name="konke_id" value="{{ $kaprogKonkeId }}">
                                                 @endif
 
                                                 <!-- Baris 2 -->
@@ -108,7 +116,7 @@
             // current logged-in role, used in JS to auto-load for pembimbing
             const currentRole = "{{ auth()->user()->role ?? '' }}";
             // for kaprog we also need its jurusan id to prefill filters
-            const kaprogKonkeId = "{{ auth()->user()->konke_id ?? '' }}";
+            const kaprogKonkeId = "{{ $kaprogKonkeId ?? '' }}";
 
             function renderTable(responseData) {
                 let html = '';

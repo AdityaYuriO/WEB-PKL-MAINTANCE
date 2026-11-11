@@ -9,7 +9,9 @@
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-8">
                         <div class="card-body">
-                            <h4 class="card-title text-white mb-2 fw-bold">Selamat Datang, Bapak/Ibu {{ Auth::user()->name }}!</h4>
+                            <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">
+                                Selamat Datang, @if ($sapaan) {{ $sapaan }} @endif{{ Auth::user()->name }}!
+                            </h4>
                             <p class="mb-4 text-white-50">
                                 Ini adalah dashboard panel Kepala Program (Kaprog). Anda dapat memantau data usulan PKL, mengevaluasi proses pengajuan, dan mengelola administratif program keahlian Anda.
                             </p>

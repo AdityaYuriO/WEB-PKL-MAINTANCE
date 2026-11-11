@@ -153,7 +153,15 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
     }
     function kaprog()
     {
-        return view('kaprog.dashboard');
+        $guru = Auth::user()->guru;
+
+        $sapaan = match ($guru?->jenis_kelamin) {
+            'Laki-laki' => 'Bapak',
+            'Perempuan' => 'Ibu',
+            default => null,
+        };
+
+        return view('kaprog.dashboard', compact('sapaan'));
     }
     function persuratan()
     {

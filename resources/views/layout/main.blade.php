@@ -683,7 +683,7 @@ Request::routeIs('nilai-akhir.*')
                     @endif
 
                     @if (auth()->user()->role == 'kaprog')
-                        <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('data.iduka', 'detail.iduka', 'iduka.edit') ? 'active' : '' }}">
                             <a href="/data-iduka" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
@@ -697,7 +697,7 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('review.usulan') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('review.usulan', 'kaprog.review.detail', 'kaprog.review.detailUsulanPkl', 'kaprog.review.detailUsulan') ? 'active' : '' }}">
                             <a href="{{ route('review.usulan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Usulan</div>
@@ -971,6 +971,14 @@ Request::routeIs('nilai-akhir.*')
                                             <span>Keluar</span>
                                         </a>
                                     </li>
+                                    @if (app()->environment('local'))
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('dev.account-switcher.index') }}">
+                                                <i class="fas fa-exchange-alt me-2" style="color:#64748b;width:16px;"></i>
+                                                <span>Beralih Akun (Testing)</span>
+                                            </a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </li>
                         </ul>
