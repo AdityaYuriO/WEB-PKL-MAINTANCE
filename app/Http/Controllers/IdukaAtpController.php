@@ -206,7 +206,7 @@ class IdukaAtpController extends Controller
     {
         // Ambil semua CP beserta ATP berdasarkan konke_id
         $cps = Cp::where('konke_id', $konke_id)
-            ->with(['atps' => function($query) {
+            ->with(['atp' => function($query) {
                 $query->orderBy('kode_atp');
             }])
             ->get();
@@ -223,7 +223,7 @@ class IdukaAtpController extends Controller
         foreach ($cps as $cp) {
             $atpData = [];
 
-            foreach ($cp->atps as $atp) {
+            foreach ($cp->atp as $atp) {
                 $atpData[] = [
                     'id' => $atp->id,
                     'kode_atp' => $atp->kode_atp,

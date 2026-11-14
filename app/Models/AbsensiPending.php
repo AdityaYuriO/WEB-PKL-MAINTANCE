@@ -26,6 +26,9 @@ class AbsensiPending extends Model
         'validasi_pembimbing',
         'approved_iduka_at',
         'approved_pembimbing_at',
+        'status_konfirmasi_guru',
+        'catatan_guru',
+        'waktu_konfirmasi_guru',
         'alasan_penolakan',
         'keterangan',
     ];
@@ -35,6 +38,7 @@ class AbsensiPending extends Model
         'jam' => 'datetime',
         'approved_iduka_at' => 'datetime',
         'approved_pembimbing_at' => 'datetime',
+        'waktu_konfirmasi_guru' => 'datetime',
     ];
 
     // Default values

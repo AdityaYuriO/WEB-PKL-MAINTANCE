@@ -21,11 +21,15 @@ class SiswaController extends Controller
         // Default hanya tampilkan siswa aktif. Tambah ?status=alumni di URL untuk lihat data alumni.
         $status = $request->get('status', 'aktif');
 
-        $siswa = User::where('role', 'siswa')
-                ->where('status', $status)
-                ->with(['kelas', 'konke'])
-                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at descending
-                ->paginate(10);
+        $query = User::where('role', 'siswa')
+            ->where('status', $status)
+            ->with(['kelas', 'konke'])
+            ->orderBy('created_at', 'desc');
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . trim($request->input('search')) . '%');
+        }
+
+        $siswa = $query->paginate(10)->withQueryString();
         $konke = Konke::all();
         $kelas = Kelas::where('kelas', 'XII')->get();
         $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);

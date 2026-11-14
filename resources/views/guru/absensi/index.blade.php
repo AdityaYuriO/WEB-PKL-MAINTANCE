@@ -1,8 +1,8 @@
 @extends('layout.main')
 
 @section('content')
-<div class="container">
-    <h2>Konfirmasi Absensi Siswa</h2>
+<div class="container pt-4">
+    <h2 class="mb-4">Konfirmasi Absensi Siswa</h2>
     @if (!empty($pageError))
         <div class="alert alert-warning" role="alert">{{ $pageError }}</div>
     @endif

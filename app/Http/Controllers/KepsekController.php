@@ -9,6 +9,7 @@ use App\Models\Kelas;
 use App\Models\Konke;
 use App\Models\Kependik;
 use App\Models\PengajuanPkl;
+use App\Support\KelasJurusan;
 use Illuminate\Http\Request;
 
 class KepsekController extends Controller
@@ -21,15 +22,19 @@ class KepsekController extends Controller
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
 
-    public function dataSiswaKepsek(){
-        $siswa = User::where('role', 'siswa')
-                ->with(['kelas', 'konke'])
-                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at descending
-                ->paginate(10);
+    public function dataSiswaKepsek(Request $request){
+        $query = User::where('role', 'siswa')
+            ->with(['kelas', 'konke'])
+            ->orderBy('created_at', 'desc');
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . trim($request->input('search')) . '%');
+        }
+        $siswa = $query->paginate(10)->withQueryString();
         $konke = Konke::all();
         $kelas = Kelas::all();
+        $kelasByKonkeId = KelasJurusan::optionsByKonkeId($konke);
 
-        return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas'));    
+        return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas', 'kelasByKonkeId'));
     }
 
     public function dataGuruKepsek(){
@@ -39,8 +44,12 @@ class KepsekController extends Controller
         return view('hubin.dataguru.dataguru', compact('guru', 'konkes', 'user')); 
     }
 
-    public function dataTKKepsek(){
-        $kependik = Kependik::query()->paginate(10); // Gunakan query builder agar tetap LengthAwarePaginator
+    public function dataTKKepsek(Request $request){
+        $query = Kependik::query();
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . trim($request->input('search')) . '%');
+        }
+        $kependik = $query->paginate(10)->withQueryString();
         return view('tk.dataTk', compact('kependik'));
     }
 

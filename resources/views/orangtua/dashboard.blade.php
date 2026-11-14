@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+@php($sapaan = Auth::user()->sapaan())
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <!-- Welcome Card -->
@@ -9,9 +10,9 @@
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-8">
                         <div class="card-body">
-                            <h4 class="card-title text-white mb-2 fw-bold">Selamat Datang, Bapak/Ibu {{ Auth::user()->name }}!</h4>
+                            <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h4>
                             <p class="mb-4 text-white-50">
-                                Ini adalah dashboard panel Wali/Orang Tua Siswa. Di sini Bapak/Ibu dapat memantau kehadiran, jurnal kegiatan harian, dan informasi kelulusan Praktik Kerja Lapangan dari putra-putri Bapak/Ibu.
+                                Ini adalah dashboard panel Wali/Orang Tua Siswa. Di sini Anda dapat memantau kehadiran, jurnal kegiatan harian, dan informasi kelulusan Praktik Kerja Lapangan dari putra-putri Anda.
                             </p>
                             <a href="{{ route('profile.edit') }}" class="btn btn-light text-primary border-0 shadow-sm fw-semibold">
                                 <i class="fas fa-user-circle me-2"></i> Update Data Diri
@@ -92,7 +93,7 @@
                     </h5>
                 </div>
                 <div class="card-body pt-4">
-                    <p class="text-secondary">Terima kasih atas dukungan Bapak/Ibu dalam program Praktik Kerja Lapangan ini. Jika Bapak/Ibu menemukan kesulitan mengakses data siswa, mohon hubungi pihak sekolah/Hubin. Partisipasi Bapak/Ibu sangat berarti bagi kesuksesan siswa.</p>
+                    <p class="text-secondary">Terima kasih atas dukungan Anda dalam program Praktik Kerja Lapangan ini. Jika Anda menemukan kesulitan mengakses data siswa, mohon hubungi pihak sekolah/Hubin. Partisipasi Anda sangat berarti bagi kesuksesan siswa.</p>
                 </div>
             </div>
         </div>

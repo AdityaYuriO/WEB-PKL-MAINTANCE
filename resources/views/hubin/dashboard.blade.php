@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+@php($sapaan = Auth::user()->sapaan())
 <div class="container-xxl flex-grow-1 container-p-y">
   {{-- Welcome Card --}}
   <div class="row">
@@ -9,7 +10,7 @@
         <div class="d-flex align-items-center row">
           <div class="col-sm-8">
             <div class="card-body">
-              <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">Selamat Datang, {{ Auth::user()->name }}!</h4>
+              <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h4>
               <p class="mb-4 text-white-50">
                 Ini adalah dashboard panel Hubin. Anda dapat memantau statistik dan rekapitulasi data usulan PKL siswa secara keseluruhan.
               </p>

@@ -1,4 +1,4 @@
-﻿@extends('layout.main')
+@extends('layout.main')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -57,6 +57,7 @@
                                         <button type="button" class="btn btn-warning btn-sm"
                                             data-bs-toggle="modal" data-bs-target="#searchModal">
                                             <i class="bi bi-search"></i>
+                                            <span class="d-none d-md-inline">Search</span>
                                         </button>
 
                                         @if(in_array(auth()->user()->role, ['hubin', 'guru']))
@@ -133,12 +134,18 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#">
-                                            <input type="text" name="search" class="form-control" placeholder="Cari Siswa...">
+                                        <form method="GET" action="{{ url()->current() }}" class="mb-3">
+                                            @if (isset($status))
+                                                <input type="hidden" name="status" value="{{ $status }}">
+                                            @endif
+                                            <div class="input-group">
+                                                <input type="text" name="search" class="form-control"
+                                                    placeholder="Cari nama siswa..." value="{{ request('search') }}">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cari
+                                                </button>
+                                            </div>
                                         </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +175,7 @@
                                             </tr>
                                         </thead>
                                         <tbody style="text-align: center">
-                                            @foreach ($siswa as $index => $s)
+                                            @forelse ($siswa as $index => $s)
                                                 <tr>
                                                     <td>{{ $siswa->firstItem() + $loop->index }}</td>                                                    <td>{{ $s->name }}</td>
                                                     <td>{{ $s->nip }}</td>
@@ -253,7 +260,7 @@
                                                                                     {{ $s->konke_id == $k->id ? 'selected' : '' }}>
                                                                                     {{ $k->name_konke }}
                                                                                 </option>
-                                                                            @endforeach
+                                                                                @endforeach
                                                                         </select>
                                                                     </div>
                                                                     <div class="mb-3">
@@ -298,7 +305,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="py-4 text-center text-muted">
+                                                        Siswa tidak ditemukan.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
@@ -499,19 +512,6 @@
                     });
                 });
             });
-
-            // Search functionality
-            const searchInput = document.querySelector("input[name='search']");
-            if (searchInput) {
-                const tableRows = document.querySelectorAll("tbody tr");
-                searchInput.addEventListener("keyup", function() {
-                    const searchValue = this.value.toLowerCase();
-                    tableRows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchValue) ? "" : "none";
-                    });
-                });
-            }
 
             // Flash messages
             let successMessage = "{{ session('success') }}";

@@ -169,7 +169,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img id="modalImage" src="{{ $jurnal->foto }}" alt="Foto Kegiatan" class="img-fluid">
+                    <img id="modalImage" alt="Foto Kegiatan" class="img-fluid">
                 </div>
             </div>
         </div>

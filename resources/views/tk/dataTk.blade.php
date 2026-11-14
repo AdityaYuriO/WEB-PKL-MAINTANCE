@@ -1,4 +1,4 @@
-﻿@extends('layout.main')
+@extends('layout.main')
 @section('content')
 <div class="container-fluid">
     <div class="content-wrapper">
@@ -9,7 +9,8 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="mb-0">Data Tenaga Kependidikan</h5>
                             <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#searchModal">
                                     <i class="bi bi-search"></i>
                                     <span class="d-none d-md-inline">Search</span>
                                 </button>
@@ -31,12 +32,15 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="#">
-                                        <input type="text" name="search" class="form-control" placeholder="Cari Tenaga Kependidikan...">
+                                    <form method="GET" action="{{ url()->current() }}" class="mb-3">
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control"
+                                                placeholder="Cari nama tenaga kependidikan..." value="{{ request('search') }}">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i> Cari
+                                            </button>
+                                        </div>
                                     </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary btn-sm">Cari</button>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +59,7 @@
                                     <th>Aksi</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($kependik as $index => $item)
+                                    @forelse ($kependik as $index => $item)
                                     <tr>
                                         <td>{{ ($kependik->firstItem() ?? 1) + $loop->index }}</td>
                                         <td>{{ $item->nama }}</td>
@@ -166,7 +170,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @endforeach
+                                    @empty
+                                    <tr>
+                                        <td colspan="6" class="py-4 text-center text-muted">
+                                            {{ request()->filled('search') ? 'Tenaga kependidikan tidak ditemukan.' : 'Belum ada data tenaga kependidikan.' }}
+                                        </td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -318,20 +328,6 @@
                 event.preventDefault();
                 alert("Password minimal 6 karakter!");
             }
-        });
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        const searchInput = document.querySelector("input[name='search']");
-        const tableRows = document.querySelectorAll("tbody tr");
-
-        searchInput.addEventListener("keyup", function() {
-            const searchValue = this.value.toLowerCase();
-
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchValue) ? "" : "none";
-            });
         });
     });
 

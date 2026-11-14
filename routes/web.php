@@ -818,8 +818,8 @@ if (app()->environment('local')) {
 
         $demoAccountNips = [
             '9999999999',
+            '2345678923456789',
             '8888888801',
-            '8888888802',
             '8888888803',
             '8888888804',
             '8888888805',
@@ -827,6 +827,7 @@ if (app()->environment('local')) {
             '8888888807',
             '8888888808',
             '8888888809',
+            '12345678999',
         ];
         $demoAccountIds = \App\Models\User::query()
             ->whereIn('nip', $demoAccountNips)
@@ -835,6 +836,17 @@ if (app()->environment('local')) {
             ->pluck('id')
             ->all();
         $savedAccountIds = $request->session()->get('dev_account_switcher_ids', []);
+        $savedAccountIds = \App\Models\User::with(['konke', 'guru.konke'])
+            ->whereIn('id', $savedAccountIds)
+            ->whereIn('role', array_keys($accountSwitcherRoles))
+            ->get()
+            ->filter(function ($account) {
+                return $account->role !== 'kaprog'
+                    || $account->konke
+                    || $account->guru?->konke;
+            })
+            ->pluck('id')
+            ->all();
         $request->session()->put(
             'dev_account_switcher_ids',
             array_values(array_unique(array_merge($savedAccountIds, $demoAccountIds)))

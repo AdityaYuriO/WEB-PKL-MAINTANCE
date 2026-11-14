@@ -1,6 +1,7 @@
 ﻿@extends('layout.main')
 
 @section('content')
+    @php($sapaan = Auth::user()->sapaan())
     <div class="container-fluid"><br>
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -12,10 +13,10 @@
                                     <div class="card-body">
                                         <div class="d-flex align-items-center gap-3 mb-3">
                                             <div style="width:44px;height:44px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                                <i class="fas fa-hand-wave" style="font-size:20px;color:#3b82f6;"></i>
+                                                <i class="fas fa-chalkboard-teacher" style="font-size:20px;color:#3b82f6;"></i>
                                             </div>
                                             <div>
-                                                <h5 class="card-title mb-0" style="color:#0f172a;">Halo, {{ Auth::user()->name }}!</h5>
+                                                <h5 class="card-title mb-0" style="color:#0f172a;">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h5>
                                                 <small style="color:#64748b;">Selamat datang kembali</small>
                                             </div>
                                         </div>

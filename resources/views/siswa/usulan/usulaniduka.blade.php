@@ -257,7 +257,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Data Belum Lengkap',
-                                text: 'Silakan lengkapi data pribadi terlebih dahulu sebelum mengajukan PKL.',
+                                html: 'Silakan <a href="{{ route("siswa.data_pribadi.create") }}">lengkapi data pribadi</a> terlebih dahulu sebelum mengajukan PKL.',
                                 confirmButtonText: 'OK'
                             });
                             return;

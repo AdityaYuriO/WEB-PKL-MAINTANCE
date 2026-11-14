@@ -515,7 +515,7 @@
 
 
                     @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog', 'hubin']))
-                        <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('approval.*', 'guru.konfir-jurnal.*') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                                 <div data-i18n="Basic">Konfir Journal</div>
@@ -728,7 +728,7 @@ Request::routeIs('nilai-akhir.*')
                     @endif
 
                     @if (in_array(auth()->user()->role, ['iduka']))
-                        <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('pengajuan.review', 'pengajuan.detail', 'review.pengajuanditerima', 'review.pengajuanditolak') ? 'active' : '' }}">
                             <a href="{{ route('pengajuan.review') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
@@ -829,7 +829,7 @@ Request::routeIs('nilai-akhir.*')
                     @endif
 
                     @if (auth()->user()->role == 'pendamping')
-                        <li class="menu-item {{ Request::routeIs('pendamping.iduka.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('pendamping.iduka.index', 'iduka.index') ? 'active' : '' }}">
                             <a href="{{ route('pendamping.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>

@@ -94,7 +94,7 @@
                                             Lihat Detail
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary"
-                                            onclick="alert('Fitur sedang diperbaiki, silakan coba lagi nanti.')"
+                                            onclick="editJournal({{ $jurnal->id }})"
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -631,6 +631,16 @@
                 editForm.addEventListener('submit', function(e) {
                     e.preventDefault(); // Cegah pengiriman form default
 
+                    const validationAlert = document.getElementById('editJournalContent')
+                        .querySelector('.edit-validation-errors');
+                    if (validationAlert) {
+                        validationAlert.remove();
+                    }
+                    this.querySelectorAll('.is-invalid').forEach(field => {
+                        field.classList.remove('is-invalid');
+                        field.removeAttribute('aria-invalid');
+                    });
+
                     const jamMulai = this.querySelector('input[name="jam_mulai"]').value;
                     const jamSelesai = this.querySelector('input[name="jam_selesai"]').value;
 
@@ -680,9 +690,14 @@
                                     redirect: response.url
                                 };
                             }
-                            return response.json();
+                            return response.json().then(data => ({
+                                data,
+                                status: response.status
+                            }));
                         })
-                        .then(data => {
+                        .then(result => {
+                            const data = result.data || result;
+
                             // Debug: Log response data
                             console.log('Response data:', data);
 
@@ -704,6 +719,36 @@
                                     // Muat ulang halaman untuk menampilkan data yang diperbarui
                                     window.location.reload();
                                 });
+                            } else if (result.status === 422 && data.errors) {
+                                const modalContent = document.getElementById('editJournalContent');
+                                const errorMessages = Object.values(data.errors).reduce(
+                                    (messages, fieldErrors) => messages.concat(fieldErrors), []);
+                                const errorAlert = document.createElement('div');
+                                errorAlert.className = 'alert alert-danger edit-validation-errors';
+                                errorAlert.setAttribute('role', 'alert');
+
+                                const errorTitle = document.createElement('strong');
+                                errorTitle.textContent = 'Periksa kembali isian jurnal:';
+                                errorAlert.appendChild(errorTitle);
+
+                                const errorList = document.createElement('ul');
+                                errorList.className = 'mb-0 mt-2';
+                                errorMessages.forEach(message => {
+                                    const item = document.createElement('li');
+                                    item.textContent = message;
+                                    errorList.appendChild(item);
+                                });
+                                errorAlert.appendChild(errorList);
+                                modalContent.prepend(errorAlert);
+
+                                Object.keys(data.errors).forEach(fieldName => {
+                                    const field = editForm.elements.namedItem(fieldName);
+                                    if (field instanceof HTMLElement) {
+                                        field.classList.add('is-invalid');
+                                        field.setAttribute('aria-invalid', 'true');
+                                    }
+                                });
+                                modalContent.scrollTop = 0;
                             } else {
                                 // Tangani error validasi atau error lainnya
                                 let errorMessage = 'Terjadi kesalahan saat memperbarui jurnal.';

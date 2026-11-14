@@ -111,10 +111,7 @@
                                 <div class="row-number">{{ $index + 1 }}</div>
                             </td>
                             <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="siswa-avatar-sm">{{ strtoupper(substr($d['nama'], 0, 1)) }}</div>
-                                    <span class="siswa-nama">{{ $d['nama'] }}</span>
-                                </div>
+                                <span class="siswa-nama">{{ $d['nama'] }}</span>
                             </td>
                             <td>
                                 <div class="nilai-box">
@@ -145,32 +142,33 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('penilaian.export', ['id' => $d['id']]) }}"
-                                   class="btn-export"
-                                   title="Export Lembar Penilaian {{ $d['nama'] }}">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    Export
-                                </a>
-                                <div class="dropdown d-inline-block">
-                                    <button class="btn-export dropdown-toggle" type="button" data-bs-toggle="dropdown" 
-                                            style="margin-top:6px;background:linear-gradient(135deg,#f7c32e,#c1272d);color:#222; width: 100%; justify-content: center;">
-                                        <i class="fas fa-print me-1"></i> Cetak
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px; font-size:13px;">
-                                        <li>
-                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.preview', ['id' => $d['id']]) }}" target="_blank">
-                                                <i class="fas fa-edit text-warning" style="width:16px;"></i> Preview & Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank">
-                                                <i class="fas fa-file-pdf text-danger" style="width:16px;"></i> Cetak PDF Langsung
-                                            </a>
-                                        </li>
-                                    </ul>
+                                <div class="nilai-action-buttons">
+                                    <a href="{{ route('penilaian.export', ['id' => $d['id']]) }}"
+                                       class="btn-export"
+                                       title="Export Lembar Penilaian {{ $d['nama'] }}">
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Export
+                                    </a>
+                                    <div class="dropdown">
+                                        <button class="btn-export btn-print dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-print me-1"></i> Cetak
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px; font-size:13px;">
+                                            <li>
+                                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.preview', ['id' => $d['id']]) }}" target="_blank">
+                                                    <i class="fas fa-edit text-warning" style="width:16px;"></i> Preview & Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank">
+                                                    <i class="fas fa-file-pdf text-danger" style="width:16px;"></i> Cetak PDF Langsung
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -337,13 +335,6 @@
 /* ===========================
    SISWA INFO
 =========================== */
-.siswa-avatar-sm {
-    width:32px; height:32px;
-    background:linear-gradient(135deg,#6c63ff,#a78bfa);
-    color:white; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:13px; font-weight:700; flex-shrink:0;
-}
 .siswa-nama { font-weight:600; color:#1e1b4b; font-size:13px; }
 
 /* ===========================
@@ -393,6 +384,21 @@
     color:white; text-decoration:none;
 }
 .btn-export:active { transform:translateY(0); color:white; }
+.nilai-action-buttons {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+}
+.nilai-action-buttons .dropdown { display:flex; }
+.nilai-action-buttons .btn-export { min-height:34px; }
+.btn-print,
+.btn-print:hover,
+.btn-print:focus,
+.btn-print:active {
+    background:#b91c1c;
+    color:#fff;
+}
 
 /* ===========================
    ANIMASI

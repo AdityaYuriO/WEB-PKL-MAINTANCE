@@ -137,4 +137,55 @@ class User extends Authenticatable
     {
         return $query->where('status', 'alumni');
     }
+
+    public function sapaan(): ?string
+    {
+        $gender = match ($this->role) {
+            'siswa' => $this->dataPribadi?->jk,
+            'orangtua' => $this->jenisKelaminOrangTua(),
+            'guru', 'hubin', 'kaprog' => $this->guru?->jenis_kelamin
+                ?? $this->kependik?->jenis_kelamin,
+            'persuratan' => $this->dataPersuratan?->jk
+                ?? $this->kependik?->jenis_kelamin,
+            'ppkl', 'psekolah', 'kepsek', 'pendamping' => $this->kependik?->jenis_kelamin
+                ?? $this->guru?->jenis_kelamin,
+            default => null,
+        };
+
+        $gender = strtolower(preg_replace('/[^a-z]/i', '', (string) $gender) ?? '');
+
+        return match ($gender) {
+            'l', 'lakilaki' => 'Bapak',
+            'p', 'perempuan' => 'Ibu',
+            default => null,
+        };
+    }
+
+    private function jenisKelaminOrangTua(): ?string
+    {
+        if (!$this->nip) {
+            return null;
+        }
+
+        $dataPribadi = DataPribadi::query()
+            ->where(function ($query) {
+                $query->where('nik_ayh', $this->nip)
+                    ->orWhere('nik_ibu', $this->nip);
+            })
+            ->first(['nik_ayh', 'nik_ibu']);
+
+        if (!$dataPribadi) {
+            return null;
+        }
+
+        if ((string) $dataPribadi->nik_ayh === (string) $this->nip) {
+            return 'Laki-laki';
+        }
+
+        if ((string) $dataPribadi->nik_ibu === (string) $this->nip) {
+            return 'Perempuan';
+        }
+
+        return null;
+    }
 }

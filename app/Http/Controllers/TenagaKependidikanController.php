@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class TenagaKependidikanController extends Controller
 {
-    public function tenagaKependidikan()
+    public function tenagaKependidikan(Request $request)
     {
-        $kependik = Kependik::query()->paginate(10); // Gunakan query builder agar tetap LengthAwarePaginator
+        $query = Kependik::query();
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . trim($request->input('search')) . '%');
+        }
+        $kependik = $query->paginate(10)->withQueryString();
         return view('tk.dataTk', compact('kependik'));
     }
 

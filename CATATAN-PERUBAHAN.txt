@@ -36,3 +36,69 @@ Perbaikan
 -Memperbaiki akses foto jurnal/di detail journal dan alur modal detail.
 -Memperjelas status jurnal yang sudah diproses di halaman siswa.
 
+PEMBARUAN DEBUGGING ROLE SISWA
+==============================
+- Tautan "lengkapi data pribadi" pada peringatan pengajuan PKL diarahkan ke formulir
+  data pribadi siswa.
+- Validasi email siswa dan orang tua juga memeriksa keunikan di tabel users, agar
+  bentrok email ditampilkan sebagai kesalahan form, bukan error database.
+- Tombol Edit pada jurnal siswa dihubungkan ke modal edit yang sudah tersedia.
+- Jika update jurnal gagal divalidasi, detail kesalahan kini ditampilkan di dalam
+  modal dan kolom bermasalah ditandai. Tanggal jurnal juga diberi pesan jelas jika
+  diatur melebihi hari ini.
+- Input jam edit dinormalisasi ke HH:mm dan validasi menerima nilai database HH:mm:ss,
+  sehingga jam selesai yang lebih besar tidak salah ditolak karena detik.
+
+AUDIT DATA AKUN DEMO LOKAL
+==========================
+- Daftar Beralih Akun lokal memakai Kaprog PPLG yang jurusannya sudah terhubung,
+  tidak lagi memasukkan Kaprog Tes yang belum terhubung, dan mencakup akun Pendamping.
+- Akun demo lokal Siswa, Guru, PPKL, Pembimbing Sekolah, IDUKA, Orang Tua,
+  Persuratan, Kaprog, Hubin, Kepsek, dan Pendamping diperiksa/dilengkapi dengan
+  relasi serta data uji yang relevan.
+- Data tambahan di database lokal diberi penanda uji dan hanya dibuat untuk akun
+  demo terpilih. Tidak ada data akun lain yang diubah secara massal.
+
+PERBAIKAN DASHBOARD DAN ABSENSI GURU
+===================================
+- Ikon sambutan pada dashboard Guru menggunakan ikon Font Awesome yang valid.
+- Menu Konfir Jurnal tetap aktif pada halaman approval dan riwayatnya.
+- Header tabel Riwayat Konfirmasi Jurnal memakai warna netral dengan kontras teks
+  yang lebih jelas.
+- Label status dan jumlah jurnal pada tabel riwayat dibuat lebih kontras dan ringkas.
+- Jarak judul Konfirmasi Absensi Siswa dari navbar ditambah.
+- Kolom validasi Guru yang hilang pada absensi_pending ditambahkan melalui migrasi
+  terarah. Nilai status persetujuan Guru disesuaikan dengan enum database.
+
+PERBAIKAN MENU PENDAMPING
+=========================
+- Menu Data Institusi tetap aktif saat daftar difilter melalui halaman IDUKA.
+- Data Siswa Pendamping menerima data pemetaan kelas per konsentrasi keahlian yang
+  dibutuhkan tampilan.
+- Pencarian pada Data Siswa dan Tenaga Kependidikan memakai modal, query server-side,
+  serta pesan yang jelas jika tidak ada hasil, mengikuti pola menu GTK Guru.
+
+PERBAIKAN ROLE IDUKA
+====================
+- Judul sambutan dashboard IDUKA dipastikan berwarna putih.
+- Pemuatan CP/ATP menggunakan nama relasi model yang benar; jika request gagal,
+  pesan menampilkan penyebab respons alih-alih pesan generik saja.
+- Jarak label Check All dari checkbox dirapikan pada modal tambah dan update TP.
+- Jarak atas halaman Pengajuan Masuk dan Riwayat Pindah PKL ditambah.
+- Modal foto pada Konfirmasi Jurnal tidak lagi merujuk variabel jurnal yang tidak
+  dikirim ke halaman.
+- Active state Review Pengajuan mencakup halaman daftar, detail, dan riwayat.
+- Navbar halaman Data Institusi dan Data Pribadi IDUKA mengikuti posisi sticky
+  standar layout agar sejajar dengan menu lain dan tidak menutupi konten; overflow
+  horizontal halaman Data Institusi tidak lagi menghalangi perilaku sticky.
+- Judul bagian Data Pribadi IDUKA diberi latar kontras agar teks terbaca.
+- Tombol Export dan Cetak pada Rekap Nilai Akhir disejajarkan; inisial bulat pada
+  nama siswa dihapus agar nama tampil tanpa penanda yang membingungkan.
+
+PERBAIKAN ROLE ORANG TUA
+========================
+- Judul sambutan dashboard Orang Tua dipaksa berwarna putih agar kontras di banner
+  biru.
+- Sapaan pada dashboard disesuaikan dengan jenis kelamin di profil tiap role; jika
+  data gender tidak tersedia, nama ditampilkan tanpa sapaan yang menebak.
+

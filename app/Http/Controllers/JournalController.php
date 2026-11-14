@@ -49,8 +49,8 @@ class JournalController extends Controller
         $validated = $request->validate([
             'tgl' => 'required|date|before_or_equal:today',
             'uraian' => 'required|string|max:1000',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'jam_mulai' => 'required|date_format:H:i,H:i:s',
+            'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_pengetahuan_baru' => 'nullable',
             'is_dalam_mapel' => 'nullable',
@@ -96,9 +96,23 @@ class JournalController extends Controller
             $validator = Validator::make($request->all(), [
                 'tgl' => 'required|date|before_or_equal:today',
                 'uraian' => 'required|string|max:1000',
-                'jam_mulai' => 'required|date_format:H:i',
-                'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+                'jam_mulai' => 'required|date_format:H:i,H:i:s',
+                'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ], [
+                'tgl.required' => 'Tanggal jurnal wajib diisi.',
+                'tgl.date' => 'Tanggal jurnal tidak valid.',
+                'tgl.before_or_equal' => 'Tanggal jurnal tidak boleh melebihi hari ini.',
+                'uraian.required' => 'Uraian kegiatan wajib diisi.',
+                'uraian.max' => 'Uraian kegiatan maksimal 1000 karakter.',
+                'jam_mulai.required' => 'Jam mulai wajib diisi.',
+                'jam_mulai.date_format' => 'Format jam mulai tidak valid.',
+                'jam_selesai.required' => 'Jam selesai wajib diisi.',
+                'jam_selesai.date_format' => 'Format jam selesai tidak valid.',
+                'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
+                'foto.image' => 'File foto harus berupa gambar.',
+                'foto.mimes' => 'Foto harus berformat JPG, JPEG, PNG, atau GIF.',
+                'foto.max' => 'Ukuran foto maksimal 2 MB.',
             ]);
 
             if ($validator->fails()) {
@@ -202,7 +216,7 @@ class JournalController extends Controller
         if (request()->ajax() || request()->wantsJson()) {
             try {
                 // Render the complete edit form
-                $html = view('siswa.jurnal.partials.edit', compact('jurnal'))->render();
+                $html = view('siswa.jurnal.edit', compact('jurnal'))->render();
                 return response($html, 200);
             } catch (\Exception $e) {
                 Log::error('Error rendering edit form: ' . $e->getMessage());

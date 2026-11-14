@@ -29,7 +29,9 @@ class DataPribadiController extends Controller
 
 public function store(Request $request)
     {
-        $dataPribadi = Auth::user()->dataPribadi;
+        $user = Auth::user();
+        $dataPribadi = $user->dataPribadi;
+        $userOrtu = User::where('nip', $dataPribadi->nik_ayh ?? $request->input('nik_ayh'))->first();
         $allowedClasses = KelasJurusan::namesFor(
             Konke::find($request->input('konke_id'))?->name_konke
         );
@@ -37,7 +39,11 @@ public function store(Request $request)
         // Validasi
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'nip' => 'required|unique:data_pribadis,nip,' . ($dataPribadi->id ?? 'null') . ',id',
+            'nip' => [
+                'required',
+                Rule::unique('data_pribadis', 'nip')->ignore($dataPribadi?->id),
+                Rule::unique('users', 'nip')->ignore($user->id),
+            ],
             'kelas_id' => [
                 'required',
                 Rule::exists('kelas', 'id')->where(fn ($query) => $query
@@ -53,7 +59,12 @@ public function store(Request $request)
             'tempat_lhr' => 'required|string',
             'tgl_lahir' => 'nullable|date',
             'tahun_ajaran_id' => 'required|exists:tahun_ajaran,id',
-            'email' => 'required|email|unique:data_pribadis,email,' . ($dataPribadi->id ?? 'null') . ',id',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('data_pribadis', 'email')->ignore($dataPribadi?->id),
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
 
             'name_ayh' => 'required|string|max:255',
             'nik_ayh' => 'required|unique:data_pribadis,nik_ayh,' . ($dataPribadi->id ?? 'null') . ',id',
@@ -71,7 +82,12 @@ public function store(Request $request)
             'ttd_ortu_manual_hubungan' => 'nullable|string|max:255', // contoh: Paman
             'ttd_ortu_manual_nama' => 'nullable|string|max:255', // contoh: Ujang
 
-            'email_ortu' => 'nullable|email|unique:data_pribadis,email_ortu,' . ($dataPribadi->id ?? 'null') . ',id',
+            'email_ortu' => [
+                'nullable',
+                'email',
+                Rule::unique('data_pribadis', 'email_ortu')->ignore($dataPribadi?->id),
+                Rule::unique('users', 'email')->ignore($userOrtu?->id),
+            ],
             'no_tlp' => 'required|string|max:15|unique:data_pribadis,no_tlp,' . ($dataPribadi->id ?? 'null') . ',id',
         ]);
 
@@ -81,7 +97,6 @@ public function store(Request $request)
         }
 
         // Update user siswa (Auth user)
-        $user = Auth::user();
         $user->update([
             'name' => $validated['name'],
             'nip' => $validated['nip'],
@@ -108,8 +123,6 @@ public function store(Request $request)
 
 
         if ($request->filled('nik_ayh')) {
-            $userOrtu = User::where('nip', $dataPribadi->nik_ayh ?? $request->nik_ayh)->first();
-
             if ($userOrtu) {
                 $userOrtu->update([
                     'name' => $request->name_ayh,

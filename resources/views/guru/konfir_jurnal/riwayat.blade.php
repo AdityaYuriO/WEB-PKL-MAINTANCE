@@ -156,9 +156,8 @@
                                         </h5>
                                         <p class="text-muted mb-0 small">Riwayat lengkap konfirmasi jurnal</p>
                                     </div>
-                                    <span
-                                        class="badge bg-primary bg-opacity-10 text-white py-2 px-3 rounded-pill fw-medium">
-                                        <i class="bi bi-list-check me-1 text-white"></i>
+                                    <span class="history-count">
+                                        <i class="bi bi-list-check" aria-hidden="true"></i>
                                         {{ $jurnals->count() }} dari {{ $jurnals->total() }} jurnal
                                     </span>
                                 </div>
@@ -168,13 +167,13 @@
                                     <table class="table table-hover align-middle mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th class="ps-4 py-3 text-uppercase fw-medium small text-muted border-0">No</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Tanggal</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Nama Siswa</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Waktu</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Status</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Diperbarui</th>
-                                                <th class="pe-4 py-3 text-uppercase fw-medium small text-muted border-0 text-end">Aksi</th>
+                                                <th class="ps-4 py-3 text-uppercase fw-semibold small text-dark border-0">No</th>
+                                                <th class="py-3 text-uppercase fw-semibold small text-dark border-0">Tanggal</th>
+                                                <th class="py-3 text-uppercase fw-semibold small text-dark border-0">Nama Siswa</th>
+                                                <th class="py-3 text-uppercase fw-semibold small text-dark border-0">Waktu</th>
+                                                <th class="py-3 text-uppercase fw-semibold small text-dark border-0">Status</th>
+                                                <th class="py-3 text-uppercase fw-semibold small text-dark border-0">Diperbarui</th>
+                                                <th class="pe-4 py-3 text-uppercase fw-semibold small text-dark border-0 text-end">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -210,24 +209,24 @@
                                                         </span>
                                                     </td>
                                                     <td class="py-3">
-                                                        <div class="d-flex flex-column gap-2">
+                                                        <div class="journal-status">
                                                             <!-- PERUBAHAN: Tampilkan status yang sesuai dengan sistem baru -->
                                                             @if ($journal->status === 'rejected')
-                                                                <span class="badge bg-danger bg-opacity-15 text-danger border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                <span class="journal-status-badge journal-status-rejected">
                                                                     <i class="bi bi-x-circle-fill me-1 small"></i>Ditolak
                                                                 </span>
                                                             @elseif ($journal->status === 'approved')
-                                                                <span class="badge bg-success bg-opacity-15 text-success border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                <span class="journal-status-badge journal-status-approved">
                                                                     <i class="bi bi-check-circle-fill me-1 small"></i>Disetujui
                                                                 </span>
                                                                 <!-- PERUBAHAN: Tampilkan siapa yang menyetujui -->
                                                                 @if ($journal->approved_by)
-                                                                    <small class="text-success d-flex align-items-center">
+                                                                    <small class="journal-approval-by">
                                                                         <i class="bi bi-check-circle-fill me-1 small"></i>Disetujui oleh: {{ $journal->approved_by }}
                                                                     </small>
                                                                 @endif
                                                             @else
-                                                                <span class="badge bg-warning bg-opacity-15 text-warning border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                <span class="journal-status-badge journal-status-pending">
                                                                     <i class="bi bi-clock-fill me-1 small"></i>Menunggu
                                                                 </span>
                                                             @endif
@@ -440,25 +439,14 @@
             }
 
             .table thead th {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: #f1f5f9;
+                color: #334155;
                 border: none;
                 font-weight: 600;
                 letter-spacing: 0.5px;
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 padding: 1rem 1.5rem;
-                position: relative;
-            }
-
-            .table thead th::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 1px;
-                background: rgba(255, 255, 255, 0.3);
             }
 
             .table tbody tr {
@@ -467,9 +455,7 @@
             }
 
             .table tbody tr:hover {
-                background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
-                transform: translateX(8px);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                background: #f8fafc;
             }
 
             .table tbody tr:last-child {
@@ -480,6 +466,66 @@
                 vertical-align: middle;
                 border: none;
                 padding: 1rem 1.5rem;
+            }
+
+            .history-count {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.5rem 0.85rem;
+                border: 1px solid #c7d2fe;
+                border-radius: 999px;
+                background: #eef2ff;
+                color: #3730a3;
+                font-size: 0.8rem;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .journal-status {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.45rem;
+            }
+
+            .journal-status-badge {
+                display: inline-flex;
+                align-items: center;
+                width: fit-content;
+                max-width: 100%;
+                padding: 0.35rem 0.7rem;
+                border: 1px solid transparent;
+                border-radius: 999px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                line-height: 1.25;
+            }
+
+            .journal-status-approved {
+                background: #dcfce7;
+                border-color: #86efac;
+                color: #166534;
+            }
+
+            .journal-status-rejected {
+                background: #fee2e2;
+                border-color: #fca5a5;
+                color: #991b1b;
+            }
+
+            .journal-status-pending {
+                background: #fef3c7;
+                border-color: #fcd34d;
+                color: #92400e;
+            }
+
+            .journal-approval-by {
+                display: inline-flex;
+                align-items: flex-start;
+                color: #475569;
+                font-size: 0.8rem;
+                line-height: 1.4;
             }
 
             /* Journal Row Animation */

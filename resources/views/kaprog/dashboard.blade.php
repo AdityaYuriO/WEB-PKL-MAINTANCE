@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+@php($sapaan = Auth::user()->sapaan())
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <!-- Welcome Card -->
@@ -10,7 +11,7 @@
                     <div class="col-sm-8">
                         <div class="card-body">
                             <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">
-                                Selamat Datang, @if ($sapaan) {{ $sapaan }} @endif{{ Auth::user()->name }}!
+                                Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!
                             </h4>
                             <p class="mb-4 text-white-50">
                                 Ini adalah dashboard panel Kepala Program (Kaprog). Anda dapat memantau data usulan PKL, mengevaluasi proses pengajuan, dan mengelola administratif program keahlian Anda.

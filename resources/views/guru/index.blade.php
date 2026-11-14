@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+@php($sapaan = Auth::user()->sapaan())
 <div class="container-xxl flex-grow-1 container-p-y">
 
     {{-- Welcome Card --}}
@@ -14,7 +15,7 @@
                                     <i class="fas fa-chalkboard-teacher" style="font-size:20px;color:#3b82f6;"></i>
                                 </div>
                                 <div>
-                                    <h5 class="card-title mb-0">Halo, {{ Auth::user()->name }}!</h5>
+                                    <h5 class="card-title mb-0">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h5>
                                     <small style="color:#64748b;">Dashboard Guru PKL</small>
                                 </div>
                             </div>

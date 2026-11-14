@@ -65,10 +65,10 @@ class GuruAbsensiController extends Controller
         $absensi = AbsensiPending::findOrFail($id);
         $this->authorizePendingRecord($absensi);
         $absensi->update([
-            'status_konfirmasi_guru' => 'disetujui',
+            'status_konfirmasi_guru' => 'approved',
             'waktu_konfirmasi_guru' => Carbon::now(),
         ]);
-        if ($absensi->status_konfirmasi === 'disetujui' && $absensi->status_konfirmasi_guru === 'disetujui') {
+        if ($absensi->status_konfirmasi === 'disetujui' && $absensi->status_konfirmasi_guru === 'approved') {
             $this->pindahkanKeAbsensi($absensi);
             $absensi->delete();
         }
@@ -83,7 +83,7 @@ class GuruAbsensiController extends Controller
         $absensi = AbsensiPending::findOrFail($id);
         $this->authorizePendingRecord($absensi);
         $absensi->update([
-            'status_konfirmasi_guru' => 'ditolak',
+            'status_konfirmasi_guru' => 'rejected',
             'catatan_guru' => $request->catatan_guru,
             'waktu_konfirmasi_guru' => Carbon::now(),
         ]);
@@ -95,10 +95,10 @@ class GuruAbsensiController extends Controller
         $izin = IzinPending::findOrFail($id);
         $this->authorizePendingRecord($izin);
         $izin->update([
-            'status_konfirmasi_guru' => 'disetujui',
+            'status_konfirmasi_guru' => 'approved',
             'waktu_konfirmasi_guru' => Carbon::now(),
         ]);
-        if ($izin->status_konfirmasi === 'disetujui' && $izin->status_konfirmasi_guru === 'disetujui') {
+        if ($izin->status_konfirmasi === 'disetujui' && $izin->status_konfirmasi_guru === 'approved') {
             $this->pindahkanKeAbsensiIzin($izin);
             $izin->delete();
         }
@@ -113,7 +113,7 @@ class GuruAbsensiController extends Controller
         $izin = IzinPending::findOrFail($id);
         $this->authorizePendingRecord($izin);
         $izin->update([
-            'status_konfirmasi_guru' => 'ditolak',
+            'status_konfirmasi_guru' => 'rejected',
             'catatan_guru' => $request->catatan_guru,
             'waktu_konfirmasi_guru' => Carbon::now(),
         ]);

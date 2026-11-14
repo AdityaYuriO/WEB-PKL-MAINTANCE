@@ -15,7 +15,14 @@ class IzinPending extends Model
         'jenis_izin', 
         'keterangan', 
         'status_konfirmasi',
+        'status_konfirmasi_guru',
+        'catatan_guru',
+        'waktu_konfirmasi_guru',
         'alasan_penolakan'
+    ];
+
+    protected $casts = [
+        'waktu_konfirmasi_guru' => 'datetime',
     ];
     
     public function user()
