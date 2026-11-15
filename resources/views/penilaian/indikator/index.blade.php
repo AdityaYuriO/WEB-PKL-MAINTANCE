@@ -242,7 +242,9 @@
                     </div>
 
                     <div class="modal-footer bg-light">
-                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button> --}}
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                            Batal
+                        </button>
 
                         <button type="submit" class="btn btn-primary-custom btn-sm">
                             Simpan
@@ -255,3 +257,4 @@
         </div>
     </div>
 @endsection
+

@@ -63,7 +63,7 @@ class KepsekController extends Controller
      public function historiPengajuan()
     {
         // Ambil semua data pengajuan yang sudah diproses (status bukan 'proses')
-        $historiPengajuan = PengajuanPkl::with('iduka', 'siswa')
+        $historiPengajuan = PengajuanPkl::with('iduka', 'siswa.kelas')
             ->where('status', 'diterima')
             ->orderBy('updated_at', 'desc')
             ->get()

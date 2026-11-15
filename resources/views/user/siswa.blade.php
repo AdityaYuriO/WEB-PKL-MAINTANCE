@@ -41,10 +41,23 @@
                                                 placeholder="Masukkan NIP/NIS" required>
                                         </div>
 
+                                        <!-- Kelas -->
                                         <div class="mb-3">
+                                            <label class="form-label fw-semibold">Kelas</label>
+                                            <select name="kelas_id" class="form-select" required>
+                                                <option value="">Pilih Kelas</option>
+                                                @foreach ($kelas as $k)
+                                                    <option value="{{ $k->id }}">
+                                                        {{$k->name_kelas }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                             <div class="mb-3">
                                             <label class="form-label">Tahun Ajaran</label>
                                             <input type="text" name="tahun_ajaran" class="form-control"
-                                                value="{{ old('tahun_ajaran') }}" placeholder="2025/2026" required>
+                                                placeholder="2025/2026" required>
+                                        </div>
                                         </div>
                                     </div>
 
@@ -64,32 +77,13 @@
                                                 placeholder="Masukkan password" required>
                                         </div>
 
-                                        <!-- Jurusan -->
+                                        <!-- Konsentrasi Keahlian -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Konsentrasi Keahlian</label>
-                                            <select id="konke_id" name="konke_id" class="form-select" required>
+                                            <select name="konke_id" class="form-select" required>
                                                 <option value="">Pilih Konsentrasi</option>
                                                 @foreach ($konke as $kk)
-                                                    <option value="{{ $kk->id }}"
-                                                        @selected(old('konke_id') == $kk->id)>
-                                                        {{ $kk->name_konke }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <!-- Kelas -->
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Kelas (XII)</label>
-                                            <select id="kelas_id" name="kelas_id" class="form-select" required disabled>
-                                                <option value="">Pilih Jurusan terlebih dahulu</option>
-                                                @foreach ($kelas as $k)
-                                                    <option value="{{ $k->id }}"
-                                                        data-konke-id="{{ $k->konke_id }}"
-                                                        data-kelas="{{ $k->name_kelas }}"
-                                                        @selected(old('kelas_id') == $k->id)>
-                                                        {{ trim(($k->kelas ?? 'XII') . ' ' . ($k->name_kelas ?? '')) }}
-                                                    </option>
+                                                    <option value="{{ $kk->id }}">{{ $kk->name_konke }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -116,52 +110,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const jurusanSelect = document.getElementById('konke_id');
-            const kelasSelect = document.getElementById('kelas_id');
-            const kelasByKonkeId = @json($kelasByKonkeId);
-            const kelasOptions = Array.from(kelasSelect.options).filter(option => option.value);
-            const previousKelas = @json((string) old('kelas_id'));
-
-            function updateKelasOptions(restorePrevious = false) {
-                const selectedJurusanId = jurusanSelect.value;
-                const allowedKelas = kelasByKonkeId[selectedJurusanId] || [];
-
-                kelasOptions.forEach(option => {
-                    const visible = Boolean(selectedJurusanId) &&
-                        option.dataset.konkeId === selectedJurusanId &&
-                        allowedKelas.includes(option.dataset.kelas);
-                    option.hidden = !visible;
-                });
-
-                kelasSelect.disabled = allowedKelas.length === 0;
-                kelasSelect.options[0].textContent = selectedJurusanId
-                    ? (allowedKelas.length ? 'Pilih Kelas' : 'Tidak ada kelas untuk jurusan ini')
-                    : 'Pilih Jurusan terlebih dahulu';
-
-                const currentOption = kelasSelect.selectedOptions[0];
-                const currentIsVisible = currentOption && !currentOption.hidden;
-                if (!currentIsVisible) {
-                    kelasSelect.value = '';
-                }
-
-                if (restorePrevious && previousKelas) {
-                    const previousOption = kelasOptions.find(option =>
-                        option.value === previousKelas && !option.hidden
-                    );
-                    if (previousOption) kelasSelect.value = previousOption.value;
-                }
-            }
-
-            jurusanSelect.addEventListener('change', function () {
-                kelasSelect.value = '';
-                updateKelasOptions();
-            });
-
-            updateKelasOptions(true);
-        });
-    </script>
-@endpush

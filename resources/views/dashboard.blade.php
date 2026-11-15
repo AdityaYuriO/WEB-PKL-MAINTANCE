@@ -16,7 +16,7 @@
                                                 <i class="fas fa-chalkboard-teacher" style="font-size:20px;color:#3b82f6;"></i>
                                             </div>
                                             <div>
-                                                <h5 class="card-title mb-0" style="color:#0f172a;">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h5>
+                                                <h5 class="card-title mb-0" style="color:#0f172a;">Selamat Datang, {{ auth()->user()->role == 'kepsek' ? 'Bapak Sekolah ' : ($sapaan ? $sapaan . ' ' : '') }}{{ Auth::user()->name }}!</h5>
                                                 <small style="color:#64748b;">Selamat datang kembali</small>
                                             </div>
                                         </div>

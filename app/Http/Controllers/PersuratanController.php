@@ -284,6 +284,7 @@ class PersuratanController extends Controller
         $pindah = DB::table('pindah_pkl')
             ->join('users', 'pindah_pkl.siswa_id', '=', 'users.id')
             ->join('idukas', 'pindah_pkl.iduka_id', '=', 'idukas.id')
+            ->leftJoin('kelas', 'users.kelas_id', '=', 'kelas.id')
             ->select(
                 'pindah_pkl.id',
                 'pindah_pkl.status',
@@ -291,7 +292,9 @@ class PersuratanController extends Controller
                 'pindah_pkl.updated_at',
                 'users.name as nama_siswa',
                 'users.kelas_id',
-                'idukas.nama as nama_iduka'
+                'idukas.nama as nama_iduka',
+                'kelas.kelas as tingkat_kelas',
+                'kelas.name_kelas as nama_kelas'
             )
             ->where('pindah_pkl.status', 'menunggu_surat') // status setelah kaprog konfirmasi
             ->get();

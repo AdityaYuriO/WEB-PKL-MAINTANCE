@@ -3,9 +3,6 @@
 @section('content')
     <div class="container-fluid">
         <div class="container-xxl flex-grow-1 container-p-y">
-            @if (!empty($configurationError))
-                <div class="alert alert-warning" role="alert">{{ $configurationError }}</div>
-            @endif
             <!-- Simple Header Card -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -120,11 +117,18 @@
                         <div class="card-header bg-white border-0 py-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0 fw-semibold text-dark">Grafik Kehadiran</h5>
-                                <select id="chartFilterBtn" class="form-select form-select-sm w-auto attendance-chart-filter"
-                                    aria-label="Periode grafik kehadiran">
-                                    <option value="7" selected>7 Hari Terakhir</option>
-                                    <option value="today">Hari Ini</option>
-                                </select>
+                                <div class="dropdown">
+                                    <button id="chartFilterBtn" class="btn btn-sm btn-light border dropdown-toggle"
+                                        type="button" data-bs-toggle="dropdown">
+                                        7 Hari Terakhir
+                                    </button>
+                                    <ul class="dropdown-menu shadow-sm">
+                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="today">Hari
+                                                Ini</a></li>
+                                        <li><a class="dropdown-item chart-filter" href="#" data-filter="7">7 Hari
+                                                Terakhir</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -483,7 +487,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -538,7 +542,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -590,7 +594,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> --}}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -899,8 +903,14 @@
             // Default tampil "7 Hari Terakhir"
             loadAttendanceChart('7');
 
-            document.getElementById('chartFilterBtn').addEventListener('change', function() {
-                loadAttendanceChart(this.value);
+            // Klik dropdown filter
+            document.querySelectorAll('.chart-filter').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const filter = this.dataset.filter;
+                    document.getElementById('chartFilterBtn').innerText = this.innerText;
+                    loadAttendanceChart(filter);
+                });
             });
 
             // ====== Grafik Distribusi per Kelas (Doughnut Chart) ======
@@ -1229,3 +1239,4 @@
         });
     </script>
 @endsection
+

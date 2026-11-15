@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container">
     <h2>Daftar Cetak Usulan</h2>
     <a href="{{ route('hubin.daftarcetak.download') }}" class="btn btn-success mb-3">
     Download Excel

@@ -31,9 +31,6 @@
                     data-bs-target="#tab-riwayat" type="button" role="tab">
                     <i class="fas fa-check-circle me-2"></i>
                     <span>Riwayat</span>
-                    @if ($historyJurnals->count() > 0)
-                        <span class="badge bg-success ms-2">{{ $historyJurnals->count() }}</span>
-                    @endif
                 </button>
             </li>
         </ul>
@@ -94,7 +91,7 @@
                                             Lihat Detail
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary"
-                                            onclick="editJournal({{ $jurnal->id }})"
+                                            onclick="alert('Fitur sedang diperbaiki, silakan coba lagi nanti.')"
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -113,18 +110,7 @@
                         <div class="card-body text-center py-5">
                             <i class="fas fa-book-open text-muted mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
                             <h5 class="fw-bold text-muted">Belum Ada Jurnal</h5>
-                            @if ($historyJurnals->count() > 0)
-                                <p class="text-muted mb-3">
-                                    Jurnal yang sudah diproses tidak ditampilkan di sini.
-                                    Ada {{ $historyJurnals->count() }} jurnal di Riwayat.
-                                </p>
-                                <button type="button" class="btn btn-success"
-                                    onclick="bootstrap.Tab.getOrCreateInstance(document.getElementById('history-tab')).show()">
-                                    <i class="fas fa-check-circle me-1"></i>Lihat Status Jurnal
-                                </button>
-                            @else
-                                <p class="text-muted mb-0">Kamu belum memiliki jurnal yang masuk kriteria ini.</p>
-                            @endif
+                            <p class="text-muted mb-0">Kamu belum memiliki jurnal yang masuk kriteria ini.</p>
                         </div>
                     </div>
                 @endforelse
@@ -163,18 +149,13 @@
                                     </div>
 
                                     <!-- Status Badge -->
-                                    <div class="d-flex flex-wrap align-items-center gap-2">
-                                        @if ($jurnal->validasi_pembimbing === 'sudah')
-                                            <span class="badge bg-success px-3 py-2">
-                                                <i class="fas fa-check-circle me-1"></i>Disetujui Pembimbing
-                                            </span>
-                                        @endif
-                                        @if ($jurnal->validasi_iduka === 'sudah')
-                                            <span class="badge bg-success px-3 py-2">
-                                                <i class="fas fa-check-circle me-1"></i>Disetujui IDUKA
-                                            </span>
-                                        @endif
-                                    </div>
+                                    <span class="badge bg-success px-3 py-2">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        DISETUJUI
+                                    </span>
+                                    @if($jurnal->approved_by)
+                                        <small class="text-muted ms-2">Oleh: {{ $jurnal->approved_by }}</small>
+                                    @endif
                                 </div>
 
                                 <!-- Action Button -->
@@ -205,11 +186,11 @@
     <div class="modal fade" id="createJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white student-edit-modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title fw-bold">
                         <i class="fas fa-plus-circle me-2"></i>Tambah Jurnal Baru
                     </h5>
-                    <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <form action="{{ route('jurnal.store') }}" method="POST" enctype="multipart/form-data"
@@ -299,11 +280,11 @@
     <div class="modal fade" id="viewJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white student-edit-modal-header">
+                <div class="modal-header bg-info text-white">
                     <h5 class="modal-title fw-bold">
                         <i class="fas fa-eye me-2"></i>Detail Jurnal
                     </h5>
-                    <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" id="journalDetailContent">
@@ -631,16 +612,6 @@
                 editForm.addEventListener('submit', function(e) {
                     e.preventDefault(); // Cegah pengiriman form default
 
-                    const validationAlert = document.getElementById('editJournalContent')
-                        .querySelector('.edit-validation-errors');
-                    if (validationAlert) {
-                        validationAlert.remove();
-                    }
-                    this.querySelectorAll('.is-invalid').forEach(field => {
-                        field.classList.remove('is-invalid');
-                        field.removeAttribute('aria-invalid');
-                    });
-
                     const jamMulai = this.querySelector('input[name="jam_mulai"]').value;
                     const jamSelesai = this.querySelector('input[name="jam_selesai"]').value;
 
@@ -690,14 +661,9 @@
                                     redirect: response.url
                                 };
                             }
-                            return response.json().then(data => ({
-                                data,
-                                status: response.status
-                            }));
+                            return response.json();
                         })
-                        .then(result => {
-                            const data = result.data || result;
-
+                        .then(data => {
                             // Debug: Log response data
                             console.log('Response data:', data);
 
@@ -719,36 +685,6 @@
                                     // Muat ulang halaman untuk menampilkan data yang diperbarui
                                     window.location.reload();
                                 });
-                            } else if (result.status === 422 && data.errors) {
-                                const modalContent = document.getElementById('editJournalContent');
-                                const errorMessages = Object.values(data.errors).reduce(
-                                    (messages, fieldErrors) => messages.concat(fieldErrors), []);
-                                const errorAlert = document.createElement('div');
-                                errorAlert.className = 'alert alert-danger edit-validation-errors';
-                                errorAlert.setAttribute('role', 'alert');
-
-                                const errorTitle = document.createElement('strong');
-                                errorTitle.textContent = 'Periksa kembali isian jurnal:';
-                                errorAlert.appendChild(errorTitle);
-
-                                const errorList = document.createElement('ul');
-                                errorList.className = 'mb-0 mt-2';
-                                errorMessages.forEach(message => {
-                                    const item = document.createElement('li');
-                                    item.textContent = message;
-                                    errorList.appendChild(item);
-                                });
-                                errorAlert.appendChild(errorList);
-                                modalContent.prepend(errorAlert);
-
-                                Object.keys(data.errors).forEach(fieldName => {
-                                    const field = editForm.elements.namedItem(fieldName);
-                                    if (field instanceof HTMLElement) {
-                                        field.classList.add('is-invalid');
-                                        field.setAttribute('aria-invalid', 'true');
-                                    }
-                                });
-                                modalContent.scrollTop = 0;
                             } else {
                                 // Tangani error validasi atau error lainnya
                                 let errorMessage = 'Terjadi kesalahan saat memperbarui jurnal.';
@@ -813,3 +749,4 @@
         });
     </script>
 @endsection
+

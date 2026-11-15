@@ -191,7 +191,7 @@
                         </div>
 
                         <div id="cpTpContainer">
-                            <label class="d-flex justify-content-end align-items-center gap-2 me-2 mb-2">Check All
+                            <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllTambah">
                             </label>
                             <div class="table-responsive">
@@ -213,7 +213,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
                     </div>
                 </form>
@@ -248,7 +248,7 @@
                         </div>
 
                         <div id="cpTpContainerUpdate">
-                            <label class="d-flex justify-content-end align-items-center gap-2 me-2 mb-2">Check All
+                            <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllUpdate">
                             </label>
                             <div class="table-responsive">
@@ -270,7 +270,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-info btn-sm">Update Data</button>
                     </div>
                 </form>
@@ -407,20 +407,9 @@
                 const tpTambahBody = document.getElementById("tp-tambah-body");
                 tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-                fetch(`/get-cp-atp/${konke_id}`, {
-                    headers: { 'Accept': 'application/json' },
-                    credentials: 'same-origin'
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
+                fetch(`/get-cp-atp/${konke_id}`)
+                    .then(response => response.json())
                     .then(data => {
-                        if (!Array.isArray(data)) {
-                            throw new Error(data.error || 'Respons data TP tidak valid.');
-                        }
                         tpTambahBody.innerHTML = "";
 
                         if (data.length === 0) {
@@ -446,7 +435,7 @@
                     })
                     .catch(error => {
                         console.error("Error fetching data:", error);
-                        tpTambahBody.innerHTML = `<tr><td colspan='2' class='text-danger text-center'>Gagal memuat data: ${error.message}</td></tr>`;
+                        tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
                     });
             }
         });
@@ -481,20 +470,9 @@
             const tpUpdateBody = document.getElementById("tp-update-body");
             tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-            fetch(`/get-cp-atp/${konke_id}`, {
-                headers: { 'Accept': 'application/json' },
-                credentials: 'same-origin'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
+            fetch(`/get-cp-atp/${konke_id}`)
+                .then(response => response.json())
                 .then(data => {
-                    if (!Array.isArray(data)) {
-                        throw new Error(data.error || 'Respons data TP tidak valid.');
-                    }
                     tpUpdateBody.innerHTML = "";
 
                     if (data.length === 0) {
@@ -520,7 +498,7 @@
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
-                    tpUpdateBody.innerHTML = `<tr><td colspan='2' class='text-danger text-center'>Gagal memuat data: ${error.message}</td></tr>`;
+                    tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
                 });
         }
 

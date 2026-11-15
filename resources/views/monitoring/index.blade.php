@@ -137,7 +137,7 @@
             </div>
 
             <div class="card-body p-0">
-                <div class="table-responsive text-nowrap">
+                <div class="table-responsive text-nowrap top-scroll">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>

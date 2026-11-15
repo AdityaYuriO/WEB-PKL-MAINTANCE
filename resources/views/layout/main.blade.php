@@ -282,6 +282,66 @@
               padahal di banner biru harus putih. */
         .card-title.text-white { color: #fff !important; }
 
+        /* 10) Teks "Selamat Datang" di banner: app.css punya ".container-xxl h4.fw-bold { color: ... !important }"
+               yang lebih spesifik dari aturan .card-title.text-white, jadi tetap hitam. */
+        .container-xxl .card.bg-primary h4.card-title.text-white,
+        .container-xxl h4.card-title.text-white { color: #fff !important; }
+
+        /* 11) app.css memaksa ".btn { display: inline-flex !important }" sehingga d-none / d-md-none
+               tidak berfungsi pada tombol (jadi muncul dua tombol Detail). Dipulihkan di sini. */
+        .btn.d-none { display: none !important; }
+        @media (min-width: 576px) {
+            .btn.d-sm-none { display: none !important; }
+            .btn.d-none.d-sm-block { display: block !important; }
+            .btn.d-none.d-sm-inline { display: inline !important; }
+            .btn.d-none.d-sm-inline-block { display: inline-block !important; }
+            .btn.d-none.d-sm-flex { display: flex !important; }
+            .btn.d-none.d-sm-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 768px) {
+            .btn.d-md-none { display: none !important; }
+            .btn.d-none.d-md-block { display: block !important; }
+            .btn.d-none.d-md-inline { display: inline !important; }
+            .btn.d-none.d-md-inline-block { display: inline-block !important; }
+            .btn.d-none.d-md-flex { display: flex !important; }
+            .btn.d-none.d-md-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 992px) {
+            .btn.d-lg-none { display: none !important; }
+            .btn.d-none.d-lg-block { display: block !important; }
+            .btn.d-none.d-lg-inline { display: inline !important; }
+            .btn.d-none.d-lg-inline-block { display: inline-block !important; }
+            .btn.d-none.d-lg-flex { display: flex !important; }
+            .btn.d-none.d-lg-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 1200px) {
+            .btn.d-xl-none { display: none !important; }
+            .btn.d-none.d-xl-block { display: block !important; }
+            .btn.d-none.d-xl-inline { display: inline !important; }
+            .btn.d-none.d-xl-inline-block { display: inline-block !important; }
+            .btn.d-none.d-xl-flex { display: flex !important; }
+            .btn.d-none.d-xl-inline-flex { display: inline-flex !important; }
+        }
+
+        /* 12) HEADER MODAL BERWARNA: app.css memaksa ".modal-title { color: gelap !important }"
+               sehingga judul modal "nabrak" di latar berwarna. Judul dan tombol tutup dibuat putih. */
+        .modal-header.bg-primary { background-color: #3b82f6 !important; }
+        .modal-header.bg-success { background-color: #22c55e !important; }
+        .modal-header.bg-danger { background-color: #ef4444 !important; }
+        .modal-header.bg-warning { background-color: #f59e0b !important; }
+        .modal-header.bg-info { background-color: #06b6d4 !important; }
+        .modal-header.bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; }
+        .modal-header[class*="bg-"].text-white .modal-title,
+        .modal-header[class*="bg-"].text-white h5 { color: #fff !important; }
+        .modal-header[class*="bg-"].text-white .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
+        /* 13) SCROLLBAR HORIZONTAL DI ATAS TABEL (opsional: beri class "top-scroll" pada .table-responsive). */
+        .top-scroll-bar { overflow-x: auto; overflow-y: hidden; height: 14px; margin-bottom: 4px; }
+        .top-scroll-inner { height: 1px; }
+        .top-scroll-bar::-webkit-scrollbar { height: 10px; }
+        .top-scroll-bar::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .top-scroll-bar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+
         .page-loading-overlay {
             position: fixed;
             inset: 0;
@@ -327,6 +387,36 @@
             try {
                 if (localStorage.getItem('tr-sidebar-minimized') === '1') root.classList.add('sidebar-minimized');
             } catch (e) {}
+            function initTopScroll() {
+                document.querySelectorAll('.table-responsive.top-scroll').forEach(function (wrap) {
+                    if (wrap.dataset.topScroll) return;
+                    wrap.dataset.topScroll = '1';
+                    var bar = document.createElement('div');
+                    var inner = document.createElement('div');
+                    bar.className = 'top-scroll-bar';
+                    inner.className = 'top-scroll-inner';
+                    bar.appendChild(inner);
+                    wrap.parentNode.insertBefore(bar, wrap);
+                    var syncing = false;
+                    function link(a, b) {
+                        a.addEventListener('scroll', function () {
+                            if (syncing) return;
+                            syncing = true;
+                            b.scrollLeft = a.scrollLeft;
+                            requestAnimationFrame(function () { syncing = false; });
+                        });
+                    }
+                    link(bar, wrap);
+                    link(wrap, bar);
+                    function ukur() {
+                        inner.style.width = wrap.scrollWidth + 'px';
+                        bar.style.display = wrap.scrollWidth > wrap.clientWidth + 1 ? 'block' : 'none';
+                    }
+                    ukur();
+                    window.addEventListener('resize', ukur);
+                    if (window.ResizeObserver) new ResizeObserver(ukur).observe(wrap);
+                });
+            }
             function rapikanTombol() {
                 document.querySelectorAll('td .btn:not(.btn-icon-only)').forEach(function (b) {
                     if (b.querySelector('i') && b.textContent.replace(/\s+/g, '') === '') {
@@ -338,6 +428,7 @@
                 });
             }
             document.addEventListener('DOMContentLoaded', function () {
+                initTopScroll();
                 rapikanTombol();
                 var t;
                 new MutationObserver(function () {
@@ -691,35 +782,35 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('pengajuan') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('pengajuan', 'persuratan.review', 'persuratan.review.*') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.review') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('cetak.iduka.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('cetak.iduka.index', 'cetak.iduka', 'persuratan.download.atp') ? 'active' : '' }}">
                             <a href="{{ route('cetak.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-bar-chart"></i>
                                 <div data-i18n="Basic">Review Data CP ATP</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan', 'persuratan.suratBalasan.*') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.suratBalasan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-mail-send"></i>
                                 <div data-i18n="Basic">Review Surat Balasan</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('surat-pengantar.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('surat-pengantar.*') ? 'active' : '' }}">
                             <a href="{{ route('surat-pengantar.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file"></i>
                                 <div data-i18n="Basic">surat pengantar pkl </div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('persuratan.pindah_pkl.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.pindah_pkl.*') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.pindah_pkl.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-transfer"></i>
                                 <div data-i18n="Basic">Pindah Pkl </div>
@@ -875,14 +966,14 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('kepsek.iduka.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('kepsek.iduka.*', 'kepsek.detail.iduka') ? 'active' : '' }}">
                             <a href="{{ route('kepsek.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('kepsek.kelas.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('kepsek.kelas.*', 'kepsek.siswa.*') ? 'active' : '' }}">
                             <a href="{{ route('kepsek.kelas.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
                                 <div data-i18n="Basic">Data Siswa</div>
@@ -1025,14 +1116,6 @@ Request::routeIs('nilai-akhir.*')
                                             <span>Keluar</span>
                                         </a>
                                     </li>
-                                    @if (app()->environment('local'))
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('dev.account-switcher.index') }}">
-                                                <i class="fas fa-exchange-alt me-2" style="color:#64748b;width:16px;"></i>
-                                                <span>Beralih Akun (Testing)</span>
-                                            </a>
-                                        </li>
-                                    @endif
                                 </ul>
                             </li>
                         </ul>
@@ -1102,6 +1185,13 @@ Request::routeIs('nilai-akhir.*')
             const loadingDelay = 2000;
             let loadingTimer;
 
+            // Download file (PDF/ZIP/Excel) tidak memuat ulang halaman, jadi overlay loading tidak
+            // boleh ditampilkan; kalau tidak, overlay menyala terus padahal file sudah terunduh.
+            const downloadPattern = /(download|unduh|cetak|export|pdf|\.zip|\.xlsx?|\.docx?)/i;
+            function isDownloadUrl(url) {
+                return downloadPattern.test(url.pathname) || url.searchParams.has('download');
+            }
+
             function getNavigationMarker() {
                 try {
                     return sessionStorage.getItem(storageKey);
@@ -1162,6 +1252,8 @@ Request::routeIs('nilai-akhir.*')
                     destination.hash && destination.pathname === window.location.pathname &&
                         destination.search === window.location.search) return;
 
+                if (isDownloadUrl(destination)) return;
+
                 markNavigation();
                 setTimeout(function () {
                     if (event.defaultPrevented) clearLoading();
@@ -1171,6 +1263,9 @@ Request::routeIs('nilai-akhir.*')
             document.addEventListener('submit', function (event) {
                 const form = event.target;
                 if (form.target && form.target !== '_self') return;
+                try {
+                    if (isDownloadUrl(new URL(form.getAttribute('action') || window.location.href, window.location.href))) return;
+                } catch (error) {}
                 markNavigation();
                 setTimeout(function () {
                     if (event.defaultPrevented) clearLoading();

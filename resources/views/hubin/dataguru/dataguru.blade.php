@@ -36,7 +36,7 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="GET" action="{{ url()->current() }}" class="mb-3">
+                                        <form method="GET" action="{{ route('guru.index') }}" class="mb-3">
                                             <div class="input-group">
                                                 <input type="text" name="search" class="form-control"
                                                     placeholder="Cari nama guru..." value="{{ request('search') }}">
@@ -77,7 +77,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($guru as $g)
+                                        @foreach ($guru as $g)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td> <!-- Corrected line -->
                                                 <td>{{ $g->nama }}</td>
@@ -196,7 +196,7 @@
                                                                                 @if ($konke->id == $g->konke_id) selected @endif>
                                                                                 {{ $konke->name_konke }}
                                                                             </option>
-                                                                            @endforeach
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
 
@@ -242,8 +242,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                {{-- <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Tutup</button> --}}
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Tutup</button>
                                                                 <button type="submit" class="btn btn-primary">Simpan
                                                                     Perubahan</button>
                                                             </div>
@@ -251,14 +251,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @empty
-                                            <tr>
-                                                <td colspan="{{ auth()->user()->role === 'hubin' ? 6 : 5 }}"
-                                                    class="py-4 text-center text-muted">
-                                                    Guru tidak ditemukan.
-                                                </td>
-                                            </tr>
-                                        @endforelse
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -367,8 +360,8 @@
 
                                     </div>
                                     <div class="modal-footer">
-                                        {{-- <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Tutup</button> --}}
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Tutup</button>
                                         <button type="submit" class="btn btn-primary">Simpan Data</button>
                                     </div>
                                 </form>
@@ -427,7 +420,7 @@
                     icon: 'error',
                     title: 'Gagal Menambahkan Data',
                     html: `{!! implode('<br>', $errors->all()) !!}`,
-                    // confirmButtonText: 'Tutup'
+                    confirmButtonText: 'Tutup'
                 }).then(() => {
                     // Buka kembali modal jika ada error validasi
                     const tambahModal = new bootstrap.Modal(document.getElementById('tambahGuruModal'));
@@ -460,3 +453,4 @@
         });
     </script>
 @endsection
+
