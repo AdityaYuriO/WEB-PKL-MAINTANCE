@@ -128,6 +128,7 @@
                                         <div class="tab-pane fade show active" id="dataPribadi" role="tabpanel">
                                             <h3>Data Pribadi</h3>
 
+                                            <div class="table-responsive">
                                             <table class="table table-striped">
                                                 <tr>
                                                     <td>Nama Siswa</td>
@@ -195,12 +196,14 @@
                                                 </tr>
 
                                             </table>
+                                            </div>
                                         </div>
 
                                         <div class="tab-pane fade" id="dataOrangTua" role="tabpanel">
                                             <h3>Data Orang Tua</h3>
                                             <h5>Data Ayah</h5>
                                             @if ($siswa->dataPribadi)
+                                                <div class="table-responsive">
                                                 <table class="table table-striped">
                                                     <tr>
                                                         <td>Nama Ayah</td>
@@ -228,6 +231,8 @@
                                                         <td>{{ $siswa->dataPribadi->pekerjaan_ayh ?? '-' }}</td>
                                                     </tr>
                                                 </table>
+                                                </div>
+                                                <div class="table-responsive">
                                                 <table class="table table-striped"><br>
                                                     <h5>Data Ibu</h5>
 
@@ -257,6 +262,8 @@
                                                         <td>{{ $siswa->dataPribadi->pekerjaan_ibu ?? '-' }}</td>
                                                     </tr>
                                                 </table>
+                                                </div>
+                                                <div class="table-responsive">
                                                 <table class="table table-striped"><br>
                                                     <h5>Kontak Orang Tua</h5>
                                                     <tr>
@@ -271,6 +278,7 @@
                                                     </tr>
 
                                                 </table>
+                                                </div>
                                             @else
                                                 <p><em>Data pribadi belum diisi oleh siswa.</em></p>
                                             @endif

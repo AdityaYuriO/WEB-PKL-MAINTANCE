@@ -423,9 +423,9 @@
         
         <div style="width: 2px; height: 30px; background: #ddd; margin: 0 10px;"></div>
 
-        <button class="btn-action btn-cancel" onclick="window.close()">
+        {{-- <button class="btn-action btn-cancel" onclick="window.close()">
             <i class="fas fa-times"></i> Tutup
-        </button>
+        </button> --}}
         <button class="btn-action btn-print" onclick="submitForm()">
             <i class="fas fa-file-pdf"></i> Download PDF
         </button>

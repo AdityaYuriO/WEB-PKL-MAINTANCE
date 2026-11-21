@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class NilaiAkhirController extends Controller
 {
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // Helper: hitung predikat dari nilai akhir
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     private function getPredikat(float $nilaiAkhir): string
     {
         if ($nilaiAkhir >= 86) return 'Sangat Baik';
@@ -19,9 +19,9 @@ class NilaiAkhirController extends Controller
         return 'Kurang';
     }
 
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // Helper: susun array data satu siswa
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     private function buildData(User $siswa): ?array
     {
         $nilaiGuru  = Penilaian::where('users_id', $siswa->id)
@@ -51,16 +51,16 @@ class NilaiAkhirController extends Controller
         ];
     }
 
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // Main index
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     public function index(Request $request)
     {
         $user = auth()->user();
         $role = $user->role;
         $data = [];
 
-        // ── Filter satu siswa (dari query ?siswa=id) ──────────────────
+        // -- Filter satu siswa (dari query ?siswa=id) ------------------
         if ($request->has('siswa')) {
             $siswa = User::where('role', 'siswa')
                          ->where('status', 'aktif')
@@ -75,7 +75,7 @@ class NilaiAkhirController extends Controller
             return view('penilaian.nilai_akhir.index', compact('data'));
         }
 
-        // ── Filter semua siswa berdasarkan role ───────────────────────
+        // -- Filter semua siswa berdasarkan role -----------------------
         if ($role === 'hubin') {
             $siswas = User::where('role', 'siswa')->where('status', 'aktif')->get();
 

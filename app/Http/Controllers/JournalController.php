@@ -16,7 +16,7 @@ class JournalController extends Controller
     {
         $user = Auth::user();
 
-        // Hapus otomatis foto jurnal yang lebih dari 24 jam
+        // Hapus otomatis foto jurnal yang lebih dari 6 bulan
         $this->hapusFotoLama();
 
         // Get all journals for both active and history
@@ -376,7 +376,7 @@ class JournalController extends Controller
     }
 
     // ======================
-    // AUTO DELETE FOTO 24 JAM
+    // AUTO DELETE FOTO 6 BULAN
     // ======================
     private function hapusFotoLama()
     {
@@ -385,9 +385,10 @@ class JournalController extends Controller
             return;
         }
 
+        $batasWaktu = strtotime('-6 months'); // Batas waktu 6 bulan yang lalu
         $files = glob($path . '/*');
         foreach ($files as $file) {
-            if (is_file($file) && (time() - filemtime($file)) > 86400) { // 24 jam
+            if (is_file($file) && filemtime($file) < $batasWaktu) { // Lebih dari 6 bulan
                 @unlink($file);
             }
         }
@@ -412,7 +413,6 @@ class JournalController extends Controller
 
         // Ambil semua siswa dengan pagination
         $siswaQuery = User::where('role', 'siswa')
-        ->where('status', 'aktif')
             ->whereNotIn('id', $siswaSudahIsi) // Filter langsung di query
             ->with(['iduka', 'kelas']); // Eager loading kelas
 

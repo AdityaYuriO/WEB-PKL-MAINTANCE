@@ -29,7 +29,7 @@
                                 <i class="fas fa-calendar-day fa-2x"></i>
                             </div>
                             <div>
-                                <h5 class="alert-heading mb-1">Perhatian â€” Hari Libur Hari Ini</h5>
+                                <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
                                 <p class="mb-1">
                                     Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
                                     mungkin tidak lengkap atau dinonaktifkan.

@@ -21,7 +21,7 @@
 
                         <div class="card-body p-4">
                             <!-- Form -->
-                            <form action="{{ route('user.siswa.store') }}" method="POST">
+                            <form action="{{ route('user.siswa.store') }}" method="POST" autocomplete="off">
                                 @csrf
 
                                 <div class="row">
@@ -37,7 +37,7 @@
                                         <!-- NIP -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">NIP/NIS</label>
-                                            <input type="text" name="nip" class="form-control"
+                                            <input autocomplete="off" type="text" name="nip" class="form-control"
                                                 placeholder="Masukkan NIP/NIS" required>
                                         </div>
 
@@ -66,14 +66,14 @@
                                         <!-- Email -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
-                                            <input type="email" name="email" class="form-control"
+                                            <input autocomplete="off" type="email" name="email" readonly onfocus="this.removeAttribute('readonly');" class="form-control"
                                                 placeholder="contoh@email.com" required>
                                         </div>
 
                                         <!-- Password -->
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Password</label>
-                                            <input type="password" name="password" class="form-control"
+                                            <input autocomplete="new-password" type="password" name="password" readonly onfocus="this.removeAttribute('readonly');" class="form-control"
                                                 placeholder="Masukkan password" required>
                                         </div>
 

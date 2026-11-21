@@ -62,7 +62,7 @@ class ProgresSiswaController extends Controller
             ->where('u.role', 'siswa')
             ->orderByDesc('u.id');
 
-        // 🔍 filter jika ada
+        // ?? filter jika ada
         if ($request->filled('nama_iduka')) {
             $search = $request->nama_iduka;
             $query->where(function ($q) use ($search) {
@@ -130,7 +130,7 @@ class ProgresSiswaController extends Controller
             'totalPengajuan',
             'totalPengajuanDiterima',
             'totalPengajuanDitolak',
-            'totalBelumPKL' // ⬅️ jangan lupa dikirim ke view
+            'totalBelumPKL' // ?? jangan lupa dikirim ke view
         ));
     }
 

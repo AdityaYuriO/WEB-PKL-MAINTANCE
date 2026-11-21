@@ -60,6 +60,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
+        @if(!empty($configurationError))
+        <div class="alert alert-warning" role="alert">{{ $configurationError }}</div>
+        @endif
 
         <div class="card mb-3">
             <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">

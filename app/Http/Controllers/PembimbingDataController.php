@@ -21,8 +21,8 @@ class PembimbingDataController extends Controller
         }
 
         $siswas = $guru->siswas()
-        ->where('status', 'aktif')
-        ->with(['kelas', 'idukaDiterima'])->get();
+	->where('status','aktif')
+	->with(['kelas', 'idukaDiterima'])->get();
 
         return view('guru.siswa-dibimbing.index', compact('guru', 'siswas'));
     }

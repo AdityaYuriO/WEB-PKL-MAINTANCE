@@ -1,7 +1,7 @@
 ﻿@extends('layout.main')
 
 @section('content')
-<div class="container-fluid py-3 px-2 px-md-4">
+<div class="container-fluid px-4 py-4">
 
     {{-- ===== ALERT SUKSES ===== --}}
     @if(session('success'))
@@ -32,7 +32,7 @@
 
     {{-- ===== PAGE HEADER ===== --}}
     <div class="page-header mb-4">
-        <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="d-flex align-items-center gap-3">
             <div class="header-icon">
                 <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -62,8 +62,8 @@
             </div>
             <div class="card-modern-body">
                 <div class="row align-items-end g-3">
-                    <div class="col-12 col-md-7">
-                        <label class="form-label-custom">Cari &amp; Pilih Siswa</label>
+                    <div class="col-md-7">
+                        <label class="form-label-custom">Cari & Pilih Siswa</label>
                         <select name="user_id" id="siswaSelect" class="form-select-custom" required>
                             <option value="">-- Pilih Siswa --</option>
                             @foreach ($siswa as $s)
@@ -71,7 +71,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-12 col-md-5">
+                    <div class="col-md-5">
                         <div class="siswa-info-box" id="siswaInfoBox" style="display:none;">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="siswa-avatar" id="siswaAvatar">S</div>
@@ -96,7 +96,7 @@
         <div id="tabelIndikator" style="display:none;">
             <div class="card-modern">
                 <div class="card-modern-header">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -109,11 +109,8 @@
                 </div>
 
                 <div class="card-modern-body p-0">
-                    <div class="table-scroll-hint">
-                        <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table-modern" id="tabelIndikatorPenilaian">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table-modern">
                             <thead>
                                 <tr>
                                     <th style="width:4%">No</th>
@@ -164,11 +161,8 @@
             </div>
         </div>
         <div class="card-modern-body p-0">
-            <div class="table-scroll-hint">
-                <i class="bi bi-arrow-left-right"></i> Geser tabel ke kiri/kanan untuk melihat semua kolom
-            </div>
-            <div class="table-responsive">
-                <table class="table-modern" id="tabelDraftPenilaian">
+            <div class="table-responsive text-nowrap">
+                <table class="table-modern">
                     <thead>
                         <tr>
                             <th style="width:5%">#</th>
@@ -194,7 +188,7 @@
                                         Rata-rata: <strong>{{ round($draft['guru']->avg('nilai'), 1) }}</strong>
                                     </div>
                                 @else
-                                    <span class="draft-pending-badge">⏳ Belum Dinilai</span>
+                                    <span class="draft-pending-badge">â³ Belum Dinilai</span>
                                 @endif
                             </td>
                             <td>
@@ -204,7 +198,7 @@
                                         Rata-rata: <strong>{{ round($draft['iduka']->avg('nilai'), 1) }}</strong>
                                     </div>
                                 @else
-                                    <span class="draft-pending-badge">⏳ Belum Dinilai</span>
+                                    <span class="draft-pending-badge">â³ Belum Dinilai</span>
                                 @endif
                             </td>
                         </tr>
@@ -236,7 +230,7 @@
    PAGE HEADER
 =========================== */
 .page-header   { padding-bottom:18px; border-bottom:2px solid #ede9fe; }
-.header-icon   { width:46px; height:46px; background:linear-gradient(135deg,#6c63ff,#a78bfa); border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; box-shadow:0 4px 12px rgba(108,99,255,0.3); flex-shrink:0; }
+.header-icon   { width:46px; height:46px; background:linear-gradient(135deg,#6c63ff,#a78bfa); border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; box-shadow:0 4px 12px rgba(108,99,255,0.3); }
 .page-title    { font-size:20px; font-weight:700; color:#1e1b4b; }
 .page-subtitle { font-size:13px; color:#6b7280; margin-top:2px; }
 
@@ -338,9 +332,9 @@
 /* ===========================
    BADGE
 =========================== */
-.badge-count { background:linear-gradient(135deg,#6c63ff,#7c3aed); color:white; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; }
-.draft-done-badge    { background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; display:inline-block; }
-.draft-pending-badge { background:#fef9c3; color:#92400e; border:1px solid #fcd34d; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; display:inline-block; }
+.badge-count { background:linear-gradient(135deg,#6c63ff,#7c3aed); color:white; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; }
+.draft-done-badge    { background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+.draft-pending-badge { background:#fef9c3; color:#92400e; border:1px solid #fcd34d; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
 .draft-detail { font-size:12px; color:#6b7280; }
 
 /* ===========================
@@ -370,107 +364,6 @@
 @keyframes slideInRight { from{opacity:0;transform:translateX(30px)}  to{opacity:1;transform:translateX(0)} }
 @keyframes fadeIn       { from{opacity:0} to{opacity:1} }
 @keyframes spin         { to{transform:rotate(360deg)} }
-
-/* ===========================
-   HINT SCROLL (default hidden)
-=========================== */
-.table-scroll-hint {
-    display: none;
-    font-size: .72rem;
-    color: #64748b;
-    background: #f1f5f9;
-    border-radius: 8px;
-    padding: 6px 10px;
-    margin: 12px 12px 8px;
-}
-
-/* ============================================================ */
-/* ===== MOBILE FIXES =====                                       */
-/* ============================================================ */
-
-/* === Tablet & Mobile (≤ 991px) === */
-@media (max-width: 991.98px) {
-
-    /* 1) Buka overflow:hidden supaya tabel bisa digeser */
-    .card-modern { overflow: visible !important; }
-
-    /* 2) Balikin rounded corner biar card tetap cantik */
-    .card-modern-header {
-        border-top-left-radius: 16px !important;
-        border-top-right-radius: 16px !important;
-    }
-    .card-modern-footer {
-        border-bottom-left-radius: 16px !important;
-        border-bottom-right-radius: 16px !important;
-    }
-    .card-modern-body.p-0:last-child {
-        border-bottom-left-radius: 16px !important;
-        border-bottom-right-radius: 16px !important;
-    }
-
-    /* 3) Hint muncul */
-    .table-scroll-hint { display: block; }
-
-    /* 4) Paksa table-responsive jadi scroll container beneran */
-    .table-responsive {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior-x: contain !important;
-        touch-action: pan-x pan-y !important;
-    }
-
-    /* 5) Tabel harus lebih lebar dari container supaya bisa di-scroll */
-    #tabelIndikatorPenilaian { min-width: 900px !important; margin-bottom: 0 !important; }
-    #tabelDraftPenilaian     { min-width: 720px !important; margin-bottom: 0 !important; }
-
-    /* 6) Scrollbar tipis sebagai petunjuk bisa digeser */
-    .table-responsive::-webkit-scrollbar { height: 6px; }
-    .table-responsive::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 3px;
-    }
-    .table-responsive::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 3px;
-    }
-    .table-responsive::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-    }
-}
-
-/* === Extra small (≤ 575px) === */
-@media (max-width: 575.98px) {
-    .page-title    { font-size: 17px; }
-    .page-subtitle { font-size: 12px; }
-    .header-icon   { width: 40px; height: 40px; }
-
-    .card-modern-header { padding: 12px 14px; font-size: 13px; }
-    .card-modern-body   { padding: 14px; }
-    .card-modern-footer { padding: 12px 14px; }
-
-    .form-select-custom { font-size: 13px; padding: 9px 12px; }
-    .form-label-custom  { font-size: 12px; }
-
-    .btn-submit {
-        width: 100%;
-        justify-content: center;
-        padding: 11px 20px;
-        font-size: 13px;
-    }
-
-    .toast-item {
-        min-width: auto;
-        width: calc(100vw - 40px);
-    }
-    #toastContainer {
-        left: 20px !important;
-        right: 20px !important;
-    }
-}
 </style>
 
 <script>
@@ -520,6 +413,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
         return;
     }
 
+    // Info siswa terpilih
     document.getElementById('siswaName').textContent   = siswaName;
     document.getElementById('siswaAvatar').textContent = siswaName.charAt(0).toUpperCase();
     siswaInfoBox.style.display = 'block';
@@ -547,13 +441,19 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                 return;
             }
 
+            // Hitung total indikator
             const totalIndikator = tujuanList.reduce((sum, tp) => sum + (tp.indikator_penilaians?.length || 0), 0);
             badgeJumlah.textContent = totalIndikator + ' Indikator';
+
+            // ============================================================
+            // Render grouped: 1 row header TP + N rows indikator di bawahnya
+            // Persis seperti format docx
+            // ============================================================
 
             tujuanList.forEach((tp, tpIndex) => {
                 const indikators = tp.indikator_penilaians || [];
 
-                // ROW HEADER: Tujuan Pembelajaran
+                // ROW HEADER: Tujuan Pembelajaran (input jenis penilaian, nilai, deskripsi)
                 const rowTP = document.createElement('tr');
                 rowTP.className = 'row-tp';
                 rowTP.innerHTML = `
@@ -580,7 +480,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                 `;
                 tabelBody.appendChild(rowTP);
 
-                // ROW INDIKATOR: satu baris per indikator
+                // ROW INDIKATOR: satu baris per indikator (hanya input ketercapaian)
                 indikators.forEach((indikator, iIdx) => {
                     const rowInd = document.createElement('tr');
                     rowInd.className = 'row-indikator';

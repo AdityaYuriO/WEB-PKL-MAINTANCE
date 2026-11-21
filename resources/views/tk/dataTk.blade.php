@@ -63,7 +63,7 @@
                                         <td>{{ $item->nip_nuptk ?? '-' }}</td>
                                         <td>{{ $item->email }}</td>
                                         <td>
-                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                            <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                 @if(in_array(auth()->user()->role, ['hubin']))
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTkModal{{ $item->id }}">
                                                     <i class="bi bi-pen"></i>

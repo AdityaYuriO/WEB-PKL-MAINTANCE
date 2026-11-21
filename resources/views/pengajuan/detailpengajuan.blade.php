@@ -113,6 +113,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5>Data Siswa</h5>
+                            <div class="table-responsive">
                             <table class="table table-striped">
                                 <tr>
                                     <td>Nama Siswa</td>
@@ -165,8 +166,10 @@
                                     <td></td>
                                 </tr>
                             </table>
+                            </div>
 
                             <h5 class="mt-4">Data Institusi / Perusahaan yang Diajukan</h5>
+                            <div class="table-responsive">
                             <table class="table table-striped">
                             <tr>
                                     <td>Nama Institusi</td>
@@ -219,6 +222,7 @@
                                     <td></td>
                                 </tr>
                             </table>
+                            </div>
 
                             <div class="d-flex justify-content-between mt-3 mb-2">
                                 <div class="d-flex justify-content-start">

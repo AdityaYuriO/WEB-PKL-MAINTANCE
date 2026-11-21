@@ -27,7 +27,7 @@
                     <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">{{ $pengajuanGroup->first()->iduka->nama }}</h5>
+                                <h5 class="mb-0">{{ $pengajuanGroup->first()->iduka?->nama ?? 'IDUKA tidak ditemukan' }}</h5>
                                 <span class="badge bg-primary rounded-pill">
                                     {{ $pengajuanGroup->count() }} pengajuan
                                 </span>
@@ -50,8 +50,8 @@
                                         @foreach($pengajuanGroup as $index => $pengajuan)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $pengajuan->siswa->name }}</td>
-                                            <td>{{ $pengajuan->siswa->kelas->kelas }} {{ $pengajuan->siswa->kelas->name_kelas }}</td>
+                                            <td>{{ $pengajuan->siswa?->name ?? '-' }}</td>
+                                            <td>{{ trim(($pengajuan->siswa?->kelas?->kelas ?? '') . ' ' . ($pengajuan->siswa?->kelas?->name_kelas ?? '')) ?: '-' }}</td>
                                             <td>
                                                 @if($pengajuan->status == 'diterima')
                                                 <span class="badge bg-success">Diterima</span>
@@ -61,7 +61,7 @@
                                                 <span class="badge bg-warning text-dark">{{ $pengajuan->status }}</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $pengajuan->updated_at->format('d M Y H:i') }}</td>
+                                            <td>{{ ($pengajuan->updated_at ?? $pengajuan->created_at)?->format('d M Y H:i') ?? '-' }}</td>
                                             
                                         </tr>
                                         @endforeach

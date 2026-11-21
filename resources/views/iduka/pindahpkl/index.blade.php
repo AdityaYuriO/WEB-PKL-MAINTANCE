@@ -1,7 +1,7 @@
 ﻿@extends('layout.main')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid pt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Verifikasi Pengajuan Pindah PKL</h1>
         <a href="{{ route('iduka.pindah_pkl.riwayat') }}" class="btn btn-outline-primary">

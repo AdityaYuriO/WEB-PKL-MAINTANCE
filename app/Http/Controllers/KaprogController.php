@@ -71,8 +71,7 @@ class KaprogController extends Controller
         $usulan = UsulanIduka::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas', 'iduka'])
             ->findOrFail($id);
 
-        return view('kaprog.review.
-        lanpkl', compact('usulan'));
+        return view('kaprog.review.detailusulanpkl', compact('usulan'));
     }
 
 
@@ -126,8 +125,8 @@ class KaprogController extends Controller
         // Buat akun user untuk IDUKA terlebih dahulu
         $user = User::create([
             'name' => $usulan->nama,
-            // Jika tidak ada NIP, simpan sebagai null atau string unik agar tidak duplikat
-            'nip' => $request->filled('nip') ? $request->nip : null,
+	    // Jika tidak ada NIP, simpan sebagai null atau string unik agar tidak duplikat
+    	    'nip' => $request->filled('nip') ? $request->nip : null,
             'password' => $usulan->password, // sudah di-hash dari awal
             'role' => 'iduka',
         ]);
@@ -950,7 +949,7 @@ class KaprogController extends Controller
     }
 
     /**
-     * 🔹 Helper untuk ambil singkatan jurusan
+     * ?? Helper untuk ambil singkatan jurusan
      */
     private function getSingkatan($jurusan)
     {

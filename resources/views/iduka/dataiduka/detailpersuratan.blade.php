@@ -117,7 +117,7 @@
                                 <!-- Tombol dan Dropdown -->
                                 <div class="d-flex gap-2 ms-auto align-items-center">
                                     {{-- Tombol Kembali --}}
-                                    <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
+                                    <a href="{{ auth()->user()->role === 'persuratan' ? route('cetak.iduka.index') : route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
@@ -140,7 +140,7 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a href="{{ route('data.iduka') }}" class="dropdown-item">
+                                                <a href="{{ auth()->user()->role === 'persuratan' ? route('cetak.iduka.index') : route('data.iduka') }}" class="dropdown-item">
                                                     <span class="text-primary">Kembali</span>
                                                 </a>
                                             </li>
@@ -239,7 +239,7 @@
                                 </table>
                             </div>
                             <div class="col-lg-12 d-flex justify-content-between mt-4">
-                                <a href="{{ route('data.iduka') }}" class="btn btn-back shadow-sm">
+                                <a href="{{ auth()->user()->role === 'persuratan' ? route('cetak.iduka.index') : route('data.iduka') }}" class="btn btn-back shadow-sm">
                                     Kembali
                                 </a>
                                 @if(auth()->user()->role == 'siswa')

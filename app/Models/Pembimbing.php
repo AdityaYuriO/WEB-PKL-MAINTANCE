@@ -20,5 +20,4 @@ class Pembimbing extends Model
     {
         return $this->belongsTo(Iduka::class, 'user_id', 'id');
     }
-
 }

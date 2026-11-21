@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+@php($sapaan = Auth::user()->sapaan())
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <!-- Welcome Card -->
@@ -9,7 +10,7 @@
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-8">
                         <div class="card-body">
-                            <h4 class="card-title text-white mb-2 fw-bold">Selamat Datang, {{ Auth::user()->name }}!</h4>
+                            <h4 class="card-title text-white mb-2 fw-bold" style="color: #fff !important;">Selamat Datang, {{ $sapaan ? $sapaan . ' ' : '' }}{{ Auth::user()->name }}!</h4>
                             <p class="mb-4 text-white-50">
                                 Ini adalah dashboard panel IDUKA (Industri dan Dunia Kerja). Anda dapat mengelola data profil, memantau usulan peserta PKL, dan melakukan evaluasi kehadiran.
                             </p>

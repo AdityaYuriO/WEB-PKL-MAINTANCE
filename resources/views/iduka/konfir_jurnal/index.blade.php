@@ -4,8 +4,8 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="mb-4">
             {{-- PERUBAHAN: Judul dinamis berdasarkan role --}}
-            <h3 class="fw-bold">Persetujan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} ??</h3>
-            <p class="text-muted">Daftar jurnal yag membutuhkan persetujuan</p>
+            <h3 class="fw-bold">Persetujuan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} ??</h3>
+            <p class="text-muted">Daftar jurnal yang membutuhkan persetujuan</p>
 
             {{-- Tab Navigation --}}
             <ul class="nav nav-tabs mb-4">
@@ -118,8 +118,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-light"
-                                                data-bs-dismiss="modal">Batal</button>
+                                            {{-- <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button> --}}
                                             <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">Tolak Jurnal</button>
                                         </div>
                                     </form>
@@ -170,7 +169,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img id="modalImage" src="{{ $jurnal->foto }}" alt="Foto Kegiatan" class="img-fluid">
+                    <img id="modalImage" alt="Foto Kegiatan" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -318,9 +317,9 @@
                                 <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="retryFetch(${jurnalId})">
                                     <i class="bi bi-arrow-clockwise me-1"></i> Coba Lagi
                                 </button>
-                                <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">
+                                <!-- <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">
                                     Tutup
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     `;
@@ -427,5 +426,3 @@
         }
     </style>
 @endsection
-
-

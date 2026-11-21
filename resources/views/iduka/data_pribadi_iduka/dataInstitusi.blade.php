@@ -26,7 +26,7 @@
         html,
         body {
             max-width: 100%;
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         table {
@@ -705,7 +705,7 @@
                         {{-- Ulangi struktur yang sama untuk kolom7 dan kolom8 --}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                        {{-- <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button> --}}
                         <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                     </div>
                 </form>

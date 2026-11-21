@@ -60,7 +60,7 @@ class HakAksesController extends Controller
             ->where('status', 'diterima')
             ->exists();
 
-        // 🔍 Cek apakah sudah pernah mengajukan usulan atau pengajuan PKL dan statusnya proses/diterima
+        // ?? Cek apakah sudah pernah mengajukan usulan atau pengajuan PKL dan statusnya proses/diterima
         $usulanAktif = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
             ->exists();
@@ -73,14 +73,14 @@ class HakAksesController extends Controller
 
         $user = Auth::user()->load('pembimbing');
 
-        // ✅ Cek status spesifik: proses atau diterima
+        // ? Cek status spesifik: proses atau diterima
         $statusAjukan = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
             ->value('status') ?? PengajuanUsulan::where('user_id', $user->id)
                 ->whereIn('status', ['proses', 'diterima'])
                 ->value('status');
 
-        // 🔍 Tambahan: Ambil data riwayat pindah PKL
+        // ?? Tambahan: Ambil data riwayat pindah PKL
         // Di Controller function siswa()
 $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
     ->with([
@@ -90,7 +90,7 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
     ->orderBy('created_at', 'desc')
     ->get();
 
-        // 🔍 Cek status pengajuan pindah PKL terbaru
+        // ?? Cek status pengajuan pindah PKL terbaru
         $statusPindahPkl = PindahPkl::where('siswa_id', $user->id)
             ->whereIn('status', ['menunggu','menunggu_surat','diterima_iduka','ditolak_iduka','siap_kirim'])
             ->latest()

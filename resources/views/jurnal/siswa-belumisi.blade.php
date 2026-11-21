@@ -150,7 +150,7 @@
                     </form>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
                     <button type="button" class="btn btn-primary" onclick="submitReminder()">
                         <i class="bi bi-envelope me-1"></i>Kirim Email
                     </button>
@@ -249,4 +249,3 @@
         }
     </script>
 @endsection
-

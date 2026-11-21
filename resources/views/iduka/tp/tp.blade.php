@@ -194,6 +194,7 @@
                             <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllTambah">
                             </label>
+                            <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -207,6 +208,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
@@ -249,6 +251,7 @@
                             <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllUpdate">
                             </label>
+                            <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -262,6 +265,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 

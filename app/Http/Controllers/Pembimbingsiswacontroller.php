@@ -28,7 +28,7 @@ class PembimbingSiswaController extends Controller
 
 
     // Lihat detail pembimbingeb
-
+    
     public function show($id)
     {
         $pembimbing = Guru::with('siswas')->findOrFail($id);

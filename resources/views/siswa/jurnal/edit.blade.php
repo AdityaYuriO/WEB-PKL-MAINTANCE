@@ -36,13 +36,13 @@
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
             <i class="fas fa-clock me-1"></i>Jam Mulai
         </label>
-        <input type="time" class="form-control form-control-lg" name="jam_mulai" value="{{ old('jam_mulai', $jurnal->jam_mulai) }}" required>
+        <input type="time" class="form-control form-control-lg" name="jam_mulai" value="{{ substr((string) old('jam_mulai', $jurnal->jam_mulai), 0, 5) }}" required>
     </div>
     <div class="col-md-6">
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
             <i class="fas fa-history me-1"></i>Jam Selesai
         </label>
-        <input type="time" class="form-control form-control-lg" name="jam_selesai" value="{{ old('jam_selesai', $jurnal->jam_selesai) }}" required>
+        <input type="time" class="form-control form-control-lg" name="jam_selesai" value="{{ substr((string) old('jam_selesai', $jurnal->jam_selesai), 0, 5) }}" required>
     </div>
 </div>
 

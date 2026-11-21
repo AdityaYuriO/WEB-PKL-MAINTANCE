@@ -167,7 +167,7 @@
 
                                     <td class="text-center">
 
-                                        <button class="btn btn-warning-custom btn-circle me-1" data-bs-toggle="modal"
+                                        <button class="btn btn-warning-custom btn-circle me-2" data-bs-toggle="modal"
                                             data-bs-target="#edit{{ $item->id }}" title="Edit">
                                             <i class="fas fa-pen"></i>
                                         </button>

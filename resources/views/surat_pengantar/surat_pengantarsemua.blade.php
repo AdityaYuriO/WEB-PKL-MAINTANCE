@@ -167,7 +167,7 @@
             <p style="font-size: 20px;">CABANG DINAS PENDIDIKAN WILAYAH XIII</p>
             <p style="font-size: 20px;"><b>SMK NEGERI 1 KAWALI</b></p>
             <p >Jalan Talagasari No. 35 Tlp. (0265) 791727 Fax. (0265) 2797676 <br> e-Mail : smkn1kawali@gmail.com</p>
-            <p>Kawali – 46253</p>
+            <p>Kawali â€“ 46253</p>
         </div>
         <hr>
         <p style="text-align: right;"> Kawali, {{ $tanggal }}

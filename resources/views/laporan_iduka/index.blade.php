@@ -1,29 +1,24 @@
 @extends('layout.main')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container-xxl flex-grow-1 container-p-y laporan-iduka-page">
 
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <form method="GET" action="{{ route('laporan.iduka.index') }}">
-                            <div class="row align-items-center">
-                                <div class="col-lg-8">
-                                    <div class="row g-3">
-                                        <div class="col-md-3">
-                                            <label class="form-label fw-semibold text-muted small">Nama Iduka</label>
-                                            <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
-                                                class="form-control" placeholder="Cari Nama Iduka">
-                                        </div>
-                                        <div class="col-md-3 d-flex align-items-end">
-                                            <button type="submit" class="btn btn-primary w-100">
-                                                <i class="fas fa-search me-2"></i>Search
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="row align-items-end g-3">
+                                <div class="col-12 col-md-7 col-lg-5">
+                                    <label class="form-label fw-semibold text-muted small">Nama Iduka</label>
+                                    <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
+                                        class="form-control" placeholder="Cari Nama Iduka">
                                 </div>
-
+                                <div class="col-12 col-md-auto">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-2"></i>Cari
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -124,6 +119,16 @@
 @endsection
 
 <style>
+    @media (min-width: 1200px) {
+        .layout-page:has(.laporan-iduka-page) {
+            padding-left: var(--sidebar-width, 260px) !important;
+        }
+
+        html.sidebar-minimized .layout-page:has(.laporan-iduka-page) {
+            padding-left: 56px !important;
+        }
+    }
+
     .bg-gradient-primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -222,5 +227,3 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs
-
-

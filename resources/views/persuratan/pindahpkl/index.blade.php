@@ -49,7 +49,10 @@
                                 <div>
                                     <span class="fw-bold">{{ $item->nama_iduka }}</span>
                                     <div class="small text-muted">
-                                        {{ $item->jumlah_siswa ?? 1 }} siswa mengajukan ke sini
+                                        Siswa: {{ $item->nama_siswa }}
+                                        @if (!empty($item->nama_kelas))
+                                            ({{ trim(($item->tingkat_kelas ?? '') . ' ' . $item->nama_kelas) }})
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -58,9 +61,6 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('persuratan.pindah_pkl.detail', $item->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </a>
                                     <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" name="status" value="diterima" class="btn btn-success btn-sm"

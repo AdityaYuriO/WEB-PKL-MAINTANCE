@@ -188,7 +188,7 @@
                     <div class="text-center">
                         <img src="{{ asset($journal->foto) }}" alt="Dokumentasi kegiatan"
                              class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
-                             onclick="showImageModal('{{ asset('storage/' . $journal->foto) }}')">
+                             onclick="showImageModal(this.src)">
                     </div>
                 </div>
             </div>

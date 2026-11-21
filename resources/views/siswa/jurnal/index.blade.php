@@ -342,7 +342,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="text-center mb-3">
-                        <i class="fas fa-trash-alt3-fill text-danger" style="font-size: 4rem;"></i>
+                        <i class="fas fa-trash text-danger" style="font-size: 4rem;"></i>
                     </div>
                     <p class="text-center mb-0 fs-5">Apakah Anda yakin ingin menghapus jurnal ini?</p>
                     <p class="text-center text-muted mt-2">Data yang dihapus tidak dapat dikembalikan.</p>
@@ -355,7 +355,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger px-4 shadow-sm fw-semibold">
-                            <i class="fas fa-trash-alt3 me-1"></i>Ya, Hapus
+                            <i class="fas fa-trash me-1"></i>Ya, Hapus
                         </button>
                     </form>
                 </div>

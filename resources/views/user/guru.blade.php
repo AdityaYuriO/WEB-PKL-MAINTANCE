@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form action="{{ route('user.guru.store') }}" method="POST" id="tambahGuruForm">
+                    <form action="{{ route('user.guru.store') }}" method="POST" id="tambahGuruForm" autocomplete="off">
                         @csrf
 
                         <div class="row">
@@ -49,14 +49,14 @@
                                 <div class="mb-3">
                                     <label for="nik" class="form-label fw-semibold">NIK <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="nik" name="nik" required
+                                    <input autocomplete="off" type="text" class="form-control" id="nik" name="nik" required
                                         maxlength="16">
                                 </div>
 
                                 <!-- NIP/NUPTK -->
                                 <div class="mb-3">
                                     <label for="nip" class="form-label fw-semibold">NIP / NUPTK</label>
-                                    <input type="text" class="form-control" id="nip" name="nip">
+                                    <input autocomplete="off" type="text" class="form-control" id="nip" name="nip">
                                 </div>
 
                                 <!-- Tempat Lahir -->
@@ -111,14 +111,14 @@
                                 <div class="mb-3">
                                     <label for="email" class="form-label fw-semibold">Email <span
                                             class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input autocomplete="off" type="email" class="form-control" id="email" name="email" readonly onfocus="this.removeAttribute('readonly');" required>
                                 </div>
 
                                 <!-- No HP -->
                                 <div class="mb-3">
                                     <label for="no_hp" class="form-label fw-semibold">No HP <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+                                    <input autocomplete="off" type="text" class="form-control" id="no_hp" name="no_hp" readonly onfocus="this.removeAttribute('readonly');" required>
                                 </div>
 
                                 <!-- Role -->
@@ -138,7 +138,7 @@
                                 <div class="mb-3">
                                     <label for="password" class="form-label fw-semibold">Password <span
                                             class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <input autocomplete="new-password" type="password" class="form-control" id="password" name="password" readonly onfocus="this.removeAttribute('readonly');" required>
                                 </div>
                             </div>
                         </div>

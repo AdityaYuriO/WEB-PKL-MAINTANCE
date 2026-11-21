@@ -4,30 +4,29 @@ namespace App\Exports;
 
 use App\Models\CetakUsulan;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class CetakUsulanExport implements FromCollection
+class CetakUsulanExport implements FromCollection, WithHeadings
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
     public function collection()
     {
-        return CetakUsulan::with([
-                'dataPribadi.kelas',
-                'iduka',
-                'user'
-            ])
-            ->where('status', 'sudah')
-            ->whereHas('user', function ($query) {
-                $query->where('status', 'aktif');
-            })
+        return CetakUsulan::query()
+            ->select('cetak_usulans.*')
+            ->join('data_pribadis', 'cetak_usulans.siswa_id', '=', 'data_pribadis.user_id')
+            ->leftJoin('kelas', 'data_pribadis.kelas_id', '=', 'kelas.id')
+            ->join('users', 'cetak_usulans.siswa_id', '=', 'users.id')
+            ->where('cetak_usulans.status', 'sudah')
+            ->where('users.status', 'aktif')
+            ->orderBy('kelas.name_kelas', 'asc')
+            ->orderBy('data_pribadis.name', 'asc')
+            ->with(['dataPribadi.kelas', 'iduka', 'user'])
             ->get()
             ->map(function ($item) {
                 return [
-                    'Nama Siswa'   => $item->dataPribadi->name ?? '-',
-                    'Kelas'        => $item->dataPribadi->kelas->name_kelas ?? '-',
-                    'Nama IDUKA'   => $item->iduka->nama ?? '-',
-                    'Alamat IDUKA' => $item->iduka->alamat ?? '-',
+                    'Nama Siswa'   => optional($item->dataPribadi)->name ?? '-',
+                    'Kelas'        => optional(optional($item->dataPribadi)->kelas)->name_kelas ?? '-',
+                    'Nama IDUKA'   => optional($item->iduka)->nama ?? '-',
+                    'Alamat IDUKA' => optional($item->iduka)->alamat ?? '-',
                     'Status'       => $item->status,
                     'Dikirim'      => $item->dikirim ?? '-',
                 ];

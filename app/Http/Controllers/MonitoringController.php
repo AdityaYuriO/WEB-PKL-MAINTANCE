@@ -59,7 +59,6 @@ class MonitoringController extends Controller
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
             'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'tgl' => 'required',
         ]);
 
         // cari guru yang sedang login (berdasarkan user_id)
@@ -87,7 +86,6 @@ class MonitoringController extends Controller
             'iduka_id' => $request->iduka_id,
             'saran' => $request->saran,
             'perikiraan_siswa_diterima' => $request->perikiraan_siswa_diterima,
-            'tgl' => $request->tgl,
             'foto' => $fotos ? json_encode($fotos) : null,
             'guru_id' => $guru ? $guru->id : null, // kalau bukan guru, biarkan NULL
         ]);

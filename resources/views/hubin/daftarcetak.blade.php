@@ -9,6 +9,7 @@
 
     @foreach($cetakUsulans as $kelas => $items)
         <h4 class="mt-4">{{ $kelas }}</h4>
+        <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -33,6 +34,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @endforeach
 </div>
 @endsection

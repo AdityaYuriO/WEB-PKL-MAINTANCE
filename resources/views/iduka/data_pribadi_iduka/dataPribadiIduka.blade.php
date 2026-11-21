@@ -63,6 +63,18 @@
             .table-responsive {
                 overflow-x: auto;
             }
+
+            .card-header.iduka-section-header {
+                background-color: #3b82f6 !important;
+                border-radius: 8px 8px 0 0;
+                padding: 14px 20px;
+            }
+
+            .iduka-section-header h5 {
+                color: #fff !important;
+                margin: 0;
+            }
+
             .table {
                 min-width: 100%;
             }
@@ -114,8 +126,8 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PRIBADI Institusi / Perusahaan</h5>
+                        <div class="card-header iduka-section-header">
+                            <h5>DATA PRIBADI Institusi / Perusahaan</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -197,8 +209,8 @@
                     </div>
 
                     <div class="row mt-4">
-                        <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PIMPINAN INSTITUSI</h5>
+                        <div class="card-header iduka-section-header">
+                            <h5>DATA PIMPINAN INSTITUSI</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -235,8 +247,8 @@
                     </div>
 
                     <div class="row mt-4">
-                        <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PEMBIMBING INSTITUSI</h5>
+                        <div class="card-header iduka-section-header">
+                            <h5>DATA PEMBIMBING INSTITUSI</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">

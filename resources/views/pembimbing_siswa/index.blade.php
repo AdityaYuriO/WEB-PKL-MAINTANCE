@@ -57,12 +57,12 @@
                     aria-labelledby="detailModalLabel{{ $pembimbing->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content" style="border-radius: 15px;">
-                            <div class="modal-header bg-primary text-white"
+                            <div class="modal-header bg-primary text-white detail-pembimbing-modal-header"
                                 style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
                                 <h5 class="modal-title fw-bold" id="detailModalLabel{{ $pembimbing->id }}">
                                     <i class="fas fa-user-tie me-2"></i> Detail Pembimbing
                                 </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                <button type="button" class="btn-close modal-close-light" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
 
@@ -138,9 +138,9 @@
                                         </h6>
                                         <form action="{{ route('pembimbing.store', $pembimbing->id) }}" method="POST">
                                             @csrf
-                                            <div class="row g-2">
-                                                <div class="col-md-8">
-                                                    <div class="mb-3">
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-md-8 mb-3">
+                                                    <div>
                                                         <label for="siswa_id" class="form-label fw-bold text-secondary">
                                                             Pilih Siswa
                                                         </label>
@@ -165,7 +165,7 @@
 
 
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-4 mb-3">
                                                     <button type="submit" class="btn btn-success w-100">
                                                         <i class="fas fa-plus me-2"></i> Tambah
                                                     </button>
@@ -176,12 +176,6 @@
                                 </div>
                             </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    style="border-radius: 10px;">
-                                    <i class="fas fa-times me-2"></i> Tutup
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,4 +204,3 @@
             });
         </script>
     @endpush
-

@@ -112,7 +112,7 @@
                                         </td>
                                         <td>{{ $k->proker->name }}</td>
                                         <td>
-                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                            <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#editKonkeModal{{ $k->id }}">
                                                 <i class="bi bi-pen"></i>
@@ -167,7 +167,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
-   Â Â Â Â Â Â Â Â Â </form>
+            </form>
         </div>
     </div>
 </div>

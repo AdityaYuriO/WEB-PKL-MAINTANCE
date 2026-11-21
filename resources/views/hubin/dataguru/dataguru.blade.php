@@ -86,7 +86,7 @@
                                                 <td>{{ $g->email }}</td>
                                                 @if (in_array(auth()->user()->role, ['hubin']))
                                                     <td>
-                                                        <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                        <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#editGuruModal{{ $g->id }}">
                                                                 <i class="bi bi-pen"></i>

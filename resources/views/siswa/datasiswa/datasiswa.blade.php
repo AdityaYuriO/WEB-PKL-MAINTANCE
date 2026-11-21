@@ -177,7 +177,7 @@
                                                     </td>
                                                     <td></td>
                                                     <td>
-                                                        <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                        <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                             @if(in_array(auth()->user()->role, ['hubin', 'guru', 'kaprog']))
                                                             <button class="btn btn-warning btn-sm d-flex align-items-center"
                                                                 data-bs-toggle="modal" data-bs-target="#editSiswaModal{{ $s->id }}">
@@ -203,7 +203,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
-                                                                    <i class="fas fa-trash-alt3"></i>
+                                                                    <i class="fas fa-trash"></i>
                                                                 </button>
                                                             </form>
                                                             @endif
