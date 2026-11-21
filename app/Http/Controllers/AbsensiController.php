@@ -55,12 +55,12 @@ class AbsensiController extends Controller
             // Cek status hari libur
             try {
                 if (Carbon::today()->isSunday()) {
-                    $isHoliday = false;
+                    $isHoliday = true;
                     $holidayLabel = 'Hari Minggu (Libur Umum)';
                 } else {
                     $hols = IdukaHoliday::getHolidaysOn($user->idukaDiterima->id, Carbon::today()->toDateString());
                     if ($hols && $hols->isNotEmpty()) {
-                        $isHoliday = false;
+                        $isHoliday = true;
                         $names = $hols->pluck('name')->filter()->values();
                         $holidayLabel = $names->count() ? $names->implode(', ') : 'Hari libur';
                     }
@@ -267,15 +267,17 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('info', 'Anda sudah memiliki absensi masuk yang menunggu konfirmasi.');
             }
 
-            // Validasi koordinat jika dikirim
-            if ($request->has('latitude') && $request->has('longitude')) {
-                $request->validate([
-                    'latitude' => 'required|numeric|between:-90,90',
-                    'longitude' => 'required|numeric|between:-180,180',
-                    'lokasi_id' => 'required|string',
-                    'accuracy' => 'required|numeric|min:0'
-                ]);
+            // Validasi koordinat: GPS wajib aktif
+            if (!$request->filled('latitude') || !$request->filled('longitude') || !$request->filled('accuracy')) {
+                return redirect()->back()->with('error', 'Lokasi GPS belum terdeteksi. Nyalakan "Akses Lokasi" di halaman absensi, lalu coba absen lagi.');
             }
+
+            $request->validate([
+                'latitude' => 'required|numeric|between:-90,90',
+                'longitude' => 'required|numeric|between:-180,180',
+                'lokasi_id' => 'required|string',
+                'accuracy' => 'required|numeric|min:0'
+            ]);
 
             // Tentukan lokasi yang digunakan (pusat atau cabang)
             $lokasi = $this->getSelectedLocation($request->lokasi_id, $user);
@@ -354,6 +356,9 @@ class AbsensiController extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Absen masuk berhasil, menunggu konfirmasi IDUKA dan Pembimbing.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollback();
+            throw $e;
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error in absen masuk: ' . $e->getMessage(), [
@@ -1072,7 +1077,7 @@ class AbsensiController extends Controller
         }
 
         // Hitung batas toleransi 15 menit setelah jam masuk
-        $batasLambat = $jamMasuk->copy()->addMinutes(0.1);
+        $batasLambat = $jamMasuk->copy()->addMinutes(15);
 
         // Logika status
         if ($waktu->lte($jamMasuk)) {

@@ -1444,7 +1444,7 @@
         if (hasPendingIzin || hasApprovedIzin) { e.preventDefault(); alert(hasApprovedIzin ? 'Anda sedang izin hari ini.' : 'Anda sudah mengajukan izin. Menunggu konfirmasi.'); return false; }
         if (hasPendingDinas || hasApprovedDinas) { e.preventDefault(); alert(hasApprovedDinas ? 'Anda sedang dinas luar hari ini.' : 'Anda sudah mengajukan dinas luar. Menunggu konfirmasi.'); return false; }
         if (sudahAbsenMasuk || sedangIzin) { e.preventDefault(); alert(sedangIzin ? 'Anda sedang izin hari ini.' : 'Anda sudah melakukan absen masuk hari ini.'); return false; }
-        if (!currentPosition) { e.preventDefault(); alert('Lokasi tidak terdeteksi. Silakan aktifkan akses lokasi.'); return false; }
+        if (!currentPosition) { e.preventDefault(); alert('Lokasi GPS belum terdeteksi. Nyalakan "Akses Lokasi" di halaman absensi, lalu coba absen lagi.'); return false; }
         const jamValidation = validateJamMasuk();
         if (!jamValidation.valid) { e.preventDefault(); alert(jamValidation.message); return false; }
 
@@ -1489,7 +1489,7 @@
             if (sudahAbsenPulang || sedangIzin) { e.preventDefault(); alert(sedangIzin ? 'Anda sedang izin hari ini.' : 'Anda sudah melakukan absensi pulang hari ini.'); return false; }
             const jamValidation = validateJamPulang();
             if (!jamValidation.valid) { e.preventDefault(); alert(jamValidation.message); return false; }
-            if (!currentPosition) { e.preventDefault(); alert('Lokasi tidak terdeteksi. Silakan aktifkan akses lokasi.'); return false; }
+            if (!currentPosition) { e.preventDefault(); alert('Lokasi GPS belum terdeteksi. Nyalakan "Akses Lokasi" di halaman absensi, lalu coba absen lagi.'); return false; }
 
             const selectedLokasiId = lokasiSelect.value;
             let targetLat, targetLng, targetRadius, lokasiName;
@@ -1626,6 +1626,10 @@
 
         updateButtonStatusBasedOnTime();
         setInterval(updateButtonStatusBasedOnTime, 60000);
+
+        // ekspos ke scope global agar listener btnIzin/btnDinas (di luar blok ini) bisa memanggil
+        window.cekStatusIzin = cekStatusIzin;
+        window.cekStatusDinas = cekStatusDinas;
     });
 
     document.addEventListener('DOMContentLoaded', function () {
