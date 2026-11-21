@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Situs Sedang Dalam Perbaikan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .icon-container {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .main-icon {
+            font-size: 80px;
+            color: #e67e22;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .small-icon {
+            position: absolute;
+            font-size: 24px;
+            color: #3498db;
+        }
+        
+        .icon-1 {
+            top: 10px;
+            left: 25%;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .icon-2 {
+            top: 20px;
+            right: 25%;
+            animation: float 3s infinite ease-in-out 0.5s;
+        }
+        
+        .icon-3 {
+            bottom: 10px;
+            left: 30%;
+            animation: float 3s infinite ease-in-out 1s;
+        }
+        
+        .icon-4 {
+            bottom: 20px;
+            right: 30%;
+            animation: float 3s infinite ease-in-out 1.5s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(10deg);
+            }
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        p {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 60%;
+            background-color: #3498db;
+            border-radius: 4px;
+            animation: loading 3s infinite ease-in-out;
+        }
+        
+        @keyframes loading {
+            0%, 100% {
+                width: 60%;
+            }
+            50% {
+                width: 80%;
+            }
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            margin: 0 5px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .pulse:nth-child(2) {
+            animation-delay: 0.2s;
+            background-color: #f39c12;
+        }
+        
+        .pulse:nth-child(3) {
+            animation-delay: 0.4s;
+            background-color: #2ecc71;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.7;
+            }
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            p {
+                font-size: 16px;
+            }
+            
+            .main-icon {
+                font-size: 60px;
+            }
+            
+            .small-icon {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon-container">
+            <i class="fas fa-tools main-icon"></i>
+            <i class="fas fa-cog small-icon icon-1"></i>
+            <i class="fas fa-screwdriver small-icon icon-2"></i>
+            <i class="fas fa-wrench small-icon icon-3"></i>
+            <i class="fas fa-hammer small-icon icon-4"></i>
+        </div>
+        
+        <h1>Situs Sedang Dalam Perbaikan</h1>
+        
+        <p>Website ini saat ini tidak tersedia karena sedang dilakukan pemeliharaan dan perbaikan teknis.</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <div class="footer">
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <br><br>
+            Mohon kembali lagi nanti
+        </div>
+    </div>
+</body>
+</html>

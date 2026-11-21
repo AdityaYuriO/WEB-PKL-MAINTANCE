@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Tidak Ditemukan - 404</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .error-code {
+            font-size: 15rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            text-shadow: 5px 5px 0 #888;
+            margin-bottom: 20px;
+            letter-spacing: 10px;
+        }
+
+        .error-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .error-description {
+            font-size: 1.2rem;
+            color: #aaa;
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background-color: #fff;
+            color: #000;
+            border: 3px solid #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #000;
+            color: #fff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #fff;
+            border: 3px solid #777;
+        }
+
+        .btn-secondary:hover {
+            border-color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .search-box {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid #555;
+            background-color: #111;
+            color: #fff;
+            border-radius: 50px 0 0 50px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 15px 25px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #555;
+            border-left: none;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #444;
+        }
+
+        .footer-info {
+            color: #777;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .glitch-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 50%, rgba(255,255,255,.03) 50%),
+                linear-gradient(90deg, rgba(255,255,255,.03), transparent 50%);
+            background-size: 10px 100%, 10px 100%;
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(100, 100, 100, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 100, 100, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pixel-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .pixel {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #888;
+            opacity: 0.2;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 10rem;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 8rem;
+            }
+            
+            .error-title {
+                font-size: 1.5rem;
+            }
+            
+            .error-description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+    <div class="glitch-effect"></div>
+    
+    <div class="pixel-container" id="pixelContainer"></div>
+    
+    <div class="container">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Halaman Hilang Di Luar Angkasa</h2>
+        <p class="error-description">
+            Halaman yang Anda cari tidak dapat ditemukan. Mungkin telah dipindahkan, dihapus, atau mungkin tidak pernah ada. Mari kita bantu Anda kembali ke jalur yang benar.
+        </p>
+        
+        <div class="search-box">
+            <input type="text" placeholder="Cari sesuatu di situs ini...">
+            <button><i class="fas fa-search"></i> Cari</button>
+        </div>
+        
+        <div class="button-container">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+            </a>
+            <a href="#" class="btn btn-secondary" id="goBackBtn">
+                <i class="fas fa-arrow-left"></i> Kembali ke Halaman Sebelumnya
+            </a>
+        </div>
+        
+        <div class="footer-info">
+            <p><i class="fas fa-exclamation-triangle"></i> Error 404 - Halaman Tidak Ditemukan | Jika Anda yakin ini adalah kesalahan, hubungi administrator.</p>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk membuat efek pixel bergerak di background
+        function createPixels() {
+            const container = document.getElementById('pixelContainer');
+            const pixelCount = 100;
+            
+            for (let i = 0; i < pixelCount; i++) {
+                const pixel = document.createElement('div');
+                pixel.classList.add('pixel');
+                
+                // Posisi acak
+                pixel.style.left = Math.random() * 100 + 'vw';
+                pixel.style.top = Math.random() * 100 + 'vh';
+                
+                // Animasi bergerak
+                const duration = 20 + Math.random() * 40;
+                const delay = Math.random() * 5;
+                
+                pixel.style.animation = `float ${duration}s linear ${delay}s infinite`;
+                
+                // Tambahkan keyframes untuk animasi
+                const styleSheet = document.styleSheets[0];
+                if (i === 0) {
+                    styleSheet.insertRule(`
+                        @keyframes float {
+                            0% {
+                                transform: translateY(0) translateX(0);
+                                opacity: 0.2;
+                            }
+                            25% {
+                                transform: translateY(-20vh) translateX(10vw);
+                                opacity: 0.3;
+                            }
+                            50% {
+                                transform: translateY(-40vh) translateX(-10vw);
+                                opacity: 0.1;
+                            }
+                            75% {
+                                transform: translateY(-20vh) translateX(5vw);
+                                opacity: 0.3;
+                            }
+                            100% {
+                                transform: translateY(0) translateX(0);
+                                opacity: 0.2;
+                            }
+                        }
+                    `, styleSheet.cssRules.length);
+                }
+                
+                container.appendChild(pixel);
+            }
+        }
+        
+        // Fungsi untuk tombol kembali
+        document.getElementById('goBackBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.history.back();
+        });
+        
+        // Fungsi untuk pencarian
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const query = document.querySelector('.search-box input').value;
+            if (query.trim() !== '') {
+                alert(`Mencari: "${query}"\nFitur pencarian hanya simulasi pada halaman 404 ini.`);
+                document.querySelector('.search-box input').value = '';
+            }
+        });
+        
+        // Event listener untuk input pencarian (enter key)
+        document.querySelector('.search-box input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-box button').click();
+            }
+        });
+        
+        // Inisialisasi efek pixel saat halaman dimuat
+        window.addEventListener('load', createPixels);
+        
+        // Efek ketik pada judul
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorCode = document.querySelector('.error-code');
+            const originalText = errorCode.textContent;
+            errorCode.textContent = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    errorCode.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+            
+            // Mulai efek ketik setelah 500ms
+            setTimeout(typeWriter, 500);
+        });
+    </script>
+</body>
+</html>
