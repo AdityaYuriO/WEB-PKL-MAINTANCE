@@ -612,21 +612,16 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if(auth()->user()->role === 'guru'): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('guru.absensi.*') ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('guru.absensi.index')); ?>" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-check-square"></i>
-                                <div data-i18n="Basic">Absensi</div>
-                            </a>
-                        </li>
-                    <?php elseif(in_array(auth()->user()->role, ['iduka', 'kaprog'])): ?>
+                    <?php if(in_array(auth()->user()->role, ['iduka', 'kaprog', 'guru'])): ?>
                         <li class="menu-item <?php echo e(Request::routeIs('konfir.absen.index') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('konfir.absen.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-square"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
+                    <?php endif; ?>
 
+                    <?php if(in_array(auth()->user()->role, ['iduka', 'kaprog'])): ?>
                         <li
                             class="menu-item
 <?php echo e(Request::routeIs('tujuan-pembelajaran.*') ||
@@ -1304,5 +1299,4 @@ Request::routeIs('nilai-akhir.*')
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
-</html>
-<?php /**PATH C:\laragon\www\web-pkl-maintance\konek ke git\WEB-PKL-MAINTANCE\resources\views/layout/main.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\laragon\www\web-pkl-maintance\konek ke git\WEB-PKL-MAINTANCE\resources\views/layout/main.blade.php ENDPATH**/ ?>

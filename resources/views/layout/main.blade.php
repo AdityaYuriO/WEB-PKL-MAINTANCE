@@ -614,21 +614,16 @@
                         </li>
                     @endif
 
-                    @if (auth()->user()->role === 'guru')
-                        <li class="menu-item {{ Request::routeIs('guru.absensi.*') ? 'active' : '' }}">
-                            <a href="{{ route('guru.absensi.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-check-square"></i>
-                                <div data-i18n="Basic">Absensi</div>
-                            </a>
-                        </li>
-                    @elseif (in_array(auth()->user()->role, ['iduka', 'kaprog']))
+                    @if (in_array(auth()->user()->role, ['iduka', 'kaprog', 'guru']))
                         <li class="menu-item {{ Request::routeIs('konfir.absen.index') ? 'active' : '' }}">
                             <a href="{{ route('konfir.absen.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-square"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
+                    @endif
 
+                    @if (in_array(auth()->user()->role, ['iduka', 'kaprog']))
                         <li
                             class="menu-item
 {{ Request::routeIs('tujuan-pembelajaran.*') ||
