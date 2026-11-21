@@ -60,11 +60,412 @@
 
     <!-- Custom App CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('css/app.css')); ?>">
+
+    
+    <style id="perbaikan-ui">
+        /* 1) TABEL: app.css memberi .table-responsive "overflow: hidden"
+              sehingga isi tabel yang lebar terpotong dan tidak bisa di-scroll. */
+        .table-responsive {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-responsive::-webkit-scrollbar { height: 10px; }
+        .table-responsive::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+
+        /* 2) TOMBOL PANAH SIDEBAR ( < dan > ) */
+        .sidebar-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            margin-left: auto;
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 6px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: left .3s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+        }
+        .sidebar-toggle-btn:hover {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, .25);
+            color: #f1f5f9;
+        }
+        .sidebar-toggle-btn i {
+            font-size: 20px;
+            line-height: 1;
+            transition: transform .3s ease;
+        }
+
+        /* 3) SIDEBAR (desktop >= 1200px)
+              Sidebar tetap (fixed) seperti bawaan template, posisi konten TIDAK diubah.
+              Saat di-minimize: sidebar meluncur keluar, konten melebar, tombol panah
+              berputar jadi ">" dan logo muncul di navbar (fade-in). */
+        .sidebar-toggle-floating { display: none; }
+        .navbar-brand-mini { display: none; }
+
+        @media (min-width: 1200px) {
+            #layout-menu,
+            .layout-menu {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                display: flex;
+                flex-direction: column;
+                visibility: visible;
+                transition: left .3s ease, visibility 0s linear 0s;
+            }
+            #layout-menu .menu-inner { flex: 1 1 auto; min-height: 0; }
+
+            .layout-page { transition: padding-left .3s ease; }
+
+            /* tombol bawaan di dalam sidebar hanya untuk layar kecil */
+            .sidebar-toggle-mobile { display: none !important; }
+
+            .sidebar-toggle-floating {
+                display: flex;
+                position: fixed;
+                top: 24px;
+                left: calc(var(--sidebar-width, 260px) - 19px);
+                margin: 0;
+                z-index: 1090;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+            }
+
+            html.sidebar-minimized #layout-menu,
+            html.sidebar-minimized .layout-menu {
+                left: calc(-1 * var(--sidebar-width, 260px) - 40px) !important;
+                visibility: hidden;
+                transition: left .3s ease, visibility 0s linear .3s;
+            }
+            html.sidebar-minimized .layout-page { padding-left: 56px !important; }
+            html.sidebar-minimized .sidebar-toggle-floating { left: 6px; }
+            html.sidebar-minimized .sidebar-toggle-floating i { transform: rotate(180deg); }
+
+            /* Logo + teks di navbar: tersembunyi saat sidebar tampil, fade-in saat sidebar ditutup */
+            .navbar-brand-mini {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 0 0 auto;
+                margin-right: 16px;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateX(-8px);
+                transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s;
+            }
+            .navbar-brand-mini img {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, .3);
+            }
+            .navbar-brand-mini span {
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: .5px;
+                line-height: 1.2;
+                text-transform: uppercase;
+                white-space: nowrap;
+                color: var(--text-primary, #0f172a);
+            }
+            html.sidebar-minimized .navbar-brand-mini {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: none;
+                transition: opacity .4s ease .2s, transform .4s ease .2s, visibility 0s linear 0s;
+            }
+        }
+
+        /* 4) TITIK SUBMENU: app.css memampatkan padding submenu sehingga titik bawaan
+              template menimpa huruf (Siswa, GTK, Nilai, dst). */
+        .layout-menu .menu-sub .menu-item > .menu-link {
+            position: relative;
+            padding: 8px 12px 8px 30px !important;
+        }
+        .layout-menu .menu-sub .menu-item > .menu-link::before {
+            content: '' !important;
+            position: absolute !important;
+            left: 13px !important;
+            top: 50% !important;
+            width: 6px !important;
+            height: 6px !important;
+            margin: 0 !important;
+            border: 0 !important;
+            border-radius: 50% !important;
+            background-color: currentColor !important;
+            opacity: .45;
+            transform: translateY(-50%) !important;
+        }
+        .layout-menu .menu-sub .menu-item > .menu-link:hover::before { opacity: 1; }
+        .layout-menu .menu-sub .menu-item.active > .menu-link::before {
+            display: block !important;
+            background-color: var(--accent, #3b82f6) !important;
+            opacity: 1;
+        }
+
+        /* 5) TOMBOL AKSI (ikon): ukuran sama untuk pensil, mata, dan hapus + jarak antar tombol. */
+        .aksi-icon-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+        }
+        .aksi-icon-group form { display: flex !important; margin: 0; }
+        .aksi-icon-group .btn {
+            width: 34px;
+            height: 34px;
+            padding: 0 !important;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .aksi-icon-group .btn i { font-size: 15px; line-height: 1; }
+
+        /* 6) TEKS MELUBER: sel tabel ber-max-width (mis. Saran/Catatan di monitoring) mewarisi
+              "nowrap" dari .text-nowrap sehingga teksnya menimpa kolom sebelahnya. Dibuat turun baris. */
+        td[style*="max-width"] {
+            white-space: normal !important;
+            word-break: break-word;
+        }
+
+        /* 7) TOMBOL AKSI DI TABEL: jarak sedikit antar tombol, tombol ikon seragam ukurannya. */
+        td .btn-group { display: inline-flex; gap: 6px; }
+        td .btn-group > .btn {
+            margin-left: 0 !important;
+            border-radius: var(--bs-btn-border-radius, .375rem) !important;
+        }
+        td .gap-1:has(> .btn),
+        td .gap-1:has(> form) { gap: 8px !important; }
+        td > .btn + .btn,
+        td > .btn + form,
+        td > form + .btn,
+        td > form + form,
+        td form > .btn + .btn,
+        td .d-flex:not([class*="gap-"]) > .btn + .btn,
+        td .d-flex:not([class*="gap-"]) > .btn + form,
+        td .d-flex:not([class*="gap-"]) > form + .btn { margin-left: 6px; }
+        td .btn.me-1 { margin-right: 8px !important; }
+
+        /* Tombol HANYA berisi ikon (ditandai skrip di bawah dengan class .btn-icon-only).
+           Tombol berisi ikon + teks (mis. "Lihat", "Export") tidak ikut diubah ukurannya. */
+        td .btn.btn-icon-only {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 0 !important;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        td .btn.btn-icon-only > i { font-size: 15px; line-height: 1; margin: 0 !important; }
+        td form.aksi-form { display: inline-flex; margin: 0; vertical-align: middle; }
+
+        /* 9) NAVBAR ATAS: menempel di atas saat halaman di-scroll. */
+        #layout-navbar {
+            position: sticky;
+            top: 10px;
+            z-index: 1020;
+            box-shadow: var(--shadow-sm), 0 -10px 0 0 var(--body-bg) !important;
+        }
+
+        /* 8) JUDUL BANNER DASHBOARD: .card-title di app.css memaksa warna gelap,
+              padahal di banner biru harus putih. */
+        .card-title.text-white { color: #fff !important; }
+
+        /* 10) Teks "Selamat Datang" di banner: app.css punya ".container-xxl h4.fw-bold { color: ... !important }"
+               yang lebih spesifik dari aturan .card-title.text-white, jadi tetap hitam. */
+        .container-xxl .card.bg-primary h4.card-title.text-white,
+        .container-xxl h4.card-title.text-white { color: #fff !important; }
+
+        /* 11) app.css memaksa ".btn { display: inline-flex !important }" sehingga d-none / d-md-none
+               tidak berfungsi pada tombol (jadi muncul dua tombol Detail). Dipulihkan di sini. */
+        .btn.d-none { display: none !important; }
+        @media (min-width: 576px) {
+            .btn.d-sm-none { display: none !important; }
+            .btn.d-none.d-sm-block { display: block !important; }
+            .btn.d-none.d-sm-inline { display: inline !important; }
+            .btn.d-none.d-sm-inline-block { display: inline-block !important; }
+            .btn.d-none.d-sm-flex { display: flex !important; }
+            .btn.d-none.d-sm-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 768px) {
+            .btn.d-md-none { display: none !important; }
+            .btn.d-none.d-md-block { display: block !important; }
+            .btn.d-none.d-md-inline { display: inline !important; }
+            .btn.d-none.d-md-inline-block { display: inline-block !important; }
+            .btn.d-none.d-md-flex { display: flex !important; }
+            .btn.d-none.d-md-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 992px) {
+            .btn.d-lg-none { display: none !important; }
+            .btn.d-none.d-lg-block { display: block !important; }
+            .btn.d-none.d-lg-inline { display: inline !important; }
+            .btn.d-none.d-lg-inline-block { display: inline-block !important; }
+            .btn.d-none.d-lg-flex { display: flex !important; }
+            .btn.d-none.d-lg-inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 1200px) {
+            .btn.d-xl-none { display: none !important; }
+            .btn.d-none.d-xl-block { display: block !important; }
+            .btn.d-none.d-xl-inline { display: inline !important; }
+            .btn.d-none.d-xl-inline-block { display: inline-block !important; }
+            .btn.d-none.d-xl-flex { display: flex !important; }
+            .btn.d-none.d-xl-inline-flex { display: inline-flex !important; }
+        }
+
+        /* 12) HEADER MODAL BERWARNA: app.css memaksa ".modal-title { color: gelap !important }"
+               sehingga judul modal "nabrak" di latar berwarna. Judul dan tombol tutup dibuat putih. */
+        .modal-header.bg-primary { background-color: #3b82f6 !important; }
+        .modal-header.bg-success { background-color: #22c55e !important; }
+        .modal-header.bg-danger { background-color: #ef4444 !important; }
+        .modal-header.bg-warning { background-color: #f59e0b !important; }
+        .modal-header.bg-info { background-color: #06b6d4 !important; }
+        .modal-header.bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; }
+        .modal-header[class*="bg-"].text-white .modal-title,
+        .modal-header[class*="bg-"].text-white h5 { color: #fff !important; }
+        .modal-header[class*="bg-"].text-white .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
+        /* 13) SCROLLBAR HORIZONTAL DI ATAS TABEL (opsional: beri class "top-scroll" pada .table-responsive). */
+        .top-scroll-bar { overflow-x: auto; overflow-y: hidden; height: 14px; margin-bottom: 4px; }
+        .top-scroll-inner { height: 1px; }
+        .top-scroll-bar::-webkit-scrollbar { height: 10px; }
+        .top-scroll-bar::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        .top-scroll-bar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+
+        .page-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(248, 250, 252, .78);
+            cursor: wait;
+        }
+        .page-loading-overlay.is-visible { display: flex; }
+        .page-loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 28px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+        }
+        .page-loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #dbeafe;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: page-loading-spin .8s linear infinite;
+        }
+        @keyframes page-loading-spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    
+    <script>
+        (function () {
+            var root = document.documentElement;
+            try {
+                if (localStorage.getItem('tr-sidebar-minimized') === '1') root.classList.add('sidebar-minimized');
+            } catch (e) {}
+            function initTopScroll() {
+                document.querySelectorAll('.table-responsive.top-scroll').forEach(function (wrap) {
+                    if (wrap.dataset.topScroll) return;
+                    wrap.dataset.topScroll = '1';
+                    var bar = document.createElement('div');
+                    var inner = document.createElement('div');
+                    bar.className = 'top-scroll-bar';
+                    inner.className = 'top-scroll-inner';
+                    bar.appendChild(inner);
+                    wrap.parentNode.insertBefore(bar, wrap);
+                    var syncing = false;
+                    function link(a, b) {
+                        a.addEventListener('scroll', function () {
+                            if (syncing) return;
+                            syncing = true;
+                            b.scrollLeft = a.scrollLeft;
+                            requestAnimationFrame(function () { syncing = false; });
+                        });
+                    }
+                    link(bar, wrap);
+                    link(wrap, bar);
+                    function ukur() {
+                        inner.style.width = wrap.scrollWidth + 'px';
+                        bar.style.display = wrap.scrollWidth > wrap.clientWidth + 1 ? 'block' : 'none';
+                    }
+                    ukur();
+                    window.addEventListener('resize', ukur);
+                    if (window.ResizeObserver) new ResizeObserver(ukur).observe(wrap);
+                });
+            }
+            function rapikanTombol() {
+                document.querySelectorAll('td .btn:not(.btn-icon-only)').forEach(function (b) {
+                    if (b.querySelector('i') && b.textContent.replace(/\s+/g, '') === '') {
+                        b.classList.add('btn-icon-only');
+                        if (b.parentElement && b.parentElement.tagName === 'FORM') {
+                            b.parentElement.classList.add('aksi-form');
+                        }
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                initTopScroll();
+                rapikanTombol();
+                var t;
+                new MutationObserver(function () {
+                    clearTimeout(t);
+                    t = setTimeout(rapikanTombol, 80);
+                }).observe(document.body, { childList: true, subtree: true });
+            });
+            document.addEventListener('click', function (e) {
+                var t = e.target.closest ? e.target.closest('.layout-menu-toggle') : null;
+                if (!t || window.innerWidth < 1200) return;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var on = root.classList.toggle('sidebar-minimized');
+                try { localStorage.setItem('tr-sidebar-minimized', on ? '1' : '0'); } catch (err) {}
+            }, true);
+        })();
+    </script>
+
+    
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 
 <body>
+    <div id="pageLoadingOverlay" class="page-loading-overlay" role="status" aria-live="polite"
+        aria-label="Memuat halaman">
+        <div class="page-loading-indicator">
+            <span class="page-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat halaman...</span>
+        </div>
+    </div>
+
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
+        <!-- Tombol minimize sidebar (desktop). Sengaja di luar sidebar supaya tetap terlihat saat sidebar ditutup. -->
+        <button type="button" id="sidebarToggleBtn" class="layout-menu-toggle sidebar-toggle-btn sidebar-toggle-floating"
+            aria-label="Sembunyikan / tampilkan sidebar" title="Sembunyikan / tampilkan sidebar">
+            <i class="bx bx-chevron-left"></i>
+        </button>
+
         <div class="layout-container">
             <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -77,25 +478,9 @@
                             K-ONE</span>
                     </a>
 
-                    <button type="button"
-                        class="layout-menu-toggle btn btn-sm ms-auto d-flex align-items-center justify-content-center d-lg-none"
-                        style="
-                            background: black;
-                            border: 1px solid rgba(255,255,255,0.1);
-                            color: #cbd5e1;
-                            width: 44px;
-                            height: 44px;
-                            border-radius: 6px;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            padding: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        "
-                        onmouseover="this.style.backgroundColor='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='#f1f5f9';"
-                        onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='#cbd5e1';">
-                        <i class="bx bx-chevron-left" style="font-size: 20px;"></i>
+                    <button type="button" class="layout-menu-toggle sidebar-toggle-btn sidebar-toggle-mobile"
+                        aria-label="Tutup menu">
+                        <i class="bx bx-chevron-left"></i>
                     </button>
                 </div>
 
@@ -103,7 +488,7 @@
 
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
-                    <li class="menu-item <?php echo e(Request::routeIs('') ? 'active' : ''); ?>">
+                    <li class="menu-item <?php echo e(Request::is('dashboard', 'dashboard/*') ? 'active' : ''); ?>">
                         <a href="<?php if(auth()->user()->role == 'guru'): ?> /dashboard/guru
                         <?php elseif(auth()->user()->role == 'siswa'): ?> /dashboard/siswa
                         <?php elseif(auth()->user()->role == 'hubin'): ?> /dashboard/hubin
@@ -127,17 +512,17 @@
 
                     <!-- Layouts -->
                     <?php if(in_array(auth()->user()->role, ['hubin', 'psekolah'])): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('hubin.iduka.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('hubin.iduka.index', 'hubin.detail.iduka') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('hubin.iduka.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('kelas.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('kelas.index', 'siswa.kelas') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('kelas.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Basic">Data Siswa</div>
+                                <div data-i18n="Basic">Data Kelas</div>
                             </a>
                         </li>
 
@@ -149,20 +534,20 @@
                         </li>
 
                         <li
-                            class="menu-item <?php echo e(Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : ''); ?>">
+                            class="menu-item <?php echo e(Request::routeIs('guru.*', 'tk.*') ? 'active open' : ''); ?>">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item <?php echo e(Request::routeIs('guru.index') ? 'active' : ''); ?>">
+                                <li class="menu-item <?php echo e(Request::routeIs('guru.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('guru.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item <?php echo e(Request::routeIs('tk.index') ? 'active' : ''); ?>">
+                                <li class="menu-item <?php echo e(Request::routeIs('tk.*', 'kependik.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('tk.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -217,14 +602,24 @@
                         </li>
                     <?php endif; ?>
 
+
                     <?php if(in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog', 'hubin'])): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('approval.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('approval.*', 'guru.konfir-jurnal.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('approval.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                                 <div data-i18n="Basic">Konfir Journal</div>
                             </a>
                         </li>
+                    <?php endif; ?>
 
+                    <?php if(auth()->user()->role === 'guru'): ?>
+                        <li class="menu-item <?php echo e(Request::routeIs('guru.absensi.*') ? 'active' : ''); ?>">
+                            <a href="<?php echo e(route('guru.absensi.index')); ?>" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-check-square"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a>
+                        </li>
+                    <?php elseif(in_array(auth()->user()->role, ['iduka', 'kaprog'])): ?>
                         <li class="menu-item <?php echo e(Request::routeIs('konfir.absen.index') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('konfir.absen.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-square"></i>
@@ -343,7 +738,7 @@ Request::routeIs('nilai-akhir.*')
                         <li class="menu-item <?php echo e(Request::routeIs('data.siswa') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('data.siswa')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Basic">Data siswa</div>
+                                <div data-i18n="Basic">Daftar Siswa</div>
                             </a>
                         </li>
 
@@ -356,7 +751,7 @@ Request::routeIs('nilai-akhir.*')
 
                         <li class="menu-item <?php echo e(Request::routeIs('konke.index') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('konke.index')); ?>" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-bookmark-star"></i>
+                                <i class="menu-icon tf-icons bx bx-bookmark"></i>
                                 <div data-i18n="Basic">Konsentrasi Keahlian</div>
                             </a>
                         </li>
@@ -387,35 +782,35 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('pengajuan') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('pengajuan', 'persuratan.review', 'persuratan.review.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('persuratan.review')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('cetak.iduka.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('cetak.iduka.index', 'cetak.iduka', 'persuratan.download.atp') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('cetak.iduka.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-bar-chart"></i>
                                 <div data-i18n="Basic">Review Data CP ATP</div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('persuratan.suratBalasan') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('persuratan.suratBalasan', 'persuratan.suratBalasan.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('persuratan.suratBalasan')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-mail-send"></i>
                                 <div data-i18n="Basic">Review Surat Balasan</div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('surat-pengantar.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('surat-pengantar.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('surat-pengantar.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file"></i>
                                 <div data-i18n="Basic">surat pengantar pkl </div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('persuratan.pindah_pkl.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('persuratan.pindah_pkl.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('persuratan.pindah_pkl.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-transfer"></i>
                                 <div data-i18n="Basic">Pindah Pkl </div>
@@ -424,7 +819,7 @@ Request::routeIs('nilai-akhir.*')
                     <?php endif; ?>
 
                     <?php if(in_array(auth()->user()->role, ['iduka'])): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('review.pengajuan') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('pengajuan.review', 'pengajuan.detail', 'review.pengajuanditerima', 'review.pengajuanditolak') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('pengajuan.review')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
@@ -433,7 +828,7 @@ Request::routeIs('nilai-akhir.*')
                     <?php endif; ?>
 
                     <?php if(auth()->user()->role == 'kaprog'): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('data.iduka') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('data.iduka', 'detail.iduka', 'iduka.edit') ? 'active' : ''); ?>">
                             <a href="/data-iduka" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
@@ -447,7 +842,7 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('review.usulan') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('review.usulan', 'kaprog.review.detail', 'kaprog.review.detailUsulanPkl', 'kaprog.review.detailUsulan') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('review.usulan')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Usulan</div>
@@ -525,7 +920,7 @@ Request::routeIs('nilai-akhir.*')
                     <?php endif; ?>
 
                     <?php if(auth()->user()->role == 'pendamping'): ?>
-                        <li class="menu-item <?php echo e(Request::routeIs('pendamping.iduka.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('pendamping.iduka.index', 'iduka.index') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('pendamping.iduka.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
@@ -540,7 +935,7 @@ Request::routeIs('nilai-akhir.*')
                         </li>
 
                         <li
-                            class="menu-item <?php echo e(Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : ''); ?>">
+                            class="menu-item <?php echo e(Request::routeIs('pendamping.guru.*', 'pendamping.tk.*') ? 'active open' : ''); ?>">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
@@ -548,13 +943,13 @@ Request::routeIs('nilai-akhir.*')
 
                             <ul class="menu-sub">
                                 <li
-                                    class="menu-item <?php echo e(Request::routeIs('pendamping.guru.index') ? 'active' : ''); ?>">
+                                    class="menu-item <?php echo e(Request::routeIs('pendamping.guru.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('pendamping.guru.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item <?php echo e(Request::routeIs('pendamping.tk.index') ? 'active' : ''); ?>">
+                                <li class="menu-item <?php echo e(Request::routeIs('pendamping.tk.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('pendamping.tk.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -571,14 +966,14 @@ Request::routeIs('nilai-akhir.*')
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('kepsek.iduka.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('kepsek.iduka.*', 'kepsek.detail.iduka') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('kepsek.iduka.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
                                 <div data-i18n="Basic">Data Institusi</div>
                             </a>
                         </li>
 
-                        <li class="menu-item <?php echo e(Request::routeIs('kepsek.kelas.index') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(Request::routeIs('kepsek.kelas.*', 'kepsek.siswa.*') ? 'active' : ''); ?>">
                             <a href="<?php echo e(route('kepsek.kelas.index')); ?>" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-user"></i>
                                 <div data-i18n="Basic">Data Siswa</div>
@@ -586,20 +981,20 @@ Request::routeIs('nilai-akhir.*')
                         </li>
 
                         <li
-                            class="menu-item <?php echo e(Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : ''); ?>">
+                            class="menu-item <?php echo e(Request::routeIs('kepsek.guru.*', 'kepsek.tk.*') ? 'active open' : ''); ?>">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item <?php echo e(Request::routeIs('kepsek.guru.index') ? 'active' : ''); ?>">
+                                <li class="menu-item <?php echo e(Request::routeIs('kepsek.guru.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('kepsek.guru.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item <?php echo e(Request::routeIs('kepsek.tk.index') ? 'active' : ''); ?>">
+                                <li class="menu-item <?php echo e(Request::routeIs('kepsek.tk.*') ? 'active' : ''); ?>">
                                     <a href="<?php echo e(route('kepsek.tk.index')); ?>" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
@@ -642,6 +1037,12 @@ Request::routeIs('nilai-akhir.*')
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                             <i class="fas fa-bars" style="font-size:22px; color:#64748b;"></i>
                         </a>
+                    </div>
+
+                    <!-- Logo kecil di navbar: fade-in saat sidebar ditutup, fade-out saat sidebar tampil -->
+                    <div class="navbar-brand-mini" aria-hidden="true">
+                        <img src="<?php echo e(asset('images/logoo.png')); ?>" alt="">
+                        <span>TATA RIKSA K-ONE</span>
                     </div>
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
@@ -779,6 +1180,116 @@ Request::routeIs('nilai-akhir.*')
 
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            const storageKey = 'page-navigation-started-at';
+            const loadingDelay = 2000;
+            let loadingTimer;
+
+            // Download file (PDF/ZIP/Excel) tidak memuat ulang halaman, jadi overlay loading tidak
+            // boleh ditampilkan; kalau tidak, overlay menyala terus padahal file sudah terunduh.
+            const downloadPattern = /(download|unduh|cetak|export|pdf|\.zip|\.xlsx?|\.docx?)/i;
+            function isDownloadUrl(url) {
+                return downloadPattern.test(url.pathname) || url.searchParams.has('download');
+            }
+
+            function getNavigationMarker() {
+                try {
+                    return sessionStorage.getItem(storageKey);
+                } catch (error) {
+                    console.error('Unable to access navigation session storage:', error);
+                    return null;
+                }
+            }
+
+            function showLoading() {
+                overlay.classList.add('is-visible');
+            }
+
+            function clearLoading() {
+                clearTimeout(loadingTimer);
+                overlay.classList.remove('is-visible');
+                try {
+                    sessionStorage.removeItem(storageKey);
+                } catch (error) {
+                    console.error('Unable to clear navigation session storage:', error);
+                }
+            }
+
+            function markNavigation() {
+                try {
+                    sessionStorage.setItem(storageKey, Date.now().toString());
+                } catch (error) {
+                    console.error('Unable to store navigation state:', error);
+                }
+                clearTimeout(loadingTimer);
+                loadingTimer = setTimeout(showLoading, loadingDelay);
+            }
+
+            const previousNavigation = Number(getNavigationMarker());
+            if (previousNavigation) {
+                const elapsed = Date.now() - previousNavigation;
+                if (elapsed >= loadingDelay) {
+                    showLoading();
+                } else {
+                    loadingTimer = setTimeout(showLoading, loadingDelay - elapsed);
+                }
+                window.addEventListener('load', clearLoading, { once: true });
+                window.addEventListener('pageshow', clearLoading, { once: true });
+            }
+
+            document.addEventListener('click', function (event) {
+                if (event.defaultPrevented || event.button !== 0 ||
+                    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+                const link = event.target.closest('a[href]');
+                if (!link || link.hasAttribute('download') || link.target ||
+                    link.classList.contains('logout-btn') ||
+                    link.hasAttribute('data-bs-toggle')) return;
+
+                const destination = new URL(link.href, window.location.href);
+                if (destination.origin !== window.location.origin ||
+                    destination.href === window.location.href ||
+                    destination.hash && destination.pathname === window.location.pathname &&
+                        destination.search === window.location.search) return;
+
+                if (isDownloadUrl(destination)) return;
+
+                markNavigation();
+                setTimeout(function () {
+                    if (event.defaultPrevented) clearLoading();
+                }, 0);
+            });
+
+            document.addEventListener('submit', function (event) {
+                const form = event.target;
+                if (form.target && form.target !== '_self') return;
+                try {
+                    if (isDownloadUrl(new URL(form.getAttribute('action') || window.location.href, window.location.href))) return;
+                } catch (error) {}
+                markNavigation();
+                setTimeout(function () {
+                    if (event.defaultPrevented) clearLoading();
+                }, 0);
+            });
+
+            window.addEventListener('beforeunload', function () {
+                if (!getNavigationMarker()) {
+                    try {
+                        sessionStorage.setItem(storageKey, Date.now().toString());
+                    } catch (error) {
+                        console.error('Unable to store navigation state:', error);
+                    }
+                }
+            });
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) clearLoading();
+            });
+        })();
+    </script>
 
     <script>
         if ("serviceWorker" in navigator) {
