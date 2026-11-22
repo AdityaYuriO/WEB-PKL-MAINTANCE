@@ -31,6 +31,21 @@ class AbsensiController extends Controller
     }
 
     /**
+     * Ambil hari libur khusus. Hari Minggu selalu dibuka,
+     * jadi data libur (termasuk "Hari Minggu (Libur)" dari model) diabaikan.
+     */
+    private function getBlockingHolidays($idukaId, $date)
+    {
+        if (Carbon::parse($date)->isSunday()) {
+            return collect();
+        }
+
+        $hols = IdukaHoliday::getHolidaysOn($idukaId, $date);
+
+        return $hols ? collect($hols)->values() : collect();
+    }
+
+    /**
      * Throw exception if PKL period has ended; used to guard write actions.
      */
     private function ensurePklActive()
@@ -52,18 +67,13 @@ class AbsensiController extends Controller
 
         // Get today's attendance if exists
         if ($user->idukaDiterima) {
-            // Cek status hari libur
+            // Cek status hari libur khusus (hari Minggu TIDAK lagi dianggap libur)
             try {
-                if (Carbon::today()->isSunday()) {
-                    $isHoliday = false;
-                    $holidayLabel = 'Hari Minggu (Libur Umum)';
-                } else {
-                    $hols = IdukaHoliday::getHolidaysOn($user->idukaDiterima->id, Carbon::today()->toDateString());
-                    if ($hols && $hols->isNotEmpty()) {
-                        $isHoliday = false;
-                        $names = $hols->pluck('name')->filter()->values();
-                        $holidayLabel = $names->count() ? $names->implode(', ') : 'Hari libur';
-                    }
+                $hols = $this->getBlockingHolidays($user->idukaDiterima->id, Carbon::today()->toDateString());
+                if ($hols && $hols->isNotEmpty()) {
+                    $isHoliday = true;
+                    $names = $hols->pluck('name')->filter()->values();
+                    $holidayLabel = $names->count() ? $names->implode(', ') : 'Hari libur';
                 }
 
                 Log::info('Status hari libur di method index', [
@@ -191,6 +201,12 @@ class AbsensiController extends Controller
             $today = Carbon::today();
             $now = Carbon::now();
 
+            // Validasi apakah user sudah terdaftar di IDUKA
+            if (!$user->idukaDiterima) {
+                DB::rollback();
+                return redirect()->back()->with('error', 'Anda belum terdaftar di IDUKA. Silakan hubungi administrator.');
+            }
+
             // Logging untuk debugging
             Log::info('Absensi masuk dipanggil', [
                 'user_id' => $user->id,
@@ -199,25 +215,9 @@ class AbsensiController extends Controller
                 'iduka_id' => $user->idukaDiterima->id
             ]);
 
-            // Validasi apakah user sudah terdaftar di IDUKA
-            if (!$user->idukaDiterima) {
-                return redirect()->back()->with('error', 'Anda belum terdaftar di IDUKA. Silakan hubungi administrator.');
-            }
-
-            // CEK HARI LIBUR - Harus di paling awal
+            // CEK HARI LIBUR KHUSUS (hari Minggu sekarang BOLEH absen)
             try {
-                // Cek hari Minggu terlebih dahulu
-                if ($today->isSunday()) {
-                    Log::warning('Mencoba absen pada hari Minggu', [
-                        'user_id' => $user->id,
-                        'iduka_id' => $user->idukaDiterima->id,
-                        'date' => $today->toDateString()
-                    ]);
-                    return redirect()->back()->with('error', 'Absensi ditutup: Hari Minggu (Libur Umum). Silakan hubungi IDUKA jika ada keperluan mendesak.');
-                }
-
-                // Cek hari libur khusus dari database
-                $hols = IdukaHoliday::getHolidaysOn($user->idukaDiterima->id, $today->toDateString());
+                $hols = $this->getBlockingHolidays($user->idukaDiterima->id, $today->toDateString());
                 if ($hols && $hols->isNotEmpty()) {
                     $names = $hols->pluck('name')->filter()->values();
                     $label = $names->count() ? $names->implode(', ') : 'Hari libur';
@@ -227,6 +227,7 @@ class AbsensiController extends Controller
                         'date' => $today->toDateString(),
                         'holidays' => $names->toArray()
                     ]);
+                    DB::rollback();
                     return redirect()->back()->with('error', "Absensi ditutup: {$label}. Silakan hubungi IDUKA jika ada keperluan mendesak.");
                 }
             } catch (\Exception $e) {
@@ -235,6 +236,7 @@ class AbsensiController extends Controller
 
             // VALIDASI: Pastikan user memiliki pembimbing_id yang valid
             if (!$user->pembimbing_id) {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Anda belum memiliki pembimbing. Silakan hubungi administrator.');
             }
 
@@ -245,6 +247,7 @@ class AbsensiController extends Controller
                     'user_id' => $user->id,
                     'pembimbing_id' => $user->pembimbing_id
                 ]);
+                DB::rollback();
                 return redirect()->back()->with('error', 'Data pembimbing tidak valid. Silakan hubungi administrator.');
             }
 
@@ -254,6 +257,7 @@ class AbsensiController extends Controller
                 ->first();
 
             if ($existingAbsensi) {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Anda sudah melakukan absensi masuk hari ini.');
             }
 
@@ -264,6 +268,7 @@ class AbsensiController extends Controller
                 ->first();
 
             if ($existingPending) {
+                DB::rollback();
                 return redirect()->back()->with('info', 'Anda sudah memiliki absensi masuk yang menunggu konfirmasi.');
             }
 
@@ -293,6 +298,7 @@ class AbsensiController extends Controller
 
                 if (!$validation['isWithinRadius']) {
                     $lokasiName = $request->lokasi_id === 'pusat' ? 'Pusat' : $lokasi->nama;
+                    DB::rollback();
                     return redirect()->back()->with(
                         'error',
                         "Anda berada di luar radius yang diizinkan untuk absensi di {$lokasiName}. Jarak Anda: " . round($validation['distance']) . " meter, Radius maksimal: " . $lokasi->radius . " meter, Akurasi GPS: ±" . round($request->accuracy) . "m"
@@ -306,6 +312,7 @@ class AbsensiController extends Controller
             // Ambil data guru yang menjadi pembimbing siswa
             $guru = Guru::find($user->pembimbing_id);
             if (!$guru) {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Data pembimbing tidak ditemukan. Silakan hubungi administrator.');
             }
 
@@ -396,6 +403,7 @@ class AbsensiController extends Controller
             $user = Auth::user();
 
             if (!$user->idukaDiterima) {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun.');
             }
 
@@ -407,20 +415,9 @@ class AbsensiController extends Controller
                 'iduka_id' => $user->idukaDiterima->id
             ]);
 
-            // Cek hari libur untuk IDUKA sebelum memproses absen pulang
+            // Cek hari libur khusus IDUKA (hari Minggu sekarang BOLEH absen)
             try {
-                // Cek hari Minggu terlebih dahulu
-                if (Carbon::today()->isSunday()) {
-                    Log::warning('Mencoba absen pulang pada hari Minggu', [
-                        'user_id' => $user->id,
-                        'iduka_id' => $user->idukaDiterima->id,
-                        'date' => Carbon::today()->toDateString()
-                    ]);
-                    return redirect()->back()->with('error', 'Absensi ditutup: Hari Minggu (Libur Umum). Silakan hubungi IDUKA jika ada keperluan mendesak.');
-                }
-
-                // Cek hari libur khusus dari database
-                $holsPulang = IdukaHoliday::getHolidaysOn($user->idukaDiterima->id, Carbon::today()->toDateString());
+                $holsPulang = $this->getBlockingHolidays($user->idukaDiterima->id, Carbon::today()->toDateString());
                 if ($holsPulang && $holsPulang->isNotEmpty()) {
                     $namesP = $holsPulang->pluck('name')->filter()->values();
                     $labelP = $namesP->count() ? $namesP->implode(', ') : 'Hari libur';
@@ -430,6 +427,7 @@ class AbsensiController extends Controller
                         'date' => Carbon::today()->toDateString(),
                         'holidays' => $namesP->toArray()
                     ]);
+                    DB::rollback();
                     return redirect()->back()->with('error', "Absensi ditutup: {$labelP}. Silakan hubungi IDUKA jika ada keperluan mendesak.");
                 }
             } catch (\Exception $e) {
@@ -443,17 +441,20 @@ class AbsensiController extends Controller
                     ->first();
 
                 if (!$absensiHariIni) {
+                    DB::rollback();
                     return redirect()->back()->with('error', 'Anda belum memiliki record absensi hari ini.');
                 }
             }
 
             // Jika sedang izin, tidak bisa absen pulang
             if ($absensiHariIni->status === 'izin') {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Anda sedang izin hari ini. Tidak bisa melakukan absensi pulang.');
             }
 
             // Jika sudah absen pulang
             if ($absensiHariIni->jam_pulang) {
+                DB::rollback();
                 return redirect()->back()->with('error', 'Anda sudah melakukan absensi pulang hari ini pada ' . $absensiHariIni->jam_pulang->format('H:i'));
             }
 
@@ -462,6 +463,7 @@ class AbsensiController extends Controller
                 // Untuk dinas luar, validasi jam 12.00
                 $jamPulangMinimalDinas = Carbon::today()->setHour(12)->setMinute(0);
                 if (Carbon::now()->lt($jamPulangMinimalDinas)) {
+                    DB::rollback();
                     return redirect()->back()->with(
                         'error',
                         'Absen pulang untuk dinas luar hanya dapat dilakukan setelah jam 12.00 siang.'
@@ -475,6 +477,7 @@ class AbsensiController extends Controller
             } else {
                 // Untuk kasus normal, harus sudah absen masuk
                 if (!$absensiHariIni->jam_masuk) {
+                    DB::rollback();
                     return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
                 }
 
@@ -490,6 +493,7 @@ class AbsensiController extends Controller
                     Log::error('Error saat memilih lokasi', [
                         'error' => $e->getMessage()
                     ]);
+                    DB::rollback();
                     return redirect()->back()->with('error', $e->getMessage());
                 }
 
@@ -502,6 +506,7 @@ class AbsensiController extends Controller
                 }
 
                 if (Carbon::now()->lt($jamPulangMinimal)) {
+                    DB::rollback();
                     return redirect()->back()->with(
                         'error',
                         'Absen pulang hanya dapat dilakukan setelah jam ' . $jamPulangMinimal->format('H:i') . '.'
@@ -520,6 +525,7 @@ class AbsensiController extends Controller
 
                 if (!$validation['isWithinRadius']) {
                     $lokasiName = $request->lokasi_id === 'pusat' ? 'Pusat' : $lokasi->nama;
+                    DB::rollback();
                     return redirect()->back()->with(
                         'error',
                         "Anda berada di luar radius yang diizinkan untuk absensi di {$lokasiName}. Jarak Anda: " . round($validation['distance']) . " meter, Radius maksimal: " . $lokasi->radius . " meter, Akurasi GPS: ±" . round($request->accuracy) . "m"
@@ -558,6 +564,7 @@ class AbsensiController extends Controller
 
                 // Cek apakah error karena foreign key
                 if (strpos($e->getMessage(), 'foreign key constraint') !== false) {
+                    DB::rollback();
                     return redirect()->back()->with('error', 'Lokasi absensi tidak valid. Silakan pilih lokasi yang tersedia.');
                 }
 

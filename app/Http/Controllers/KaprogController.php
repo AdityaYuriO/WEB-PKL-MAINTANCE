@@ -126,7 +126,8 @@ class KaprogController extends Controller
         // Buat akun user untuk IDUKA terlebih dahulu
         $user = User::create([
             'name' => $usulan->nama,
-            'nip' => $usulan->email,
+            // Jika tidak ada NIP, simpan sebagai null atau string unik agar tidak duplikat
+            'nip' => $request->filled('nip') ? $request->nip : null,
             'password' => $usulan->password, // sudah di-hash dari awal
             'role' => 'iduka',
         ]);
