@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
@@ -17,44 +18,84 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'nip' => 'required|unique:users,nip,' . Auth::id(),
-            'profile_photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-        ]);
+        $isPhotoOnly = $request->boolean('photo_only')
+            || ($request->expectsJson() && !$request->has('name') && !$request->has('nip'));
 
-        $user = Auth::user();
-        $user->name = $request->name;
-        $user->nip = $request->nip;
-
-        if ($request->hasFile('profile_photo')) {
-            // Hapus foto lama jika ada
-            if ($user->profile_photo && File::exists(public_path($user->profile_photo))) {
-                File::delete(public_path($user->profile_photo));
-            }
-
-            // Buat folder profile_photos jika belum ada
-            if (!File::exists(public_path('profile_photos'))) {
-                File::makeDirectory(public_path('profile_photos'), 0755, true);
-            }
-
-            // Ambil file
-            $file = $request->file('profile_photo');
-            $extension = $file->getClientOriginalExtension();
-
-            // Buat nama file: [nama_user]_[id]_[random].[extension]
-            $cleanName = Str::slug($user->name, '_'); // Ubah spasi jadi underscore
-            $randomString = Str::random(5); // String random 5 karakter
-            $fileName = $cleanName . '_' . $user->id . '_' . $randomString . '.' . $extension;
-
-            // Simpan foto baru
-            $file->move(public_path('profile_photos'), $fileName);
-            $user->profile_photo = 'profile_photos/' . $fileName;
+        $rules = [
+            'profile_photo' => ($isPhotoOnly ? 'required' : 'nullable') . '|image|mimes:jpg,png,jpeg|max:2048',
+        ];
+        if (!$isPhotoOnly) {
+            $rules['name'] = 'required|string|max:255';
+            $rules['nip']  = 'required|unique:users,nip,' . Auth::id();
         }
 
-        $user->save();
+        $request->validate($rules, [
+            'profile_photo.required' => 'Silakan pilih foto profil terlebih dahulu.',
+            'profile_photo.image'    => 'File yang dipilih harus berupa gambar.',
+            'profile_photo.mimes'    => 'Format foto harus JPG, JPEG, atau PNG.',
+            'profile_photo.max'      => 'Ukuran foto profil maksimal 2 MB.',
+        ]);
 
-        return back()->with('success', 'Profil berhasil diperbarui.');
+        try {
+            $user = Auth::user();
+            if (!$isPhotoOnly) {
+                $user->name = $request->name;
+                $user->nip = $request->nip;
+            }
+
+            $oldPhoto = null;
+            if ($request->hasFile('profile_photo')) {
+                $oldPhoto = $user->profile_photo;
+
+                // Buat folder profile_photos jika belum ada
+                if (!File::exists(public_path('profile_photos'))) {
+                    File::makeDirectory(public_path('profile_photos'), 0755, true);
+                }
+
+                // Ambil file
+                $file = $request->file('profile_photo');
+                $extension = strtolower($file->getClientOriginalExtension());
+
+                // Buat nama file: [nama_user]_[id]_[random].[extension]
+                $cleanName = Str::slug($user->name, '_') ?: 'user'; // Ubah spasi jadi underscore
+                $randomString = Str::random(5); // String random 5 karakter
+                $fileName = $cleanName . '_' . $user->id . '_' . $randomString . '.' . $extension;
+
+                // Simpan foto baru
+                $file->move(public_path('profile_photos'), $fileName);
+                $user->profile_photo = 'profile_photos/' . $fileName;
+            }
+
+            $user->save();
+
+            if ($oldPhoto && $oldPhoto !== $user->profile_photo && File::exists(public_path($oldPhoto))) {
+                File::delete(public_path($oldPhoto));
+            }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success'           => true,
+                    'message'           => 'Foto profil berhasil diperbarui.',
+                    'profile_photo_url' => $user->profile_photo ? asset($user->profile_photo) : asset('images/default.jpg'),
+                ]);
+            }
+
+            return back()->with('success', 'Profil berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            Log::error('Gagal memperbarui foto profil', [
+                'user_id' => Auth::id(),
+                'error'   => $e->getMessage(),
+            ]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat menyimpan foto profil. Silakan coba lagi.',
+                ], 500);
+            }
+
+            return back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
+        }
     }
 
     public function updatePassword(Request $request)

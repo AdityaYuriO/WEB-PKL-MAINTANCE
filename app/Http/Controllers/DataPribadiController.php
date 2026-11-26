@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Konke;
-use App\Models\tahunAjaran;
 use App\Models\DataPribadi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
 
 class DataPribadiController extends Controller
 {
@@ -18,10 +21,8 @@ class DataPribadiController extends Controller
         $dataPribadi = Auth::user()->dataPribadi ?? new DataPribadi();
         $siswa = User::with('siswa', 'kelas', 'konke')->where('id', Auth::id())->first();
         $konke = Konke::all();
-        $tahunAjaran = tahunAjaran::all();
         $kelas = Kelas::all();
-
-        return view('siswa.data_pribadi.form', compact('dataPribadi', 'siswa', 'kelas', 'konke', 'tahunAjaran'));
+        return view('siswa.data_pribadi.form', compact('dataPribadi', 'siswa', 'kelas', 'konke'));
     }
 
 public function store(Request $request)
@@ -40,7 +41,6 @@ public function store(Request $request)
             'agama' => 'required|string',
             'tempat_lhr' => 'required|string',
             'tgl_lahir' => 'nullable|date',
-            'tahun_ajaran_id' => 'required|exists:tahun_ajaran,id',
             'email' => 'required|email|unique:data_pribadis,email,' . ($dataPribadi->id ?? 'null') . ',id',
 
             'name_ayh' => 'required|string|max:255',
@@ -61,6 +61,12 @@ public function store(Request $request)
 
             'email_ortu' => 'nullable|email|unique:data_pribadis,email_ortu,' . ($dataPribadi->id ?? 'null') . ',id',
             'no_tlp' => 'required|string|max:15|unique:data_pribadis,no_tlp,' . ($dataPribadi->id ?? 'null') . ',id',
+
+            'password' => ['nullable', 'required_with:password_confirmation', 'string', Password::defaults(), 'confirmed'],
+        ], [
+            'password.required_with' => 'Password baru wajib diisi jika konfirmasi password diisi.',
+            'password.min' => 'Password baru minimal harus :min karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         // Jika agama 'Lainnya', pakai input manual
@@ -68,55 +74,85 @@ public function store(Request $request)
             $validated['agama'] = $request->agama_lainnya;
         }
 
-        // Update user siswa (Auth user)
-        $user = Auth::user();
-        $user->update([
-            'name' => $validated['name'],
-            'nip' => $validated['nip'],
-            'email' => $validated['email'],
-            'kelas_id' => $validated['kelas_id'],
-            'konke_id' => $validated['konke_id'],
-        ]);
+        $passwordUpdated = $request->filled('password');
 
-        if ($request->ttd_ortu_option === 'manual') {
-            $validated['ttd_ortu'] = $request->ttd_ortu_manual_hubungan;
-            $validated['ttd_ortu_nama'] = $request->ttd_ortu_manual_nama;
-        } else {
-            $validated['ttd_ortu'] = $request->ttd_ortu_option;
-            $validated['ttd_ortu_nama'] = null;
-        }
-
-
-        if (!$dataPribadi) {
-            $validated['user_id'] = Auth::id();
-            DataPribadi::create($validated);
-        } else {
-            $dataPribadi->update($validated);
-        }
-
-
-        if ($request->filled('nik_ayh')) {
-            $userOrtu = User::where('nip', $dataPribadi->nik_ayh ?? $request->nik_ayh)->first();
-
-            if ($userOrtu) {
-                $userOrtu->update([
-                    'name' => $request->name_ayh,
-                    'nip' => $request->nik_ayh,
-                    'email' => $request->email_ortu,
+        try {
+            $updatedUser = DB::transaction(function () use ($request, &$validated, $dataPribadi, $passwordUpdated) {
+                // Update user siswa (Auth user)
+                $user = User::findOrFail(Auth::id());
+                $user->update([
+                    'name' => $validated['name'],
+                    'nip' => $validated['nip'],
+                    'email' => $validated['email'],
+                    'kelas_id' => $validated['kelas_id'] ?? null,
+                    'konke_id' => $validated['konke_id'] ?? null,
                 ]);
-            } else {
-                User::create([
-                    'name' => $request->name_ayh,
-                    'nip' => $request->nik_ayh,
-                    'email' => $request->email_ortu,
-                    'password' => Hash::make($request->nik_ayh),
-                    'role' => 'orangtua',
-                ]);
-            }
+
+                if ($passwordUpdated) {
+                    $user->password = Hash::make($request->input('password'));
+                    if (!$user->save()) {
+                        throw new \RuntimeException('Gagal menyimpan password baru ke database.');
+                    }
+                }
+
+                if ($request->ttd_ortu_option === 'manual') {
+                    $validated['ttd_ortu'] = $request->ttd_ortu_manual_hubungan;
+                    $validated['ttd_ortu_nama'] = $request->ttd_ortu_manual_nama;
+                } else {
+                    $validated['ttd_ortu'] = $request->ttd_ortu_option;
+                    $validated['ttd_ortu_nama'] = null;
+                }
+
+                $dataPribadiPayload = Arr::except($validated, ['password']);
+
+                if (!$dataPribadi) {
+                    $dataPribadiPayload['user_id'] = $user->id;
+                    DataPribadi::create($dataPribadiPayload);
+                } else {
+                    $dataPribadi->update($dataPribadiPayload);
+                }
+
+                if ($request->filled('nik_ayh')) {
+                    $userOrtu = User::where('nip', ($dataPribadi?->nik_ayh) ?? $request->nik_ayh)->first();
+
+                    if ($userOrtu) {
+                        $userOrtu->update([
+                            'name' => $request->name_ayh,
+                            'nip' => $request->nik_ayh,
+                            'email' => $request->email_ortu,
+                        ]);
+                    } else {
+                        User::create([
+                            'name' => $request->name_ayh,
+                            'nip' => $request->nik_ayh,
+                            'email' => $request->email_ortu,
+                            'password' => Hash::make($request->nik_ayh),
+                            'role' => 'orangtua',
+                        ]);
+                    }
+                }
+
+                return $user;
+            });
+
+            Auth::setUser($updatedUser->fresh());
+        } catch (\Throwable $e) {
+            Log::error('Gagal memperbarui data pribadi/password siswa', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()
+                ->withInput($request->except(['password', 'password_confirmation']))
+                ->with('error', $passwordUpdated
+                    ? 'Password dan data pribadi gagal disimpan. Silakan periksa kembali atau coba beberapa saat lagi.'
+                    : 'Gagal menyimpan data pribadi. Silakan coba beberapa saat lagi.');
         }
 
         return redirect()->route('siswa.data_pribadi.create')
-            ->with('success', 'Data pribadi berhasil disimpan.');
+            ->with('success', $passwordUpdated
+                ? 'Data pribadi dan password baru berhasil disimpan.'
+                : 'Data pribadi berhasil disimpan.');
     }
 
    }

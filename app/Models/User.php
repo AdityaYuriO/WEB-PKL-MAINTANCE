@@ -16,15 +16,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'nip',
         'iduka_id',
         'pembimbing_id',
         'kelas_id',
         'konke_id',
+        'tahun_ajaran',
         'lokasi_pkl_id',
-        'profile_photo',
-        'status',
-        'tahun_lulus',
+        'profile_photo'
     ];
 
     protected $hidden = [
@@ -121,20 +119,75 @@ class User extends Authenticatable
         return $this->hasMany(Monitoring::class, 'guru_id');
     }
 
-    public function riwayatKelas()
+    /**
+     * Memeriksa apakah data pribadi siswa sudah terisi lengkap di database.
+     */
+    public function isDataPribadiLengkap(): bool
     {
-        return $this->hasMany(RiwayatKelas::class, 'user_id');
+        $data = $this->dataPribadi;
+        if (!$data) {
+            return false;
+        }
+
+        // Field wajib berdasarkan validasi DataPribadiController::store()
+        $requiredFields = [
+            'alamat_siswa',
+            'no_hp',
+            'jk',
+            'agama',
+            'tempat_lhr',
+            'name_ayh',
+            'nik_ayh',
+            'tempat_lhr_ayh',
+            'name_ibu',
+            'nik_ibu',
+            'tempat_lhr_ibu',
+            'no_tlp',
+        ];
+
+        foreach ($requiredFields as $field) {
+            $val = $data->{$field};
+            if (is_null($val) || trim((string)$val) === '') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    // Scope: hanya siswa/akun yang masih aktif (belum jadi alumni)
-    public function scopeAktif($query)
+    /**
+     * Mendapatkan daftar label field data pribadi yang belum lengkap.
+     */
+    public function getMissingDataPribadiFields(): array
     {
-        return $query->where('status', 'aktif');
-    }
+        $data = $this->dataPribadi;
+        if (!$data) {
+            return ['Data Diri & Orang Tua'];
+        }
 
-    // Scope: hanya alumni
-    public function scopeAlumni($query)
-    {
-        return $query->where('status', 'alumni');
+        $fieldLabels = [
+            'alamat_siswa' => 'Alamat',
+            'no_hp' => 'No. HP Siswa',
+            'jk' => 'Jenis Kelamin',
+            'agama' => 'Agama',
+            'tempat_lhr' => 'Tempat Lahir Siswa',
+            'name_ayh' => 'Nama Ayah',
+            'nik_ayh' => 'NIK Ayah',
+            'tempat_lhr_ayh' => 'Tempat Lahir Ayah',
+            'name_ibu' => 'Nama Ibu',
+            'nik_ibu' => 'NIK Ibu',
+            'tempat_lhr_ibu' => 'Tempat Lahir Ibu',
+            'no_tlp' => 'No. Telepon Orang Tua',
+        ];
+
+        $missing = [];
+        foreach ($fieldLabels as $field => $label) {
+            $val = $data->{$field};
+            if (is_null($val) || trim((string)$val) === '') {
+                $missing[] = $label;
+            }
+        }
+
+        return $missing;
     }
 }

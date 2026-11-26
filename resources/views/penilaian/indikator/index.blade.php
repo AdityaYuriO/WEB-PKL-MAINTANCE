@@ -97,6 +97,7 @@
 
         .btn-warning-custom:hover {
             background-color: #dda20a;
+            color: white;
         }
 
         .btn-danger-custom {
@@ -107,6 +108,7 @@
 
         .btn-danger-custom:hover {
             background-color: #be2617;
+            color: white;
         }
 
         .modal-header {
@@ -154,7 +156,6 @@
 
                             @forelse ($indikator as $item)
                                 <tr>
-
                                     <td>{{ $loop->iteration }}</td>
 
                                     <td>
@@ -166,7 +167,6 @@
                                     <td>{{ $item->indikator }}</td>
 
                                     <td class="text-center">
-
                                         <button class="btn btn-warning-custom btn-circle me-1" data-bs-toggle="modal"
                                             data-bs-target="#edit{{ $item->id }}" title="Edit">
                                             <i class="fas fa-pen"></i>
@@ -176,12 +176,108 @@
                                             data-bs-target="#delete{{ $item->id }}" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
-
                                     </td>
-
                                 </tr>
-                            @empty
 
+                                <!-- MODAL EDIT -->
+                                <div class="modal fade" id="edit{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+
+                                            <form action="{{ route('indikator.update', $item->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">
+                                                        <i class="fas fa-edit me-2"></i>
+                                                        Edit Indikator Penilaian
+                                                    </h5>
+
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Tujuan Pembelajaran</label>
+
+                                                        <select name="id_tujuan_pembelajaran" class="form-select" required>
+                                                            @foreach ($tujuan as $tp)
+                                                                <option value="{{ $tp->id }}"
+                                                                    {{ $item->id_tujuan_pembelajaran == $tp->id ? 'selected' : '' }}>
+                                                                    {{ $tp->tujuan_pembelajaran }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Indikator</label>
+                                                        <textarea name="indikator" class="form-control" rows="4" required>{{ $item->indikator }}</textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer bg-light">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        data-bs-dismiss="modal">
+                                                        Batal
+                                                    </button>
+
+                                                    <button type="submit" class="btn btn-warning-custom btn-sm">
+                                                        Update
+                                                    </button>
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL DELETE -->
+                                <div class="modal fade" id="delete{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+
+                                            <form action="{{ route('indikator.destroy', $item->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-danger">
+                                                        <i class="fas fa-trash-alt me-2"></i>
+                                                        Konfirmasi Hapus
+                                                    </h5>
+
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    Apakah Anda yakin ingin menghapus indikator berikut?
+                                                    <div class="mt-2 p-2 bg-light border rounded">
+                                                        <strong>{{ $item->indikator }}</strong>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer bg-light">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        data-bs-dismiss="modal">
+                                                        Batal
+                                                    </button>
+
+                                                    <button type="submit" class="btn btn-danger-custom btn-sm">
+                                                        Ya, Hapus
+                                                    </button>
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
                                 <tr>
                                     <td colspan="4" class="text-center py-4">
                                         Tidak ada data ditemukan.
@@ -257,4 +353,3 @@
         </div>
     </div>
 @endsection
-

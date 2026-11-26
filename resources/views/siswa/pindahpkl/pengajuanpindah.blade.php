@@ -1,7 +1,7 @@
 ﻿@extends('layout.main')
 
 @section('content')
-<div class="container mt-4">
+<div class="container container-p-y">
     <h4 class="mb-3">Form Pindah Tempat PKL</h4>
 
     <form action="{{ route('pindah-pkl.store') }}" method="POST" enctype="multipart/form-data">
@@ -25,4 +25,5 @@
     </form>
 </div>
 @endsection
+
 

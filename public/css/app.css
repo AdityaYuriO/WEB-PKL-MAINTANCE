@@ -1,13 +1,5 @@
-/* =============================================
-   TATA RIKSA K-ONE — Global Custom CSS
-   Modern UI: Dark Sidebar, Clean Components
-   ============================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* =============================================
-   CSS VARIABLES
-   ============================================= */
 :root {
     --sidebar-bg:        #0f172a;
     --sidebar-bg2:       #1e293b;
@@ -44,9 +36,6 @@
     --transition:  all 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* =============================================
-   GLOBAL BASE
-   ============================================= */
 *,
 *::before,
 *::after {
@@ -62,9 +51,7 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* =============================================
-   SIDEBAR / MENU
-   ============================================= */
+
 #layout-menu,
 .layout-menu {
     background-color: var(--sidebar-bg) !important;
@@ -220,9 +207,6 @@ html, body {
     opacity: 0.6;
 }
 
-/* =============================================
-   NAVBAR
-   ============================================= */
 .layout-navbar,
 nav.layout-navbar {
     background-color: var(--navbar-bg) !important;
@@ -233,7 +217,6 @@ nav.layout-navbar {
     padding-bottom: 0 !important;
 }
 
-/* Username in navbar */
 .navbar-nav > li {
     color: var(--text-secondary);
     font-size: 13.5px;
@@ -311,9 +294,7 @@ nav.layout-navbar {
     color: var(--accent) !important;
 }
 
-/* =============================================
-   LAYOUT CONTENT
-   ============================================= */
+
 .layout-page {
     background-color: var(--body-bg) !important;
 }
@@ -323,9 +304,6 @@ nav.layout-navbar {
     padding-bottom: 2rem !important;
 }
 
-/* =============================================
-   CARDS
-   ============================================= */
 .card {
     background-color: var(--card-bg) !important;
     border: 1px solid var(--border-color) !important;
@@ -369,9 +347,6 @@ nav.layout-navbar {
     font-size: 22px;
 }
 
-/* =============================================
-   BUTTONS
-   ============================================= */
 .btn {
     font-family: 'Inter', sans-serif !important;
     font-weight: 600 !important;
@@ -496,9 +471,6 @@ nav.layout-navbar {
     border-color: #475569 !important;
 }
 
-/* =============================================
-   TABLES
-   ============================================= */
 .table {
     border-collapse: separate !important;
     border-spacing: 0 !important;
@@ -534,9 +506,6 @@ nav.layout-navbar {
     overflow: hidden;
 }
 
-/* =============================================
-   BADGES
-   ============================================= */
 .badge {
     font-size: 11px !important;
     font-weight: 600 !important;
@@ -552,9 +521,7 @@ nav.layout-navbar {
 .badge.bg-secondary { background-color: #f1f5f9 !important; color: #64748b !important; }
 .badge.bg-danger    { background-color: #fef2f2 !important; color: #b91c1c !important; }
 
-/* =============================================
-   FORMS & INPUTS
-   ============================================= */
+
 .form-control,
 .form-select {
     border: 1.5px solid var(--border-color) !important;
@@ -594,9 +561,6 @@ nav.layout-navbar {
     border-radius: var(--radius-sm) !important;
 }
 
-/* =============================================
-   ALERTS
-   ============================================= */
 .alert {
     border: none !important;
     border-radius: var(--radius-md) !important;
@@ -618,9 +582,7 @@ nav.layout-navbar {
 .alert-warning { background-color: #fffbeb !important; color: #92400e !important; }
 .alert-danger  { background-color: #fef2f2 !important; color: #b91c1c !important; }
 
-/* =============================================
-   MODALS
-   ============================================= */
+
 .modal-content {
     border: none !important;
     border-radius: var(--radius-xl) !important;
@@ -650,9 +612,6 @@ nav.layout-navbar {
     background-color: #f8fafc !important;
 }
 
-/* =============================================
-   SELECT2
-   ============================================= */
 .select2-container--default .select2-selection--single {
     border: 1.5px solid var(--border-color) !important;
     border-radius: var(--radius-sm) !important;
@@ -667,9 +626,6 @@ nav.layout-navbar {
     box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
 }
 
-/* =============================================
-   SCROLLBAR
-   ============================================= */
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -685,9 +641,6 @@ nav.layout-navbar {
     background: #94a3b8;
 }
 
-/* =============================================
-   PAGE TITLE AREA
-   ============================================= */
 .container-xxl h4.fw-bold {
     font-size: 20px !important;
     font-weight: 700 !important;
@@ -698,9 +651,6 @@ nav.layout-navbar {
     color: var(--text-muted) !important;
 }
 
-/* =============================================
-   UTILITIES
-   ============================================= */
 .text-primary { color: var(--accent) !important; }
 
 .bg-primary {
@@ -717,10 +667,6 @@ nav.layout-navbar {
     backdrop-filter: blur(4px);
 }
 
-/* =============================================
-   SIDEBAR SPACING FIX
-   ============================================= */
-/* Remove extra spacing on sidebar edges */
 .app-brand.demo {
     padding: 16px 16px 12px !important;
 }
@@ -740,14 +686,243 @@ nav.layout-navbar {
     padding-right: 16px !important;
 }
 
-/* =============================================
-   RESPONSIVE
-   ============================================= */
 @media (max-width: 1200px) {
     #layout-menu {
         z-index: 1100;
     }
     .layout-overlay {
         background-color: rgba(15,23,42,0.5) !important;
+    }
+}
+
+.siswa-bottom-nav-container {
+    position: fixed;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1040;
+    padding: 0 16px;
+    pointer-events: none;
+}
+
+.siswa-bottom-nav {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 9999px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+    padding: 6px 8px;
+    width: 100%;
+    max-width: 400px;
+    gap: 4px;
+}
+
+.siswa-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 4px 6px;
+    border-radius: 9999px;
+    text-decoration: none;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-width: 0;
+    gap: 3px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.siswa-nav-item:hover {
+    color: #1e293b;
+    text-decoration: none;
+}
+
+.siswa-nav-item .nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.siswa-nav-item .nav-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2.1;
+    display: block;
+}
+
+.siswa-nav-item .nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
+.siswa-nav-item.active {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.siswa-nav-item.active .nav-icon {
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.siswa-nav-item.active .nav-label {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+@media (max-width: 1199.98px) {
+    /* Mobile Floating Pill Navbar Khusus Role Siswa */
+    body.role-siswa #layout-navbar {
+        position: fixed !important;
+        top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+        left: 14px !important;
+        right: 14px !important;
+        width: calc(100% - 28px) !important;
+        max-width: 440px !important;
+        margin: 0 auto !important;
+        border-radius: 9999px !important;
+        background-color: rgba(255, 255, 255, 0.90) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(226, 232, 240, 0.85) !important;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.85) !important;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03) !important;
+        z-index: 1040 !important;
+        min-height: 56px !important;
+        height: 56px !important;
+        padding: 6px 8px 6px 18px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+
+    body.role-siswa #layout-navbar .navbar-nav-right {
+        flex-basis: auto !important;
+        flex-grow: 0 !important;
+        width: auto !important;
+        margin-left: auto !important;
+    }
+
+    body.role-siswa #layout-navbar .navbar-nav {
+        margin-left: auto !important;
+        gap: 0 !important;
+    }
+
+    body.role-siswa .siswa-navbar-greeting {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        padding-right: 8px;
+    }
+
+    body.role-siswa .greeting-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.25;
+        letter-spacing: -0.2px;
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    body.role-siswa .greeting-subtitle {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 500;
+        line-height: 1.2;
+        margin-top: 1px;
+        letter-spacing: -0.1px;
+    }
+
+    body.role-siswa #layout-navbar .dropdown-menu {
+        border-radius: 14px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12) !important;
+        margin-top: 8px !important;
+    }
+
+    body.role-siswa .layout-page {
+        padding-top: calc(82px + env(safe-area-inset-top, 0px)) !important;
+        padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+    body.role-siswa #layout-menu,
+    body.role-siswa .layout-overlay,
+    body.role-siswa .layout-menu-toggle {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .siswa-bottom-nav-container {
+        display: none !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body.role-siswa #layout-navbar {
+        left: 8px !important;
+        right: 8px !important;
+        width: calc(100% - 16px) !important;
+        padding: 5px 6px 5px 14px !important;
+        min-height: 52px !important;
+        height: 52px !important;
+        top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    body.role-siswa .greeting-title {
+        font-size: 13px;
+        max-width: 150px;
+    }
+
+    body.role-siswa .greeting-subtitle {
+        font-size: 10px;
+    }
+
+    body.role-siswa .layout-page {
+        padding-top: calc(72px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    .siswa-bottom-nav-container {
+        padding: 0 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    .siswa-bottom-nav {
+        padding: 5px 6px;
+        gap: 2px;
+    }
+    .siswa-nav-item {
+        padding: 5px 2px 4px;
+        gap: 2px;
+    }
+    .siswa-nav-item .nav-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+    .siswa-nav-item .nav-label {
+        font-size: 10px;
     }
 }

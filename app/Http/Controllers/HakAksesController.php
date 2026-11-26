@@ -17,27 +17,15 @@ class HakAksesController extends Controller
     public function hubin()
     {
         // Data Usulan dari dua tabel
-        $jumlahUsulan = PengajuanUsulan::whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count() + UsulanIduka::whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count();
+        $jumlahUsulan = PengajuanUsulan::count() + UsulanIduka::count();
 
         // Status Diterima
-        $jumlahDiterima = PengajuanUsulan::where('status', 'diterima')->
-            whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count() + UsulanIduka::where('status', 'diterima')->whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count();
+        $jumlahDiterima = PengajuanUsulan::where('status', 'diterima')->count()
+            + UsulanIduka::where('status', 'diterima')->count();
 
         // Status Ditolak
-        $jumlahDitolak = PengajuanUsulan::where('status', 'ditolak')->
-            whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count() + UsulanIduka::where('status', 'ditolak')->whereHas('user', function ($query) {
-            $query->where('status', 'aktif');
-        })->count();
+        $jumlahDitolak = PengajuanUsulan::where('status', 'ditolak')->count()
+            + UsulanIduka::where('status', 'ditolak')->count();
 
 
 
@@ -60,7 +48,7 @@ class HakAksesController extends Controller
             ->where('status', 'diterima')
             ->exists();
 
-        // 🔍 Cek apakah sudah pernah mengajukan usulan atau pengajuan PKL dan statusnya proses/diterima
+        // ðŸ” Cek apakah sudah pernah mengajukan usulan atau pengajuan PKL dan statusnya proses/diterima
         $usulanAktif = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
             ->exists();
@@ -73,14 +61,14 @@ class HakAksesController extends Controller
 
         $user = Auth::user()->load('pembimbing');
 
-        // ✅ Cek status spesifik: proses atau diterima
+        // âœ… Cek status spesifik: proses atau diterima
         $statusAjukan = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
             ->value('status') ?? PengajuanUsulan::where('user_id', $user->id)
                 ->whereIn('status', ['proses', 'diterima'])
                 ->value('status');
 
-        // 🔍 Tambahan: Ambil data riwayat pindah PKL
+        // ðŸ” Tambahan: Ambil data riwayat pindah PKL
         // Di Controller function siswa()
 $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
     ->with([
@@ -90,11 +78,16 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
     ->orderBy('created_at', 'desc')
     ->get();
 
-        // 🔍 Cek status pengajuan pindah PKL terbaru
+        // ðŸ” Cek status pengajuan pindah PKL terbaru
         $statusPindahPkl = PindahPkl::where('siswa_id', $user->id)
             ->whereIn('status', ['menunggu','menunggu_surat','diterima_iduka','ditolak_iduka','siap_kirim'])
             ->latest()
             ->first();
+
+        // ðŸ” Cek kelengkapan data pribadi siswa dari database
+        $user->load('dataPribadi');
+        $isDataLengkap = $user->isDataPribadiLengkap();
+        $missingFields = $user->getMissingDataPribadiFields();
 
         return view('siswa.dashboard', compact(
             'usulanSiswa',
@@ -105,7 +98,9 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
             'statusAjukan',
             'user',
             'riwayatPindahPkl',
-            'statusPindahPkl'
+            'statusPindahPkl',
+            'isDataLengkap',
+            'missingFields'
         ));
     }
 
@@ -201,11 +196,6 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
         ];
 
         if (Auth::attempt($infoLogin)) {
-            if (Auth::user()->status === 'alumni') {
-                Auth::logout();
-                return redirect('/login')->withErrors('Akun ini sudah berstatus alumni dan tidak dapat login.')->withInput();
-            }
-
             if (Auth::user()->role == 'hubin') {
                 return redirect()->route('hubin.dashboard');
             } elseif (Auth::user()->role == 'siswa') {
